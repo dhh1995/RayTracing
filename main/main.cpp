@@ -27,24 +27,21 @@ int main()
 	
 	//--------------------------------------test_scene 1----------------------------
 	
-	// Primitive* obj1 = new Primitive();
-	// obj1->setShape(new Sphere(Vec3f(4, 1, -2), 2));
-	// obj1->setMaterial(new Material(RED, 1, 0.6));
-	// scene->addObject(obj1);
+	Primitive* obj1 = new Sphere(Vec3f(4, 1, -2), 2);
+	obj1->setMaterial(new Material(RED, 1, 0.6));
+	scene->addObject(obj1);
 
-	// Primitive* obj2 = new Primitive();
-	// obj2->setShape(new Sphere(Vec3f(4, 1, 2), 2));
-	// obj2->setMaterial(new Material(BLUE, 1, 0.5));
-	// scene->addObject(obj2);
+	Primitive* obj2 = new Sphere(Vec3f(4, 1, 2), 2);
+	obj2->setMaterial(new Material(BLUE, 1, 0.5));
+	scene->addObject(obj2);
 
-	Primitive* obj3 = new Primitive();
-	obj3->setShape(new Plane(Vec3f(0, 1, 0), 1));
-	Material* floor3 = new Material(WHITE, 0.5, 0.8, WHITE / 10);
-	Image* image3 = new Image("/home/dhh1995/RayTracing/texture/parquet.jpg");
-	Texture* texture3 = new Texture(image3);
-	floor3->setTexture(texture3);
-	obj3->setMaterial(floor3);
-	scene->addObject(obj3);
+	// Primitive* obj3 = new Plane(Vec3f(0, 1, 0), 1);
+	// Material* floor3 = new Material(WHITE, 0.5, 0.8, WHITE / 10);
+	// Image* image3 = new Image("/home/dhh1995/RayTracing/texture/parquet.jpg");
+	// Texture* texture3 = new Texture(image3);
+	// floor3->setTexture(texture3);
+	// obj3->setMaterial(floor3);
+	// scene->addObject(obj3);
 
 	// Primitive* obj4 = new Primitive();
 	// obj4->setShape(new Triangle(Vec3f(1, 0, 0), Vec3f(1, 1, 2), Vec3f(1, 1, -2)));
@@ -52,11 +49,10 @@ int main()
 	// obj4->setMaterial(new Material(BLUE, 0, 0.5, WHITE / 10));
 	// scene->addObject(obj4);
 
-	Primitive* obj5 = new Primitive();
-	obj5->setShape(new TriangleMesh("/home/dhh1995/RayTracing/test_data/cube.obj", Vec3f(2, 0, 0)));
-	//obj5->setShape(new Triangle(Vec3f(2,0,0), Vec3f(2,1,1), Vec3f(2,1,-1) ));
-	obj5->setMaterial(new Material(BLUE, 0.1, 0.5, WHITE));
-	scene->addObject(obj5);
+	// Primitive* obj5 = new TriangleMesh("/home/dhh1995/RayTracing/test_data/cube.obj", Vec3f(2, 0, 0));
+	// //obj5->setShape(new Triangle(Vec3f(2,0,0), Vec3f(2,1,1), Vec3f(2,1,-1) ));
+	// obj5->setMaterial(new Material(BLUE, 0.1, 0.5, WHITE));
+	// scene->addObject(obj5);
 
 	camera->setPos(Vec3f(-5, 0 ,0));
 

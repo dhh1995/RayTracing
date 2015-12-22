@@ -3,20 +3,21 @@
 #define CORE_PRIMITIVE_H
 
 #include "common.h"
-#include "shape.h"
 #include "material.h"
 
 namespace Raytracer {
 
 class Primitive{
 public:
-	Primitive():mShape(NULL), mMaterial(NULL){
+	Primitive():mMaterial(NULL){
 	}
-	Shape* getShape(){
-		return mShape;
+	void setName(char* aName){
+		delete mName;
+		mName = new char[strlen(aName) + 1]; 
+		strcpy(mName, aName);
 	}
-	void setShape(Shape* aShape){
-		mShape = aShape;
+	char* getName(){
+		return mName;
 	}
 	Material* getMaterial(){
 		return mMaterial;
@@ -24,33 +25,16 @@ public:
 	void setMaterial(Material* aMaterial){
 		mMaterial = aMaterial;
 	}
-	int intersect(const Ray& ray, Intersection& isect){
-		return mShape->intersect(ray, isect);
+
+	virtual string getType() = 0;
+	virtual int intersect(const Ray& aRay, Intersection& isect) = 0;
+	virtual int intersectP(const Ray& aRay) = 0;
+	virtual Vec3f getNorm(Vec3f pos) = 0;
+	virtual Color getColor(Vec3f pos){
+		mMaterial->getColor();
 	}
-	int intersectP(const Ray& ray){
-		return mShape->intersectP(ray);
-	}
-	void setName(char* aName);
-	char* getName(){
-		return mName;
-	}
-	Color getColor(Vec3f pos){
-		if (mMaterial->haveTexture()){
-			//pair<int, int> res = mShape->getCoordinate(pos);
-			return mMaterial->getColor(pos.x, pos.z);
-		}else
-			return mMaterial->getColor();
-	}
-	Vec3f getNorm(Vec3f pos){
-		return mShape->getNorm(pos);
-	}
-	// virtual ~Primitive(){
-	// 	delete mShape;
-	// 	delete mMaterial;
-	// 	//delete mName;
-	// }
-private:
-	Shape* mShape;
+
+public:
 	Material* mMaterial;
 	char* mName;
 };

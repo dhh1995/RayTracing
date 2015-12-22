@@ -3,12 +3,12 @@
 #define SHAPES_SPHERE_H
 
 #include "core/common.h"
-#include "core/shape.h"
+#include "core/primitive.h"
 #include "core/intersection.h"
 
 namespace Raytracer {
 
-class Sphere : public Shape{
+class Sphere : public Primitive{
 public:
 	Sphere(Vec3f aCentre, real aRadius) : mCentre(aCentre), mRadius(aRadius){
 		mSqRadius = mRadius * mRadius;

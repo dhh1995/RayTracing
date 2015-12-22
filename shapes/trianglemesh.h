@@ -3,12 +3,12 @@
 #define SHAPES_TRIANGLEMESH_H
 
 #include "core/common.h"
-#include "core/shape.h"
+#include "core/primitive.h"
 #include "core/intersection.h"
 
 namespace Raytracer {
 
-class Triangle : public Shape{
+class Triangle : public Primitive{
 public:
 	string getType(){
 		return "Triangle";
@@ -28,7 +28,7 @@ public:
 //private:
 };
 
-class TriangleMesh : public Shape{
+class TriangleMesh : public Primitive{
 public:
 	TriangleMesh(string objFile, Vec3f trans);
 	string getType(){

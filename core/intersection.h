@@ -10,12 +10,19 @@ namespace Raytracer {
 class Intersection{
 public:
 	Intersection(Primitive* aPrim = NULL, Vec3f aPos = ORIGINAL, real aDist = INF) : mPrim(aPrim), mPos(aPos), mDist(aDist){
+		mColor = BLACK;
 	}
 	void setPos(Vec3f aPos){
 		mPos = aPos;
 	}
 	Vec3f getPos() const{
 		return mPos;
+	}
+	void setNorm(Vec3f aNorm){
+		mNorm = aNorm;
+	}
+	Vec3f getNorm() const{
+		return mNorm;
 	}
 	void setDist(real aDist){
 		mDist = aDist;
@@ -29,11 +36,17 @@ public:
 	Primitive* getPrim() const{
 		return mPrim;
 	}
-	Color getColor(){
+	void setColor(Color aColor){
+		mColor = aColor;
+	}
+	Color getColor() const{
+		return mColor;
 	}
 private:
 	real mDist;
 	Vec3f mPos;
+	Vec3f mNorm;
+	Color mColor;
 	Primitive* mPrim;
 };
 

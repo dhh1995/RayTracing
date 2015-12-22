@@ -3,12 +3,12 @@
 #define SHAPES_PLANE_H
 
 #include "core/common.h"
-#include "core/shape.h"
+#include "core/primitive.h"
 #include "core/intersection.h"
 
 namespace Raytracer {
 
-class Plane : public Shape{
+class Plane : public Primitive{
 public:
 	Plane(Vec3f aPos, Vec3f aNorm) : mNorm(aNorm){
 		mNorm.Normalize();
@@ -25,6 +25,7 @@ public:
 	Vec3f getNorm(Vec3f pos){
 		return mNorm;
 	}
+	
 private:
 	Vec3f mNorm;
 	real mD;
