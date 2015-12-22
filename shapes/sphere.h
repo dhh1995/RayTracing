@@ -16,11 +16,9 @@ public:
 	string getType(){
 		return "Sphere";
 	}
+	void setIsect(Intersection& isect, real dist, Vec3f pos);
 	int intersect(const Ray& aRay, Intersection& isect);
 	int intersectP(const Ray& aRay);
-	Vec3f getNorm(Vec3f pos){
-		return (pos - mCentre).Normalize();
-	}
 private:
 	Vec3f mCentre;
 	real mRadius;

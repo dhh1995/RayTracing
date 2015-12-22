@@ -52,6 +52,9 @@ public:
 	Color getColor(real u, real v){
 		return mTexture->getColor(u, v);
 	}
+	Vec3f getNorm(real u, real v){
+		return ZERO;
+	}
 private:
 	Color mKa;
 	Color mColor;

@@ -12,7 +12,7 @@ class Plane : public Primitive{
 public:
 	Plane(Vec3f aPos, Vec3f aNorm) : mNorm(aNorm){
 		mNorm.Normalize();
-		mD = - dot(aPos, mNorm); 
+		mD = - dot(aPos, mNorm);
 	}
 	Plane(Vec3f aNorm, real aD) : mNorm(aNorm), mD(aD){
 		mNorm.Normalize();
@@ -20,14 +20,12 @@ public:
 	string getType(){
 		return "Plane";
 	}
+	void setIsect(Intersection& isect, real dist, Vec3f pos);
 	int intersect(const Ray& aRay, Intersection& isect);
 	int intersectP(const Ray& aRay);
-	Vec3f getNorm(Vec3f pos){
-		return mNorm;
-	}
-	
 private:
 	Vec3f mNorm;
+	//Vec3f mUdir, mVdir;
 	real mD;
 };
 

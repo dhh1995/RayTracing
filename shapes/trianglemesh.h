@@ -14,15 +14,15 @@ public:
 		return "Triangle";
 	}
 	Triangle(Vec3f A, Vec3f B, Vec3f C):A(A), B(B), C(C){
+		//A.prt(),B.prt(),C.prt();
 		mNorm = cross(B - A, C - A).Normalize();
+		//mNorm.prt();
 		mD = - dot(A, mNorm);
 	}
+	void setIsect(Intersection& isect, real dist, Vec3f pos);
 	bool inside(const Vec3f pos);
 	int intersect(const Ray& ray, Intersection& isect);
 	int intersectP(const Ray& ray);
-	Vec3f getNorm(Vec3f pos){
-		return mNorm;
-	}
 	Vec3f A, B, C, mNorm;
 	real mD;
 //private:
@@ -30,7 +30,7 @@ public:
 
 class TriangleMesh : public Primitive{
 public:
-	TriangleMesh(string objFile, Vec3f trans);
+	TriangleMesh(string objFile, Material* aMaterial, Vec3f trans = ORIGINAL);
 	string getType(){
 		return "TriangleMesh";
 	}

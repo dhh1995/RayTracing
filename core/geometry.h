@@ -164,11 +164,11 @@ public:
 	inline real length(){
 		return sqrt(L2Norm_Sqr());
 	}
-	void read(FILE* fp){
-		fscanf(fp, "%f %f %f",&x, &y, &z);
-	}
+	// void read(FILE* fp){
+	// 	fscanf(fp, "%lf %lf %lf", &x, &y, &z);
+	// }
 	void read(){
-		scanf("%f %f %f",&x, &y, &z);
+		scanf("%f %f %f", &x, &y, &z);
 	}
 	void prt() const{
 	    printf("%f %f %f\n",x,y,z);    

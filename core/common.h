@@ -18,11 +18,12 @@ namespace Raytracer {
 #define MISS	 0		// Ray missed primitive
 #define INPRIM	-1		// Ray started inside primitive
 
-const int TRACEDEPTH = 0;
+const int TRACEDEPTH = 5;
 const real PI = acos(-1.);
 const real INF = 1e18;
 
 typedef Vec3f Color;
+const Vec3f ZERO 	 = Vec3f(0., 0., 0.);
 const Vec3f ORIGINAL = Vec3f(0., 0., 0.);
 const Color WHITE	= Color(1., 1., 1.);
 const Color RED		= Color(1., 0., 0.);

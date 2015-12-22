@@ -25,7 +25,7 @@ public:
 	}
 	real calcShade(Light* light, Vec3f pos, Vec3f& dir);
 	Color getLi(const Ray& ray, const Intersection& isect);
-	//void loadObj();
+	void loadObj();//TODO
 private:
 	//Primitive* mAggregate;
 	vector<Primitive* > mAggregate;

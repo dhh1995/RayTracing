@@ -29,7 +29,7 @@ public:
 	virtual string getType() = 0;
 	virtual int intersect(const Ray& aRay, Intersection& isect) = 0;
 	virtual int intersectP(const Ray& aRay) = 0;
-	virtual Vec3f getNorm(Vec3f pos) = 0;
+	//virtual Vec3f getNorm(Vec3f pos) = 0;
 	virtual Color getColor(Vec3f pos){
 		mMaterial->getColor();
 	}

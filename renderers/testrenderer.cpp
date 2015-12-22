@@ -14,11 +14,11 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth){
 	//res = WHITE / (1 + (isect.getDist()));
 	res = mScene->getLi(ray, isect);
 
-	Primitive* prim = isect.getPrim();
+	Material* matter = isect.getPrim()->getMaterial();
 	Vec3f pi = isect.getPos();
-	Color color = prim->getColor(pi);
+	Color color = isect.getColor();
 	// calculate reflection
-	real refl = prim->getMaterial()->getReflection();
+	real refl = matter->getReflection();
 	if ((refl > 0.0f) && (depth < TRACEDEPTH))
 	{
 		// real drefl = prim->getMaterial()->getDiffuseRefl();
@@ -50,7 +50,7 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth){
 		// else
 		{
 			// calculate perfect reflection
-			Vec3f N = prim->getNorm(pi);
+			Vec3f N = isect.getNorm();
 			Vec3f R = ray.d - 2.0f * dot(ray.d, N) * N;
 			Color rcol(0, 0, 0);
 			real dist;
@@ -66,8 +66,17 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth){
 void TestRenderer::render(){
 	//assert(mCamera != NULL);
 	vector<Ray> rays = mCamera->generateRays();
-	cout << rays.size() << endl;
+	int nRays = rays.size(), cnt = 0, tot = 100;
+	int lastShow = -1;
+	cout << nRays << endl;
 	for (Ray ray : rays){
+		++cnt;
+		int percent = cnt * tot / nRays;
+		if (percent != lastShow){
+			lastShow = percent;
+			printf("%d/%d\n", percent,tot);
+		}
+
 		int x = ray.mFilmX, y = ray.mFilmY;
 		//if (x>=45 && x<=88)
 		//	printf("%d %d\n", x, y);

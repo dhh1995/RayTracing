@@ -7,7 +7,7 @@ int Scene::intersect(const Ray& ray, Intersection& isect){
 	isect.setDist(INF);
 	int ans = MISS;
 	for (Primitive* obj : mAggregate){
-		Intersection tmp(obj);
+		Intersection tmp;
 		//printf("%d\n", obj);
 		int retval = obj->intersect(ray, tmp);
 		if (retval != 0){
@@ -35,18 +35,18 @@ real Scene::calcShade(Light* light, Vec3f pos, Vec3f& dir){
 }
 
 Color Scene::getLi(const Ray& ray, const Intersection& isect){
-	Primitive* prim = isect.getPrim();
 	Vec3f pi = isect.getPos();
-	//Vec3f N = isect.getNorm(pi);
-	Color color = prim->getColor(pi);
-	Vec3f N = prim->getNorm(pi);
-	Color res = mAmbient * prim->getMaterial()->getKa();
+	Vec3f N = isect.getNorm();
+	Color color = isect.getColor();
+	Material* matter = isect.getPrim()->getMaterial();
+	
+	Color res = mAmbient * matter->getKa();
 	for (Light* light : mLights){
 		Vec3f L;
 		real shade = calcShade(light, pi, L);
 		if (shade > 0){
 			// calculate diffuse shading
-			real diff = prim->getMaterial()->getDiffuse();
+			real diff = matter->getDiffuse();
 			if (diff > 0){
 				real dt = dot(L, N);
 				if (dt > 0){
@@ -56,7 +56,7 @@ Color Scene::getLi(const Ray& ray, const Intersection& isect){
 				}
 			}
 			// determine specular component using Schlick's BRDF approximation
-			real spec = prim->getMaterial()->getSpecular();
+			real spec = matter->getSpecular();
 			if (spec > 0){
 				// point light source: sample once for specular highlight
 				Vec3f R = L - 2.0f * dot( L, N ) * N;
