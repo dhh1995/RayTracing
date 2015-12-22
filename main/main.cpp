@@ -21,25 +21,25 @@ int main()
 
 	puts("Camera constructed");
 
-	Scene* scene = new Scene;
+	Scene* scene = new Scene(WHITE / 10);
 
 	//scene->loadObj();
 	
 	//--------------------------------------test_scene 1----------------------------
 	
-	Primitive* obj1 = new Primitive();
-	obj1->setShape(new Sphere(Vec3f(4, 1, -2), 2));
-	obj1->setMaterial(new Material(RED, 1, 0.6));
-	scene->addObject(obj1);
+	// Primitive* obj1 = new Primitive();
+	// obj1->setShape(new Sphere(Vec3f(4, 1, -2), 2));
+	// obj1->setMaterial(new Material(RED, 1, 0.6));
+	// scene->addObject(obj1);
 
-	Primitive* obj2 = new Primitive();
-	obj2->setShape(new Sphere(Vec3f(4, 1, 2), 2));
-	obj2->setMaterial(new Material(BLUE, 1, 0.5));
-	scene->addObject(obj2);
+	// Primitive* obj2 = new Primitive();
+	// obj2->setShape(new Sphere(Vec3f(4, 1, 2), 2));
+	// obj2->setMaterial(new Material(BLUE, 1, 0.5));
+	// scene->addObject(obj2);
 
 	Primitive* obj3 = new Primitive();
 	obj3->setShape(new Plane(Vec3f(0, 1, 0), 1));
-	Material* floor3 = new Material(WHITE, 0.8, 0.5);
+	Material* floor3 = new Material(WHITE, 0.5, 0.8, WHITE / 10);
 	Image* image3 = new Image("/home/dhh1995/RayTracing/texture/parquet.jpg");
 	Texture* texture3 = new Texture(image3);
 	floor3->setTexture(texture3);
@@ -47,20 +47,22 @@ int main()
 	scene->addObject(obj3);
 
 	// Primitive* obj4 = new Primitive();
-	// obj4->setShape(new Triangle(Vec3f(0, 1, 0), Vec3f(1, 0, 0), Vec3f(0, 0, 1)));
-	// obj4->setShape(new Triangle(Vec3f(3, 1, 0), Vec3f(3, 0, 0), Vec3f(3, 0, 1)));
-	// obj4->setMaterial(new Material(GREEN, 0.1, 0.5));
+	// obj4->setShape(new Triangle(Vec3f(1, 0, 0), Vec3f(1, 1, 2), Vec3f(1, 1, -2)));
+	// //obj4->setShape(new Triangle(Vec3f(3, 0, 0), Vec3f(3, 1, 0), Vec3f(3, 1, 1)));
+	// obj4->setMaterial(new Material(BLUE, 0, 0.5, WHITE / 10));
 	// scene->addObject(obj4);
 
-	// Primitive* obj5 = new Primitive();
-	// obj5->setShape(new TriangleMesh("/home/dhh1995/RayTracing/test_data/cube.obj", Vec3f(2, 0, 2)));
-	// obj5->setMaterial(new Material(GREEN, 0.1, 0.5));
-	// scene->addObject(obj5);
+	Primitive* obj5 = new Primitive();
+	obj5->setShape(new TriangleMesh("/home/dhh1995/RayTracing/test_data/cube.obj", Vec3f(2, 0, 0)));
+	//obj5->setShape(new Triangle(Vec3f(2,0,0), Vec3f(2,1,1), Vec3f(2,1,-1) ));
+	obj5->setMaterial(new Material(BLUE, 0.1, 0.5, WHITE));
+	scene->addObject(obj5);
 
+	camera->setPos(Vec3f(-5, 0 ,0));
 
-	Light* light1 = new Light(Vec3f(-8,2,0), GREEN);
+	Light* light1 = new Light(Vec3f(-8, 2, 0), GREEN);
 	scene->addLight(light1);
-	Light* light2 = new Light(Vec3f(0,3,0), WHITE);
+	Light* light2 = new Light(Vec3f(0, 1, 0), WHITE);
 	scene->addLight(light2);
 
 	//--------------------------------------test_scene 2----------------------------

@@ -11,7 +11,7 @@ namespace Raytracer {
 
 class Scene{
 public:
-	Scene(){
+	Scene(Color aAmbient = BLACK): mAmbient(aAmbient){
 		mAggregate.clear();
 		mLights.clear();
 	}
@@ -30,6 +30,7 @@ private:
 	//Primitive* mAggregate;
 	vector<Primitive* > mAggregate;
 	vector<Light* > mLights;
+	Color mAmbient;
 };
 
 }; // namespace Raytrace

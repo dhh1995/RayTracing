@@ -69,6 +69,8 @@ void TestRenderer::render(){
 	cout << rays.size() << endl;
 	for (Ray ray : rays){
 		int x = ray.mFilmX, y = ray.mFilmY;
+		//if (x>=45 && x<=88)
+		//	printf("%d %d\n", x, y);
 		//if (x % 30 == 0 && y % 40 == 0)
 		//ray.prt();
 		Color res;

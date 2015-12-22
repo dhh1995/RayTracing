@@ -35,12 +35,12 @@ real Scene::calcShade(Light* light, Vec3f pos, Vec3f& dir){
 }
 
 Color Scene::getLi(const Ray& ray, const Intersection& isect){
-	Color res;
 	Primitive* prim = isect.getPrim();
 	Vec3f pi = isect.getPos();
 	//Vec3f N = isect.getNorm(pi);
 	Color color = prim->getColor(pi);
 	Vec3f N = prim->getNorm(pi);
+	Color res = mAmbient * prim->getMaterial()->getKa();
 	for (Light* light : mLights){
 		Vec3f L;
 		real shade = calcShade(light, pi, L);

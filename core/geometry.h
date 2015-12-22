@@ -170,10 +170,10 @@ public:
 	void read(){
 		scanf("%f %f %f",&x, &y, &z);
 	}
-	void prt(){
+	void prt() const{
 	    printf("%f %f %f\n",x,y,z);    
 	}
-	void print(){
+	void print() const{
 	    printf("%f %f %f\n",x,y,z);    
 	}
 
@@ -203,7 +203,7 @@ public:
 	inline Vec3f operator()(real t) const {
 		return o + d * t;
 	}
-	void prt(){
+	void prt() const{
 		printf("o: ");
 		o.print();
 		printf("d: ");

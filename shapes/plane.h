@@ -12,7 +12,7 @@ class Plane : public Shape{
 public:
 	Plane(Vec3f aPos, Vec3f aNorm) : mNorm(aNorm){
 		mNorm.Normalize();
-		mD = dot(aPos, mNorm); 
+		mD = - dot(aPos, mNorm); 
 	}
 	Plane(Vec3f aNorm, real aD) : mNorm(aNorm), mD(aD){
 		mNorm.Normalize();

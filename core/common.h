@@ -18,7 +18,7 @@ namespace Raytracer {
 #define MISS	 0		// Ray missed primitive
 #define INPRIM	-1		// Ray started inside primitive
 
-const int TRACEDEPTH = 5;
+const int TRACEDEPTH = 0;
 const real PI = acos(-1.);
 const real INF = 1e18;
 

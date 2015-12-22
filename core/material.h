@@ -10,7 +10,7 @@ namespace Raytracer {
 
 class Material{
 public:
-	Material(Color aColor, real aRefl, real aDiff):mColor(aColor), mRefl(aRefl), mDiff(aDiff){
+	Material(Color aColor, real aRefl, real aDiff, Color Ka = BLACK):mColor(aColor), mRefl(aRefl), mDiff(aDiff), mKa(Ka){
 		mTexture = NULL;
 	}
 	void setColor(Color &aColor){
@@ -37,6 +37,12 @@ public:
 	real getReflection(){
 		return mRefl;
 	}
+	void setKa(Color Ka){
+		mKa = Ka;
+	}
+	Color getKa(){
+		return mKa;
+	}
 	void setTexture(Texture* aTexture){
 		mTexture = aTexture;
 	}
@@ -47,6 +53,7 @@ public:
 		return mTexture->getColor(u, v);
 	}
 private:
+	Color mKa;
 	Color mColor;
 	real mRefl;
 	real mDiff;

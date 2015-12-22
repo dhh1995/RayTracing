@@ -14,15 +14,16 @@ public:
 		return "Triangle";
 	}
 	Triangle(Vec3f A, Vec3f B, Vec3f C):A(A), B(B), C(C){
-		E1 = A - B, E2 = A - C;
-		mNorm = cross(E1, E2);
+		mNorm = cross(B - A, C - A).Normalize();
+		mD = - dot(A, mNorm);
 	}
+	bool inside(const Vec3f pos);
 	int intersect(const Ray& ray, Intersection& isect);
 	int intersectP(const Ray& ray);
 	Vec3f getNorm(Vec3f pos){
 		return mNorm;
 	}
-	Vec3f A, B, C, E1, E2, mNorm;
+	Vec3f A, B, C, mNorm;
 	real mD;
 //private:
 };
