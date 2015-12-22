@@ -17,7 +17,7 @@ class TestRenderer : public Renderer {
 public:
 	TestRenderer():mRaysCast(0){
 	}
-	void rayTracing(Ray ray, Color& res, int depth);
+	void rayTracing(Ray ray, Color& res, int depth, real aRIndex, real &aDist);
 	void render();
 	void show();
 	//Options options;

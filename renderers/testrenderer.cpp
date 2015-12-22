@@ -2,7 +2,7 @@
 
 namespace Raytracer {
 
-void TestRenderer::rayTracing(Ray ray, Color& res, int depth){
+void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real &aDist){
 	Intersection isect;
 	if (mScene->intersect(ray, isect) == 0){
 		res = BACKGROUND;
@@ -13,9 +13,11 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth){
 	//Vec3f pi = ray.o + ray.d * isect.getDist();
 	//res = WHITE / (1 + (isect.getDist()));
 	res = mScene->getLi(ray, isect);
+	aDist = isect.getDist();
 
 	Material* matter = isect.getPrim()->getMaterial();
 	Vec3f pi = isect.getPos();
+	Vec3f norm = isect.getNorm();
 	Color color = isect.getColor();
 	// calculate reflection
 	real refl = matter->getReflection();
@@ -54,9 +56,33 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth){
 			Vec3f R = ray.d - 2.0f * dot(ray.d, N) * N;
 			Color rcol(0, 0, 0);
 			real dist;
-			rayTracing( Ray( pi + R * EPS, R ), rcol, depth + 1); //, a_RIndex, dist, a_Samples * 0.5f, a_SScale * 2 );
+			rayTracing( Ray( pi + R * EPS, R ), rcol, depth + 1, aRIndex, dist); //, a_Samples * 0.5f, a_SScale * 2 );
 			mRaysCast++;
 			res += refl * rcol * color;
+		}
+	}
+
+	// calculate refraction
+	real refr = matter->getRefraction();
+	if ((refr > 0.0f) && (depth < TRACEDEPTH))
+	{
+		real rindex = matter->getRefrIndex();
+		real n = aRIndex / rindex;
+		Vec3f N = norm;
+		real cosI = -dot(N, ray.d);
+		real cosT2 = 1.0f - n * n * (1.0f - cosI * cosI);
+		if (cosT2 > 0.0f)
+		{
+			Vec3f T = (n * ray.d) + (n * cosI - sqrt( cosT2 )) * N;
+			//printf("%lf %lf %lf\n", n, cosI, cosT2); T.prt();
+			Color rcol( 0, 0, 0 );
+			real dist;
+			rayTracing( Ray(pi + T * EPS, T), rcol, depth + 1, rindex, dist); //, a_Samples * 0.5f, a_SScale * 2 );
+			mRaysCast++;
+			// apply Beer's law
+			Color absorbance = matter->getColor() * 0.15f * -dist;
+			Color transparency = Color( exp( absorbance.r ), exp( absorbance.g ), exp( absorbance.b ) );
+			res += refr * rcol * transparency;
 		}
 	}
 
@@ -83,7 +109,8 @@ void TestRenderer::render(){
 		//if (x % 30 == 0 && y % 40 == 0)
 		//ray.prt();
 		Color res;
-		rayTracing(ray, res, 0);
+		real dist;
+		rayTracing(ray, res, 0, 1, dist);
 		//printf("%d %d\n",x,y);
 		mCamera->getFilm()->setColor(x, y, res);
 	}

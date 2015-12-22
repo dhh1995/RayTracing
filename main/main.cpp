@@ -28,26 +28,33 @@ int main()
 		scene->loadObj();
 	}
 
+	//Material(Color aColor, real aRefl, real aRefr, real aDiff, real aSpec, real aRIndex = 1, Color Ka = BLACK)
+	Material* mat1 = new Material(RED, 1, 0, 0.6, 0.4, 1.0, WHITE / 5);
+	Material* mat2 = new Material(WHITE, 0, 1, 0.5, 0.5, 1.3, WHITE / 5);
+	
+	Material* floor3 = new Material(WHITE, 0.1, 0. , 0.8, 0.2, 1.0, WHITE / 10);
+	Image* image3 = new Image("/home/dhh1995/RayTracing/texture/parquet.jpg");
+	Texture* texture3 = new Texture(image3, 200, 200);
+	floor3->setTexture(texture3);
+
+	Material* mat4 = new Material(GREEN, 0.1, 0., 0.5, 0.5, 1.0, WHITE);
+
 	//--------------------------------------test_scene 1----------------------------
 	if (useScene == 1){
 		Primitive* obj1 = new Sphere(Vec3f(5, -2, 1), 2);
-		obj1->setMaterial(new Material(RED, 1, 0.6, WHITE/5));
+		obj1->setMaterial(mat1);
 		scene->addObject(obj1);
 
 		Primitive* obj2 = new Sphere(Vec3f(5, 2, 1), 2);
-		obj2->setMaterial(new Material(WHITE, 0.8, 0.5, WHITE/5));
+		obj2->setMaterial(mat2);
 		scene->addObject(obj2);
 
 		Primitive* obj3 = new Plane(Vec3f(0, 0, 1), 1);
-		Material* floor3 = new Material(WHITE, 0.1, 0.8, WHITE / 10);
-		Image* image3 = new Image("/home/dhh1995/RayTracing/texture/parquet.jpg");
-		Texture* texture3 = new Texture(image3, 200, 200);
-		floor3->setTexture(texture3);
 		obj3->setMaterial(floor3);
 		scene->addObject(obj3);
 
 		Primitive* obj4 = new TriangleMesh("/home/dhh1995/RayTracing/test_data/cube.obj",
-			new Material(GREEN, 0.1, 0.5, WHITE), Vec3f(2, 0.5, -1));
+			mat4, Vec3f(2, 0.5, -1));
 		scene->addObject(obj4);
 
 		Light* light1 = new Light(Vec3f(8, 0, 0), GREEN);
@@ -57,69 +64,69 @@ int main()
 	}
 
 	//--------------------------------------test_scene 2----------------------------
-	if (useScene == 2){
-		Primitive* obj5 = new TriangleMesh("/home/dhh1995/RayTracing/test_data/dinosaur.2k.obj",
-			new Material(BLUE, 0.1, 0.5, WHITE), Vec3f(0, 0, 0));
-		scene->addObject(obj5);
+	// if (useScene == 2){
+	// 	Primitive* obj5 = new TriangleMesh("/home/dhh1995/RayTracing/test_data/dinosaur.2k.obj",
+	// 		new Material(BLUE, 0.1, 0.5, WHITE), Vec3f(0, 0, 0));
+	// 	scene->addObject(obj5);
 
-		camera->setPos(Vec3f(-70, 0, 0));
-		Light* light1 = new Light(Vec3f(-40, 0, 0), GREEN);
-		scene->addLight(light1);
-		Light* light2 = new Light(Vec3f(0, 0, 40), WHITE);
-		scene->addLight(light2);
-		Light* light3 = new Light(Vec3f(-30, 0, 0), WHITE);
-		scene->addLight(light3);
-		Light* light4 = new Light(Vec3f(0, 0, 30), WHITE);
-		scene->addLight(light4);
-	}
+	// 	camera->setPos(Vec3f(-70, 0, 0));
+	// 	Light* light1 = new Light(Vec3f(-40, 0, 0), GREEN);
+	// 	scene->addLight(light1);
+	// 	Light* light2 = new Light(Vec3f(0, 0, 40), WHITE);
+	// 	scene->addLight(light2);
+	// 	Light* light3 = new Light(Vec3f(-30, 0, 0), WHITE);
+	// 	scene->addLight(light3);
+	// 	Light* light4 = new Light(Vec3f(0, 0, 30), WHITE);
+	// 	scene->addLight(light4);
+	// }
 
 	//--------------------------------------test_scene 3----------------------------
-	if (useScene == 3){
-		camera->setPos(Vec3f(-5, 0 ,0));
-		Primitive* obj1 = new Plane(Vec3f(0, 0, 1), 10);
-		obj1->setMaterial(new Material(RED, 0.3, 0.6));
-		scene->addObject(obj1);
+	// if (useScene == 3){
+	// 	camera->setPos(Vec3f(-5, 0 ,0));
+	// 	Primitive* obj1 = new Plane(Vec3f(0, 0, 1), 10);
+	// 	obj1->setMaterial(new Material(RED, 0.3, 0.6));
+	// 	scene->addObject(obj1);
 
-		Primitive* obj2 = new Plane(Vec3f(0, 0, -1), 10);
-		obj2->setMaterial(new Material(GREEN, 0, 0.5));
-		scene->addObject(obj2);
+	// 	Primitive* obj2 = new Plane(Vec3f(0, 0, -1), 10);
+	// 	obj2->setMaterial(new Material(GREEN, 0, 0.5));
+	// 	scene->addObject(obj2);
 
-		Primitive* obj3 = new Plane(Vec3f(0, -1, 0), 10);
-		obj3->setMaterial(new Material(WHITE, 0, 0.5));
-		scene->addObject(obj3);
+	// 	Primitive* obj3 = new Plane(Vec3f(0, -1, 0), 10);
+	// 	obj3->setMaterial(new Material(WHITE, 0, 0.5));
+	// 	scene->addObject(obj3);
 
-		Primitive* obj4 = new Plane(Vec3f(0, 1, 0), 10);
-		obj4->setMaterial(new Material(WHITE, 0, 0.5));
-		scene->addObject(obj4);
+	// 	Primitive* obj4 = new Plane(Vec3f(0, 1, 0), 10);
+	// 	obj4->setMaterial(new Material(WHITE, 0, 0.5));
+	// 	scene->addObject(obj4);
 
-		Primitive* obj5 = new Plane(Vec3f(-1, 0, 0), 20);
-		obj5->setMaterial(new Material(WHITE, 0, 0.5));
-		scene->addObject(obj5);
+	// 	Primitive* obj5 = new Plane(Vec3f(-1, 0, 0), 20);
+	// 	obj5->setMaterial(new Material(WHITE, 0, 0.5));
+	// 	scene->addObject(obj5);
 
-		Primitive* obj6 = new Sphere(Vec3f(5, 0, -5), 2);
-		obj6->setMaterial(new Material(WHITE, 1, 0.5));
-		scene->addObject(obj6);
+	// 	Primitive* obj6 = new Sphere(Vec3f(5, 0, -5), 2);
+	// 	obj6->setMaterial(new Material(WHITE, 1, 0.5));
+	// 	scene->addObject(obj6);
 
-		Primitive* obj7 = new Sphere(Vec3f(5, 0, 5), 2);
-		obj7->setMaterial(new Material(WHITE, 1, 0.5));
-		scene->addObject(obj7);
+	// 	Primitive* obj7 = new Sphere(Vec3f(5, 0, 5), 2);
+	// 	obj7->setMaterial(new Material(WHITE, 1, 0.5));
+	// 	scene->addObject(obj7);
 
-		Material* floor3 = new Material(WHITE, 0.1, 0.8, WHITE / 10);
-		Image* image3 = new Image("/home/dhh1995/RayTracing/texture/parquet.jpg");
-		//Texture* texture3 = new Texture(image3, image3->w, image3->h);
-		Texture* texture3 = new Texture(image3,20,20);
-		floor3->setTexture(texture3);
-		obj3->setMaterial(floor3);
+	// 	Material* floor3 = new Material(WHITE, 0.1, 0.8, WHITE / 10);
+	// 	Image* image3 = new Image("/home/dhh1995/RayTracing/texture/parquet.jpg");
+	// 	//Texture* texture3 = new Texture(image3, image3->w, image3->h);
+	// 	Texture* texture3 = new Texture(image3,20,20);
+	// 	floor3->setTexture(texture3);
+	// 	obj3->setMaterial(floor3);
 
-		Light* light1 = new Light(Vec3f(5,-9,9), WHITE / 3);
-		scene->addLight(light1);
+	// 	Light* light1 = new Light(Vec3f(5,-9,9), WHITE / 3);
+	// 	scene->addLight(light1);
 
-		Light* light2 = new Light(Vec3f(5,9,-9), WHITE / 3);
-		scene->addLight(light2);
+	// 	Light* light2 = new Light(Vec3f(5,9,-9), WHITE / 3);
+	// 	scene->addLight(light2);
 
-		Light* light3 = new Light(Vec3f(5,0,0), WHITE / 3);
-		scene->addLight(light3);
-	}
+	// 	Light* light3 = new Light(Vec3f(5,0,0), WHITE / 3);
+	// 	scene->addLight(light3);
+	// }
 
 	// Pri *obj1 = new Sphere(Vector(-6, 0, -10), 5);
 	// Pri *obj2 = new Sphere(Vector(6, 0, -10), 5);

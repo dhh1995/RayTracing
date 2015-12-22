@@ -19,7 +19,7 @@ public:
 		//mNorm.prt();
 		mD = - dot(A, mNorm);
 	}
-	void setIsect(Intersection& isect, real dist, Vec3f pos);
+	void setIsect(Intersection& isect, real dist, Vec3f pos, bool backSide);
 	bool inside(const Vec3f pos);
 	int intersect(const Ray& ray, Intersection& isect);
 	int intersectP(const Ray& ray);

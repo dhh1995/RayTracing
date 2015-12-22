@@ -16,7 +16,7 @@ public:
 	string getType(){
 		return "Sphere";
 	}
-	void setIsect(Intersection& isect, real dist, Vec3f pos);
+	void setIsect(Intersection& isect, real dist, Vec3f pos, bool backSide);
 	int intersect(const Ray& aRay, Intersection& isect);
 	int intersectP(const Ray& aRay);
 private:

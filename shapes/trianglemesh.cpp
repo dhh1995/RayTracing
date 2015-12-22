@@ -2,14 +2,17 @@
 
 namespace Raytracer {
 
-void Triangle::setIsect(Intersection& isect, real dist, Vec3f pos){
+void Triangle::setIsect(Intersection& isect, real dist, Vec3f pos, bool backSide){
 	isect.setPrim(this);
 	isect.setDist(dist);
 	isect.setPos(pos);
+	Vec3f norm = mNorm;
+	if (backSide)
+		norm = -norm;
 	if (mMaterial->haveTexture()){
 		//TODO
 	}else{
-		isect.setNorm(mNorm);
+		isect.setNorm(norm);
 		isect.setColor(mMaterial->getColor());
 	}
 }
@@ -46,7 +49,7 @@ int Triangle::intersect(const Ray& ray, Intersection& isect){
 				Vec3f pos = ray(dist);
 				if (!inside(pos))
 					return MISS;
-				setIsect(isect, dist, pos);
+				setIsect(isect, dist, pos, dot(ray.d, mNorm) > 0);
 				return HIT;
 			}
 		}

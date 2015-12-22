@@ -2,11 +2,13 @@
 
 namespace Raytracer {
 
-void Sphere::setIsect(Intersection& isect, real dist, Vec3f pos){
+void Sphere::setIsect(Intersection& isect, real dist, Vec3f pos, bool backSide){
 	isect.setPrim(this);
 	isect.setDist(dist);
 	isect.setPos(pos);
 	Vec3f norm = (pos - mCentre).Normalize();
+	if (backSide)
+		norm = -norm;
 	if (mMaterial->haveTexture()){
 		real x = norm.x, y = norm.y, z = norm.z;
 		real u,v;
@@ -52,7 +54,8 @@ int Sphere::intersect(const Ray& ray, Intersection& isect){
 		}
 	}
 	//printf("retval = %d dist = %lf\n", retval, dist);
-	setIsect(isect, dist, ray(dist));
+	if (retval != 0)
+		setIsect(isect, dist, ray(dist), retval == -1);
 	return retval;
 }
 
