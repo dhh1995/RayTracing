@@ -4,9 +4,13 @@
 
 #include "core/common.h"
 #include "core/film.h"
-#include <opencv2/highgui.hpp>
-#include <opencv2/core.hpp>
-#include <opencv2/opencv.hpp>
+#ifndef LOCAL
+	#include <opencv2/highgui/highgui.hpp>
+#else
+	#include <opencv2/highgui.hpp>
+	#include <opencv2/core.hpp>
+	#include <opencv2/opencv.hpp>
+#endif
 using cv::Mat;
 using cv::Vec3b;
 using cv::imwrite;
