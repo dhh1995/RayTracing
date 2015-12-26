@@ -36,11 +36,11 @@ int main()
 	Material* mat2 = new Material(YELLOW, 0, 1, 0.5, 0.1, 1.5, WHITE / 5);
 	
 	Material* wall1 = new Material(WHITE, 0.1, 0. , 0.8, 0.2, 1.0, WHITE / 10);
-	Image* image1 = new Image("/home/dhh1995/RayTracing/texture/lena.jpg");
+	Image* image1 = new Image("texture/lena.jpg");
 	Texture* texture1 = new Texture(image1, 10, 10);
 	wall1->setTexture(texture1);
 	Material* floor3 = new Material(WHITE, 0.1, 0. , 0.8, 0.2, 1.0, WHITE / 10);
-	Image* image3 = new Image("/home/dhh1995/RayTracing/texture/parquet.jpg");
+	Image* image3 = new Image("texture/parquet.jpg");
 	Texture* texture3 = new Texture(image3, 50, 50);
 	floor3->setTexture(texture3);
 
@@ -73,9 +73,9 @@ int main()
 		obj7->setMaterial(wall1);
 		scene->addObject(obj7);
 
-		// Primitive* obj4 = new TriangleMesh("/home/dhh1995/RayTracing/test_data/cube.obj",
+		// Primitive* obj4 = new TriangleMesh("test_data/cube.obj",
 		// 	mat4, Vec3f(2, 0.5, -1));
-		Primitive* obj4 = new TriangleMesh("/home/dhh1995/RayTracing/test_data/cube.obj",
+		Primitive* obj4 = new TriangleMesh("test_data/cube.obj",
 			mat2, Vec3f(2, -0.5, 0));
 		scene->addObject(obj4);
 
@@ -94,7 +94,7 @@ int main()
 
 	//--------------------------------------test_scene 2----------------------------
 	if (useScene == 2){
-		Primitive* obj0 = new TriangleMesh("/home/dhh1995/RayTracing/test_data/dinosaur.2k.obj",
+		Primitive* obj0 = new TriangleMesh("test_data/dinosaur.2k.obj",
 			mat2, Vec3f(0, 0, 0));
 		scene->addObject(obj0);
 
@@ -169,7 +169,7 @@ int main()
 
 		//obj1->setMaterial(floor3);
 		//obj2->setMaterial(floor3);
-		//obj5->setMaterial(wall1);
+		obj5->setMaterial(wall1);
 		//obj2->setMaterial(floor3);
 
 		//Light* light1 = new Light(Vec3f(5,-9,9), SKYBLUE);
