@@ -5,6 +5,7 @@
 #include "core/common.h"
 #include "core/primitive.h"
 #include "core/intersection.h"
+#include "shapes/box.h"
 
 namespace Raytracer {
 
@@ -14,16 +15,16 @@ public:
 		return "Triangle";
 	}
 	Triangle(Vec3f A, Vec3f B, Vec3f C):A(A), B(B), C(C){
-		//A.prt(),B.prt(),C.prt();
+		//mV = (B - A).Normalize();
+		//mU = (C - A).Normalize();
 		mNorm = cross(B - A, C - A).Normalize();
-		//mNorm.prt();
 		mD = - dot(A, mNorm);
 	}
 	void setIsect(Intersection& isect, real dist, Vec3f pos, bool backSide);
 	bool inside(const Vec3f pos);
 	int intersect(const Ray& ray, Intersection& isect);
 	int intersectP(const Ray& ray);
-	Vec3f A, B, C, mNorm;
+	Vec3f A, B, C, mNorm; //, mU, mV;
 	real mD;
 //private:
 };
@@ -46,6 +47,7 @@ private:
 	//friend class Triangle;
 	vector<Vec3f> mVertexs;
 	vector<Triangle*> mTriangles;
+	Box* mBoundingBox;
 };
 
 

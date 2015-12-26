@@ -4,7 +4,8 @@ namespace Raytracer {
 
 void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real &aDist){
 	Intersection isect;
-	if (mScene->intersect(ray, isect) == 0){
+	int result = mScene->intersect(ray, isect);
+	if (result == 0){
 		res = BACKGROUND;
 		return;
 	}
@@ -19,8 +20,47 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real
 	Vec3f pi = isect.getPos();
 	Vec3f norm = isect.getNorm();
 	Color color = isect.getColor();
+
+	// color.prt();
+	// ray.prt();
+	// printf("dist = %lf\n",aDist);
+	// norm.prt();
+	// pi.prt();
+
+	bool totalReflection = false;
+	// calculate refraction
+	real refr = matter->getRefraction();
+	if ((refr > 0.0f) && (depth < TRACEDEPTH))
+	{
+		real rindex = matter->getRefrIndex();
+		real n = 1.0f / rindex;
+		if (result < 0)
+			n = rindex;
+		Vec3f N = norm;
+		real cosI = -dot(N, ray.d);
+		real cosT2 = 1.0f - n * n * (1.0f - cosI * cosI);
+		if (cosT2 > 0.0f)
+		{
+			Vec3f T = (n * ray.d) + (n * cosI - sqrt( cosT2 )) * N;
+			Color rcol( 0, 0, 0 );
+			real dist;
+			rayTracing(Ray(pi + T * EPS, T), rcol, depth + 1, rindex, dist); //, a_Samples * 0.5f, a_SScale * 2 );
+			mRaysCast++;
+			// apply Beer's law
+			Color absorbance = matter->getColor() * 0.1f * -dist;
+			Color transparency = Color( exp( absorbance.r ), exp( absorbance.g ), exp( absorbance.b ) );
+			Color add = refr * rcol;
+			if (result > 0)
+				add = add * transparency;
+			res += add; 
+		}else
+			totalReflection = true;
+	}
+
 	// calculate reflection
 	real refl = matter->getReflection();
+	if (totalReflection)
+		refl = 1.0f;
 	if ((refl > 0.0f) && (depth < TRACEDEPTH))
 	{
 		// real drefl = prim->getMaterial()->getDiffuseRefl();
@@ -62,29 +102,8 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real
 		}
 	}
 
-	// calculate refraction
-	real refr = matter->getRefraction();
-	if ((refr > 0.0f) && (depth < TRACEDEPTH))
-	{
-		real rindex = matter->getRefrIndex();
-		real n = aRIndex / rindex;
-		Vec3f N = norm;
-		real cosI = -dot(N, ray.d);
-		real cosT2 = 1.0f - n * n * (1.0f - cosI * cosI);
-		if (cosT2 > 0.0f)
-		{
-			Vec3f T = (n * ray.d) + (n * cosI - sqrt( cosT2 )) * N;
-			//printf("%lf %lf %lf\n", n, cosI, cosT2); T.prt();
-			Color rcol( 0, 0, 0 );
-			real dist;
-			rayTracing( Ray(pi + T * EPS, T), rcol, depth + 1, rindex, dist); //, a_Samples * 0.5f, a_SScale * 2 );
-			mRaysCast++;
-			// apply Beer's law
-			Color absorbance = matter->getColor() * 0.15f * -dist;
-			Color transparency = Color( exp( absorbance.r ), exp( absorbance.g ), exp( absorbance.b ) );
-			res += refr * rcol * transparency;
-		}
-	}
+	//printf("res =");
+	//res.prt();
 
 	return;
 }

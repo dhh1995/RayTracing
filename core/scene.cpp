@@ -11,9 +11,10 @@ int Scene::intersect(const Ray& ray, Intersection& isect){
 		//printf("%d\n", obj);
 		int retval = obj->intersect(ray, tmp);
 		if (retval != 0){
-			if (tmp.getDist() < isect.getDist())
+			if (tmp.getDist() < isect.getDist()){
 				isect = tmp;
-			ans = retval;
+				ans = retval;
+			}
 		}
 		//printf("%lf\n",tmp.getDist());
 	}
@@ -26,10 +27,12 @@ int Scene::intersectP(const Ray& ray){
 
 real Scene::calcShade(Light* light, Vec3f pos, Vec3f& dir){
 	Vec3f center = light->getPos();
-	dir = (center - pos).Normalize();
+	dir = center - pos;
+	real dist = dir.length();
+	dir /= dist;
 	Intersection isect;
 	if (intersect(Ray(center, -dir), isect) != 0)
-		if (isect.getPos() != pos)
+		if (isect.getDist() + EPS < dist)
 			return 0.;
 	return 1.;
 }

@@ -14,9 +14,10 @@ void Sphere::setIsect(Intersection& isect, real dist, Vec3f pos, bool backSide){
 		real u,v;
 		if (abs(x) < EPS && abs(y) < EPS)
 			u = 0, v = 0;
-		else
-			u = atan2(y, x) / 2 / PI,
+		else{
+			u = atan2(y, x) / 2 / PI;
 			v = asin(z) / 2 / PI;
+		}
 		isect.setNorm(norm + mMaterial->getNorm(u, v));
 		isect.setColor(mMaterial->getColor(u, v));
 	}else{

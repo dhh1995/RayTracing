@@ -10,12 +10,16 @@ namespace Raytracer {
 
 class Plane : public Primitive{
 public:
-	Plane(Vec3f aPos, Vec3f aNorm) : mNorm(aNorm){
+	Plane(Vec3f aNorm, Vec3f aU, Vec3f aPos) : mNorm(aNorm), mU(aU){
 		mNorm.Normalize();
+		mU.Normalize();
+		mV = cross(mNorm, mU);
 		mD = - dot(aPos, mNorm);
 	}
-	Plane(Vec3f aNorm, real aD) : mNorm(aNorm), mD(aD){
+	Plane(Vec3f aNorm, Vec3f aU, real aD) : mNorm(aNorm), mU(aU), mD(aD){
 		mNorm.Normalize();
+		mU.Normalize();
+		mV = cross(mNorm, mU);
 	}
 	string getType(){
 		return "Plane";
@@ -24,8 +28,9 @@ public:
 	int intersect(const Ray& aRay, Intersection& isect);
 	int intersectP(const Ray& aRay);
 private:
+	//Norm = U x V;
 	Vec3f mNorm;
-	//Vec3f mUdir, mVdir;
+	Vec3f mU, mV;
 	real mD;
 };
 

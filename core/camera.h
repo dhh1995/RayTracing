@@ -39,12 +39,13 @@ class ProjectiveCamera : public Camera{
 public:
 	ProjectiveCamera(Vec3f aPos, Vec3f aLookAt, Vec3f aI, real aFov)
 		: Camera(aPos), mLookAt(aLookAt), mI(aI), mFov(aFov){
-			mJ = cross(mLookAt, mI);
+			mJ = cross(mI, mLookAt);
 			mArc  = mFov / 180 * PI;
 	}
 	Ray generateRay(real dx, real dy, int i, int j);
 	vector<Ray> generateRays();
 private:
+	//J x I = LookAt
 	Vec3f mLookAt;
 	Vec3f mI, mJ;
 	real mFov, mArc;

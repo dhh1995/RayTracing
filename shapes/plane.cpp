@@ -10,7 +10,7 @@ void Plane::setIsect(Intersection& isect, real dist, Vec3f pos, bool backSide){
 	if (backSide)
 		norm = -norm;
 	if (mMaterial->haveTexture()){
-		real u = pos.x, v = pos.y;
+		real u = dot(pos, mU), v = dot(pos, mV);
 		isect.setNorm(norm + mMaterial->getNorm(u, v));
 		isect.setColor(mMaterial->getColor(u, v));
 	}else{

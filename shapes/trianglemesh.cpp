@@ -49,7 +49,12 @@ int Triangle::intersect(const Ray& ray, Intersection& isect){
 				Vec3f pos = ray(dist);
 				if (!inside(pos))
 					return MISS;
-				setIsect(isect, dist, pos, dot(ray.d, mNorm) > 0);
+				if (dot(ray.d, mNorm) > 0){
+					//ERRORs
+					setIsect(isect, dist, pos, true);
+					return INPRIM;
+				}
+				setIsect(isect, dist, pos, false);
 				return HIT;
 			}
 		}
@@ -64,6 +69,7 @@ int Triangle::intersectP(const Ray& ray){
 TriangleMesh::TriangleMesh(string objFile, Material* aMaterial, Vec3f trans){
 	FILE* fp = fopen(objFile.c_str(), "r");
 	mMaterial = aMaterial;
+	mBoundingBox = new Box();
 	//assert(fp != NULL);
 	if (fp == NULL){
 		printf("No such file: %s !", objFile.c_str());
@@ -81,6 +87,7 @@ TriangleMesh::TriangleMesh(string objFile, Material* aMaterial, Vec3f trans){
 			Vec3f vex(x, y, z);
 			//vex.prt();
 			vex += trans;
+			mBoundingBox->update(vex);
 			mVertexs.push_back(vex);
 		}else if (type[0] == 'f'){
 			int a, b, c;

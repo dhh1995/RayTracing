@@ -232,6 +232,18 @@ inline real det(const Vec3f &A, const Vec3f &B, const Vec3f &C){
 		 - A[2] * B[1] * C[0] - A[1] * B[0] * C[2] + A[0] * B[2] * C[1];
 }
 
+inline void minimize(Vec3f &A, const Vec3f &B){
+	for (int i=0;i<3;++i)
+		if (B[i] < A[i])
+			A[i] = B[i];
+}
+
+inline void maximize(Vec3f &A, const Vec3f &B){
+	for (int i=0;i<3;++i)
+		if (B[i] > A[i])
+			A[i] = B[i];
+}
+
 }; // namespace Raytracer
 
 #endif // CORE_GEOMETRY_H

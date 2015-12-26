@@ -18,9 +18,8 @@ public:
 		mUScale = aUScale;
 		mVScale = aVScale;
 	}
-	Color getColor(real u, real v){
-		return mImg->getColor(mod(int(u * mUScale), mImg->w), mod(int(v * mVScale), mImg->h) );
-	}
+	Color getColor(real u, real v);
+		//return mImg->getColor(mod(int(u * mUScale), mImg->w), mod(int(v * mVScale), mImg->h) );
 private:
 	int mod(int x, int y){
 		x %= y;
