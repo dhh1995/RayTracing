@@ -33,8 +33,7 @@ public:
 	virtual Color getColor(Vec3f pos){
 		mMaterial->getColor();
 	}
-
-public:
+protected:
 	Material* mMaterial;
 	char* mName;
 };

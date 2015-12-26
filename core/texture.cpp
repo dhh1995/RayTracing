@@ -7,14 +7,14 @@ Color Texture::getColor(real u, real v)
 	// fetch a bilinearly filtered texel
 	real fu = u * mUScale;
 	real fv = v * mVScale;
-	int u1 = ((int)fu) % mImg->w;
+	int u1 = ((int)fu) % mImg->getW();
 	if (u1 < 0)
-		u1 += mImg->w;
-	int v1 = ((int)fv) % mImg->h;
+		u1 += mImg->getW();
+	int v1 = ((int)fv) % mImg->getH();
 	if (v1 < 0)
-		v1 += mImg->h;
-	int u2 = (u1 + 1) % mImg->w;
-	int v2 = (v1 + 1) % mImg->h;
+		v1 += mImg->getH();
+	int u2 = (u1 + 1) % mImg->getW();
+	int v2 = (v1 + 1) % mImg->getH();
 	// calculate fractional parts of u and v
 	real fracu = fu - floor( fu );
 	real fracv = fv - floor( fv );

@@ -16,9 +16,19 @@ public:
 	Vec3f getColor(){
 		return mColor;
 	}
-private:
+protected:
 	Vec3f mPos;
 	Color mColor;
+};
+
+class AreaLight : public Light{
+public:
+	AreaLight(Vec3f aPos, Color aColor, Vec3f aNorm, Vec3f aI)
+		: Light(aPos, aColor), mNorm(aNorm), mI(aI){
+			mJ = cross(mNorm, mI);
+		}
+private:
+	Vec3f mNorm, mI, mJ;
 };
 
 }; // namespace Raytracer

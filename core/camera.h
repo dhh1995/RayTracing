@@ -29,7 +29,7 @@ public:
 	virtual ~Camera(){
 		delete(mFilm);
 	}
-public:
+protected:
 	Vec3f mPos;
 private:
 	Film* mFilm;
@@ -44,12 +44,20 @@ public:
 	}
 	Ray generateRay(real dx, real dy, int i, int j);
 	vector<Ray> generateRays();
-private:
+protected:
 	//J x I = LookAt
 	Vec3f mLookAt;
 	Vec3f mI, mJ;
 	real mFov, mArc;
-	//real mLensRadius, mFocalDistance;
+};
+
+class PerspectiveCamera : public ProjectiveCamera{
+	PerspectiveCamera(Vec3f aPos, Vec3f aLookAt, Vec3f aI, real aFov, real aLensRadius, real aFocalDistance)
+		: ProjectiveCamera(aPos, aLookAt, aI, aFov), mLensRadius(aLensRadius), mFocalDistance(aFocalDistance){
+			
+	}
+private:
+	real mLensRadius, mFocalDistance;
 };
 
 }; // namespace Raytracer

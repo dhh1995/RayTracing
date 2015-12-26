@@ -15,13 +15,19 @@ public:
 		mName = new char[strlen(aName) + 1]; 
 		strcpy(mName, aName);
 	}
+	int getW(){
+		return w;
+	}
+	int getH(){
+		return h;
+	}
 	virtual void setColor(int x, int y, const Color &color) = 0;
 	virtual Color getColor(int x, int y) = 0;
 	virtual void read(string path) = 0;
 	virtual void show() = 0;
+protected:
 	int w, h;
 	char *mName;
-//private:
 };
 
 }; // namespace Raytracer
