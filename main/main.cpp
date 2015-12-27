@@ -83,9 +83,9 @@ int main()
 		obj5->setMaterial(mat2);
 		//scene->addObject(obj5);
 
-		Light* light1 = new Light(Vec3f(3, 0, 5), WHITE/2);
+		Light* light1 = new Light(WHITE/2, Vec3f(3, 0, 5));
 		scene->addLight(light1);
-		Light* light2 = new Light(Vec3f(0, 0, 3), WHITE/2);
+		Light* light2 = new Light(WHITE/2, Vec3f(0, 0, 3));
 		scene->addLight(light2);
 		
 		camera->setPos(Vec3f(0,0,1));
@@ -99,13 +99,13 @@ int main()
 		scene->addObject(obj0);
 
 		camera->setPos(Vec3f(-50, 0, 0));
-		Light* light1 = new Light(Vec3f(-40, 0, 0), GREEN);
+		Light* light1 = new Light(GREEN, Vec3f(-40, 0, 0));
 		scene->addLight(light1);
-		Light* light2 = new Light(Vec3f(0, 0, 40), WHITE / 3);
+		Light* light2 = new Light(WHITE / 3, Vec3f(0, 0, 40) );
 		scene->addLight(light2);
-		Light* light3 = new Light(Vec3f(-30, 0, 0), WHITE / 3);
+		Light* light3 = new Light(WHITE / 3, Vec3f(-30, 0, 0) );
 		scene->addLight(light3);
-		Light* light4 = new Light(Vec3f(0, 0, 30), RED);
+		Light* light4 = new Light(RED, Vec3f(0, 0, 30));
 		scene->addLight(light4);
 
 		Primitive* obj5 = new Plane(Vec3f(-1, 0, 0), Vec3f(0, -1, 0), 50);
@@ -169,17 +169,20 @@ int main()
 
 		//obj1->setMaterial(floor3);
 		//obj2->setMaterial(floor3);
-		obj5->setMaterial(wall1);
+		//obj5->setMaterial(wall1);
 		//obj2->setMaterial(floor3);
 
-		//Light* light1 = new Light(Vec3f(5,-9,9), SKYBLUE);
+		//Light* light1 = new Light(SKYBLUE, Vec3f(5,-9,9));
 		//scene->addLight(light1);
 
-		//Light* light2 = new Light(Vec3f(5,9,-9), YELLOW);
+		//Light* light2 = new Light(YELLOW, Vec3f(5,9,-9));
 		//scene->addLight(light2);
 
-		Light* light3 = new Light(Vec3f(10,0,9), WHITE);
+		Light* light3 = new Light(WHITE, Vec3f(10,0,9));
 		scene->addLight(light3);
+
+		Light* light4 = new AreaLight(WHITE, Vec3f(10, 0, 9.9), Vec3f(0, 0, -1), Vec3f(1, 0, 0));
+		//scene->addLight(light4);
 	}
 
 	// Pri *obj1 = new Sphere(Vector(-6, 0, -10), 5);
@@ -199,6 +202,7 @@ int main()
 	// obj7->set_material(new Phong(REFL_DIFF, Vector(.25,.25,.25),      Vector::Zero))->add_to_scene(scene);
 	// lite->set_material(new Phong(REFL_DIFF, Vector::Zero, Vector(100, 100, 100)))->add_to_scene(scene);
 
+	scene->construct();
 	puts("Scene constructed");
 
 	Renderer* renderer = new TestRenderer();

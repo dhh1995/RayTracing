@@ -14,9 +14,22 @@ public:
 		mMin = Vec3f(INF, INF, INF);
 		mMax = -mMin;
 	}
-	void update(Vec3f A){
+	void init(const Vec3f &A){
+		mMin = mMax = A;
+	}
+	int argMaxDiff(){
+		return (mMax - mMin).argMax();
+	}
+	void update(const Vec3f &A){
 		minimize(mMin, A);
 		maximize(mMax, A);
+	}
+	void update(const Box &A){
+		minimize(mMin, A.mMin);
+		maximize(mMax, A.mMax);
+	}
+	real minDist(Vec3f pos){
+		//TODO
 	}
 	string getType(){
 		return "Box";

@@ -35,6 +35,9 @@ public:
 	string getType(){
 		return "TriangleMesh";
 	}
+	vector<Triangle*> getTriangles(){
+		return mTriangles;
+	}
 	int intersect(const Ray& ray, Intersection& isect);
 	int intersectP(const Ray& ray){}
 	Vec3f getNorm(Vec3f pos){}

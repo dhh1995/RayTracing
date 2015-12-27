@@ -8,9 +8,15 @@ namespace Raytracer {
 
 class Light{
 public:
-	Light(Vec3f aPos, Color aColor) : mPos(aPos), mColor(aColor){
+	Light(Color aColor, Vec3f aPos) : mColor(aColor), mPos(aPos){
+	}
+	virtual string getType(){
+		return "Point";
 	}
 	Vec3f getPos(){
+		return mPos;
+	}
+	virtual Vec3f getPos(real u, real v){
 		return mPos;
 	}
 	Vec3f getColor(){
@@ -23,12 +29,20 @@ protected:
 
 class AreaLight : public Light{
 public:
-	AreaLight(Vec3f aPos, Color aColor, Vec3f aNorm, Vec3f aI)
-		: Light(aPos, aColor), mNorm(aNorm), mI(aI){
-			mJ = cross(mNorm, mI);
+	AreaLight(Vec3f aColor, Color aPos, Vec3f aNorm, Vec3f aU)
+		: Light(aColor, aPos), mNorm(aNorm), mU(aU){
+			mNorm.Normalize();
+			mU.Normalize();
+			mV = cross(mNorm, mU).Normalize();
 		}
+	string getType(){
+		return "Area";
+	}
+	Vec3f getPos(real u, real v){
+		return mPos + mU * u + mV * v;
+	}
 private:
-	Vec3f mNorm, mI, mJ;
+	Vec3f mNorm, mU, mV;
 };
 
 }; // namespace Raytracer

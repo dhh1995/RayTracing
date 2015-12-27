@@ -54,8 +54,9 @@ protected:
 class PerspectiveCamera : public ProjectiveCamera{
 	PerspectiveCamera(Vec3f aPos, Vec3f aLookAt, Vec3f aI, real aFov, real aLensRadius, real aFocalDistance)
 		: ProjectiveCamera(aPos, aLookAt, aI, aFov), mLensRadius(aLensRadius), mFocalDistance(aFocalDistance){
-			
 	}
+	//Ray generateRay(real dx, real dy, int i, int j); TODO
+	//vector<Ray> generateRays(); TODO
 private:
 	real mLensRadius, mFocalDistance;
 };

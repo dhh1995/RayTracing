@@ -6,7 +6,7 @@ int Scene::intersect(const Ray& ray, Intersection& isect){
 	//return mAggregate->intersect(aRay, aDist);
 	isect.setDist(INF);
 	int ans = MISS;
-	for (Primitive* obj : mAggregate){
+	for (Primitive* obj : mPrimitives){
 		Intersection tmp;
 		//printf("%d\n", obj);
 		int retval = obj->intersect(ray, tmp);
@@ -28,13 +28,32 @@ int Scene::intersectP(const Ray& ray){
 real Scene::calcShade(Light* light, Vec3f pos, Vec3f& dir){
 	Vec3f center = light->getPos();
 	dir = center - pos;
-	real dist = dir.length();
-	dir /= dist;
-	Intersection isect;
-	if (intersect(Ray(center, -dir), isect) != 0)
-		if (isect.getDist() + EPS < dist)
-			return 0.;
-	return 1.;
+	if (light->getType() == "Point"){
+		real dist = dir.length();
+		dir /= dist;
+		Intersection isect;
+		if (intersect(Ray(center, -dir), isect) != 0)
+			if (isect.getDist() + EPS < dist)
+				return 0.;
+		return 1.;
+	}
+
+	real res = 1;
+	int n = 3, n2 = n / 2;
+	for (int i=0;i<n;++i)
+		for (int j=0;j<n;++j){
+			Vec3f newCenter = light->getPos((i-n2) / 2. , (j-n2) / 2.);
+			Vec3f d = newCenter - pos;
+			//light->getPos((i-n2) / 2. , (j-n2) / 2.).prt();
+			real dist = d.length();
+			d /= dist;
+			Intersection isect;
+			if (intersect(Ray(newCenter, -d), isect) != 0)
+				if (isect.getDist() + EPS < dist)
+					res -= 1. / n / n;
+		}
+	dir.Normalize();
+	return res;
 }
 
 Color Scene::getLi(const Ray& ray, const Intersection& isect){

@@ -152,21 +152,33 @@ public:
 	friend inline Vec3f operator * ( real f, const Vec3f& v ) { return Vec3f( v.x * f, v.y * f, v.z * f ); }
 
 public:
+	inline real L2(){
+		return x * x + y * y + z * z;
+	}
+	inline real length(){
+		return sqrt(L2());
+	}
 	inline Vec3f Normalize(){
-		real len = sqrt(L2Norm_Sqr());
+		real len = length();
 		//if(len>1e-6)
 		(*this) *= 1.0f / len;
 		return *this;
 	}
-	inline real L2Norm_Sqr(){
-		return x * x + y * y + z * z;
-	}
-	inline real length(){
-		return sqrt(L2Norm_Sqr());
-	}
 	// void read(FILE* fp){
 	// 	fscanf(fp, "%lf %lf %lf", &x, &y, &z);
 	// }
+	int argMax() const{
+		if (x > y)
+			if (x > z)
+				return 0;
+			else
+				return 2;
+		else
+			if (y > z)
+				return 1;
+			else
+				return 2;
+	}
 	void read(){
 		scanf("%f %f %f", &x, &y, &z);
 	}

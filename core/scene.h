@@ -6,6 +6,9 @@
 #include "light.h"
 #include "primitive.h"
 #include "intersection.h"
+#include "kdtree.h"
+#include "shapes/trianglemesh.h"
+#include "shapes/box.h"
 
 namespace Raytracer {
 
@@ -13,6 +16,7 @@ class Scene{
 public:
 	Scene(Color aAmbient = BLACK): mAmbient(aAmbient){
 		mAggregate.clear();
+		mPrimitives.clear();
 		mLights.clear();
 	}
 	int intersect(const Ray& ray, Intersection& isect);
@@ -21,14 +25,23 @@ public:
 		mLights.push_back(aLight);
 	}
 	void addObject(Primitive *aObject){
-		mAggregate.push_back(aObject);
+		if (aObject->getType() == "233333"){ //TriangleMesh
+			TriangleMesh* triMesh = dynamic_cast<TriangleMesh*>(aObject);
+			for (Triangle* tri : triMesh->getTriangles())
+				mAggregate.add(tri);
+		}else
+			mPrimitives.push_back(aObject);
+	}
+	void construct(){
+		mAggregate.construct();
 	}
 	real calcShade(Light* light, Vec3f pos, Vec3f& dir);
 	Color getLi(const Ray& ray, const Intersection& isect);
 	void loadObj();//TODO
 private:
 	//Primitive* mAggregate;
-	vector<Primitive* > mAggregate;
+	vector<Primitive* > mPrimitives;
+	KdTreeTri mAggregate;
 	vector<Light* > mLights;
 	Color mAmbient;
 };

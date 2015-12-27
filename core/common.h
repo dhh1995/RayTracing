@@ -19,6 +19,7 @@ namespace Raytracer {
 #define INPRIM	-1		// Ray started inside primitive
 
 const int TRACEDEPTH = 5;
+const int MAX_K_NEAREST = 112345;
 const real PI = acos(-1.);
 const real INF = 1e18;
 
@@ -46,9 +47,17 @@ const Color BACKGROUND = BLACK;
 
 using std::vector;
 using std::string;
+using std::pair;
+using std::make_pair;
 using std::cout;
 using std::endl;
 using std::min;
+
+// template<class T>
+// class KdTree;
+
+// class Photon;
+// typedef KdTree<Photon* > PhotonMap;
 
 class Scene;
 class Camera;

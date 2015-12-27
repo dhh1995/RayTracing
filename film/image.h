@@ -6,6 +6,8 @@
 #include "core/film.h"
 #ifndef LOCAL
 	#include <opencv2/highgui/highgui.hpp>
+	#include <opencv2/core/core.hpp>
+	#include <opencv2/opencv.hpp>
 #else
 	#include <opencv2/highgui.hpp>
 	#include <opencv2/core.hpp>
