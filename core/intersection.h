@@ -9,8 +9,15 @@ namespace Raytracer {
 
 class Intersection{
 public:
-	Intersection(Primitive* aPrim = NULL, Vec3f aPos = ORIGINAL, real aDist = INF) : mPrim(aPrim), mPos(aPos), mDist(aDist){
+	Intersection(Primitive* aPrim = NULL, Vec3f aPos = ORIGINAL, real aDist = INF, bool aBack = false)
+		: mPrim(aPrim), mPos(aPos), mDist(aDist), mBack(aBack){
 		mColor = BLACK;
+	}
+	void setBack(bool aBack = true){
+		mBack = aBack;
+	}
+	bool isBack(){
+		return mBack;
 	}
 	void setPos(Vec3f aPos){
 		mPos = aPos;
@@ -43,6 +50,7 @@ public:
 		return mColor;
 	}
 private:
+	bool mBack;
 	real mDist;
 	Vec3f mPos;
 	Vec3f mNorm;

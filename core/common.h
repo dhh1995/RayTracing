@@ -14,9 +14,11 @@
 
 namespace Raytracer {
 
-#define HIT		 1		// Ray hit primitive
-#define MISS	 0		// Ray missed primitive
-#define INPRIM	-1		// Ray started inside primitive
+const bool HIT = true;
+const bool MISS = false;
+//#define HIT		true		// Ray hit primitive
+//#define MISS		false		// Ray missed primitive
+//#define INPRIM	-1			// Ray started inside primitive
 
 const int TRACEDEPTH = 5;
 const int MAX_K_NEAREST = 112345;

@@ -40,8 +40,8 @@ public:
 	}
 	void setIsect(Intersection& isect, real dist, Vec3f pos, bool backSide);
 	bool inside(const Vec3f pos);
-	int intersect(const Ray& ray, Intersection& isect);
-	int intersectP(const Ray& ray);
+	bool intersect(const Ray& ray, Intersection& isect);
+	bool intersectP(const Ray& ray);
 	Vec3f A, B, C, mNorm; //, mU, mV;
 	real mD;
 //private:
@@ -56,8 +56,8 @@ public:
 	vector<Triangle*> getTriangles(){
 		return mTriangles;
 	}
-	int intersect(const Ray& ray, Intersection& isect);
-	int intersectP(const Ray& ray){}
+	bool intersect(const Ray& ray, Intersection& isect);
+	bool intersectP(const Ray& ray){}
 	Vec3f getNorm(Vec3f pos){}
 private:
 	int chg(int x){

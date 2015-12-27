@@ -104,9 +104,9 @@ public:
 	void build(KdNode* root, const vector<Triangle* > a, short lastDim = -1);
 	void construct();
 
-	void traverse(KdNode *root, const Ray& ray, Intersection& isect);
-	int intersect(const Ray& ray, Intersection& isect);
-	int intersectP(const Ray& ray){}
+	bool traverse(KdNode *root, const Ray& ray, Intersection& isect);
+	bool intersect(const Ray& ray, Intersection& isect);
+	bool intersectP(const Ray& ray){}
 
 	void del(KdNode* root);
 	~KdTreeTri(){

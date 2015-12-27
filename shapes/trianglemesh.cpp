@@ -6,9 +6,9 @@ void Triangle::setIsect(Intersection& isect, real dist, Vec3f pos, bool backSide
 	isect.setPrim(this);
 	isect.setDist(dist);
 	isect.setPos(pos);
+	isect.setBack(backSide);
+	//printf("%d\n",backSide);
 	Vec3f norm = mNorm;
-	if (backSide)
-		norm = -norm;
 	if (mMaterial->haveTexture()){
 		//TODO
 	}else{
@@ -37,24 +37,17 @@ bool Triangle::inside(const Vec3f pos){
 		&& dot(cross(A - C, pos - C), mNorm) >= 0;
 }
 
-int Triangle::intersect(const Ray& ray, Intersection& isect){
+bool Triangle::intersect(const Ray& ray, Intersection& isect){
 	//puts("inside Triangle");
 	float d = dot(mNorm, ray.d);
 	if (d != 0){
 		float dist = -(dot(mNorm, ray.o) + mD) / d;
-		//mNorm.prt();
-		//printf("%lf d=%lf\n",dist, d);
 		if (dist > 0){
 			if (dist < isect.getDist()) {
 				Vec3f pos = ray(dist);
 				if (!inside(pos))
 					return MISS;
-				if (dot(ray.d, mNorm) > 0){
-					//ERRORs
-					setIsect(isect, dist, pos, true);
-					return INPRIM;
-				}
-				setIsect(isect, dist, pos, false);
+				setIsect(isect, dist, pos, dot(ray.d, mNorm) > 0);
 				return HIT;
 			}
 		}
@@ -62,9 +55,10 @@ int Triangle::intersect(const Ray& ray, Intersection& isect){
 	return MISS;
 }
 
-int Triangle::intersectP(const Ray& ray){
+bool Triangle::intersectP(const Ray& ray){
 
 }
+
 
 TriangleMesh::TriangleMesh(string objFile, Material* aMaterial, Vec3f trans){
 	FILE* fp = fopen(objFile.c_str(), "r");
@@ -106,12 +100,12 @@ TriangleMesh::TriangleMesh(string objFile, Material* aMaterial, Vec3f trans){
 	puts("done loading");
 }
 
-int TriangleMesh::intersect(const Ray& ray, Intersection& isect){
+bool TriangleMesh::intersect(const Ray& ray, Intersection& isect){
 	Intersection tmp;
 	isect.setDist(INF);
 	int retval = MISS;
 	for (Triangle* triangle : mTriangles){
-		if (triangle->intersect(ray, tmp) != 0){
+		if (triangle->intersect(ray, tmp) == HIT){
 			retval = HIT;
 			if (tmp.getDist() < isect.getDist())
 				isect = tmp;

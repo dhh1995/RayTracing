@@ -19,7 +19,7 @@ void Plane::setIsect(Intersection& isect, real dist, Vec3f pos, bool backSide){
 	}
 }
 
-int Plane::intersect(const Ray& ray, Intersection& isect){
+bool Plane::intersect(const Ray& ray, Intersection& isect){
 	//puts("inside Plane");
 	float d = dot(mNorm, ray.d);
 	if (d != 0){
@@ -34,7 +34,7 @@ int Plane::intersect(const Ray& ray, Intersection& isect){
 	return MISS;
 }
 
-int Plane::intersectP(const Ray& aRay){
+bool Plane::intersectP(const Ray& aRay){
 
 }
 

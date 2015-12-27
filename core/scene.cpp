@@ -2,25 +2,22 @@
 
 namespace Raytracer {
 
-int Scene::intersect(const Ray& ray, Intersection& isect){
+bool Scene::intersect(const Ray& ray, Intersection& isect){
 	//return mAggregate->intersect(aRay, aDist);
 	isect.setDist(INF);
-	int ans = mAggregate.intersect(ray, isect);
+	bool ans = mAggregate.intersect(ray, isect);
 	for (Primitive* obj : mPrimitives){
 		Intersection tmp;
-		int retval = obj->intersect(ray, tmp);
-		if (retval != 0){
-			if (tmp.getDist() < isect.getDist()){
+		if (obj->intersect(ray, tmp) == HIT){
+			ans = HIT;
+			if (tmp.getDist() < isect.getDist())
 				isect = tmp;
-				ans = retval;
-			}
 		}
-		//printf("%lf\n",tmp.getDist());
 	}
 	return ans;
 }
 
-int Scene::intersectP(const Ray& ray){
+bool Scene::intersectP(const Ray& ray){
 	// int ans = mAggregate->intersectP(ray);
 	// for (Primitive* obj : mPrimitives)
 	// 	if (obj->intersectP(ray) != 0)
@@ -35,7 +32,7 @@ real Scene::calcShade(Light* light, Vec3f pos, Vec3f& dir){
 		real dist = dir.length();
 		dir /= dist;
 		Intersection isect;
-		if (intersect(Ray(center, -dir), isect) != 0)
+		if (intersect(Ray(center, -dir), isect) == HIT)
 			if (isect.getDist() + EPS < dist)
 				return 0.;
 		return 1.;
@@ -51,7 +48,7 @@ real Scene::calcShade(Light* light, Vec3f pos, Vec3f& dir){
 			real dist = d.length();
 			d /= dist;
 			Intersection isect;
-			if (intersect(Ray(newCenter, -d), isect) != 0)
+			if (intersect(Ray(newCenter, -d), isect) == HIT)
 				if (isect.getDist() + EPS < dist)
 					res -= 1. / n / n;
 		}

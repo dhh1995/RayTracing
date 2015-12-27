@@ -25,8 +25,8 @@ public:
 		return "Plane";
 	}
 	void setIsect(Intersection& isect, real dist, Vec3f pos, bool backSide);
-	int intersect(const Ray& aRay, Intersection& isect);
-	int intersectP(const Ray& aRay);
+	bool intersect(const Ray& aRay, Intersection& isect);
+	bool intersectP(const Ray& aRay);
 private:
 	//Norm = U x V;
 	Vec3f mNorm;

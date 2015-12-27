@@ -4,8 +4,7 @@ namespace Raytracer {
 
 void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real &aDist){
 	Intersection isect;
-	int result = mScene->intersect(ray, isect);
-	if (result == 0){
+	if (mScene->intersect(ray, isect) == MISS){
 		res = BACKGROUND;
 		return;
 	}
@@ -34,9 +33,11 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real
 	{
 		real rindex = matter->getRefrIndex();
 		real n = 1.0f / rindex;
-		if (result < 0)
-			n = rindex;
 		Vec3f N = norm;
+		if (isect.isBack()){
+			n = rindex;
+			N = -N;
+		}
 		real cosI = -dot(N, ray.d);
 		real cosT2 = 1.0f - n * n * (1.0f - cosI * cosI);
 		if (cosT2 > 0.0f)
@@ -44,13 +45,18 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real
 			Vec3f T = (n * ray.d) + (n * cosI - sqrt( cosT2 )) * N;
 			Color rcol( 0, 0, 0 );
 			real dist;
+			//printf("%d\n", isect.isBack());
+			//puts("enter");
+			//ray.prt();
+			//Ray(pi + T * EPS, T).prt();
 			rayTracing(Ray(pi + T * EPS, T), rcol, depth + 1, rindex, dist); //, a_Samples * 0.5f, a_SScale * 2 );
+			//puts("quit");
 			mRaysCast++;
 			// apply Beer's law
 			Color absorbance = matter->getColor() * 0.1f * -dist;
 			Color transparency = Color( exp( absorbance.r ), exp( absorbance.g ), exp( absorbance.b ) );
 			Color add = refr * rcol;
-			if (result > 0)
+			if (!isect.isBack())
 				add = add * transparency;
 			res += add; 
 		}else

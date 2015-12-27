@@ -15,7 +15,7 @@ int main()
 {
 	Film* film = new Image(500, 500);
 	film->setName("test");
-	Camera* camera = new ProjectiveCamera(Vec3f(0, 0, 0), Vec3f(1, 0, 0), Vec3f(0, 0, 1), 90);
+	Camera* camera = new ProjectiveCamera(Vec3f(0, 0, 0), Vec3f(1, 0.3, 0), Vec3f(0, 0, 1), 90);
 	//Camera *camera = new ProjectiveCamera(Vector(0, 5, 10), Vector(0, 0, -1), Vector(0, 1, 0), 90); 
 	camera->setFilm(film);
 
@@ -76,8 +76,12 @@ int main()
 		// Primitive* obj4 = new TriangleMesh("test_data/cube.obj",
 		// 	mat4, Vec3f(2, 0.5, -1));
 		Primitive* obj4 = new TriangleMesh("test_data/cube.obj",
-			mat2, Vec3f(2, -0.5, 0));
-		scene->addObject(obj4);
+			mat2, Vec3f(2, -0.5, 0.5));
+		//scene->addObject(obj4);
+		
+		Primitive* obj9 = new Sphere(Vec3f(3, 0, 1), 1);
+		obj9->setMaterial(mat2);
+		scene->addObject(obj9);
 
 		Primitive* obj5 = new Sphere(Vec3f(0, 0, 0), 1000);
 		obj5->setMaterial(mat2);

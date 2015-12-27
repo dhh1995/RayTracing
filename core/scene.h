@@ -19,13 +19,13 @@ public:
 		mPrimitives.clear();
 		mLights.clear();
 	}
-	int intersect(const Ray& ray, Intersection& isect);
-	int intersectP(const Ray& ray);
+	bool intersect(const Ray& ray, Intersection& isect);
+	bool intersectP(const Ray& ray);
 	void addLight(Light *aLight){
 		mLights.push_back(aLight);
 	}
 	void addObject(Primitive *aObject){
-		if (aObject->getType() == "TriangleMesh"){
+		if (aObject->getType() == "233TriangleMesh"){
 			TriangleMesh* triMesh = dynamic_cast<TriangleMesh*>(aObject);
 			for (Triangle* tri : triMesh->getTriangles())
 				mAggregate.add(tri);

@@ -134,17 +134,18 @@ void KdTreeTri::construct(){
 	build(root, mData);
 }
 
-int KdTreeTri::traverse(KdNode *root, const Ray& ray, Intersection& isect){
+bool KdTreeTri::traverse(KdNode *root, const Ray& ray, Intersection& isect){
 	if (root == NULL)
-		return 0;
+		return MISS;
 	if (root->isLeaf){
 		traverse(root->left, ray, isect);
 		traverse(root->left, ray, isect);
-		return;
+		return MISS;
 	}
+	return 0;
 }
 
-int KdTreeTri::intersect(const Ray& ray, Intersection& isect){
+bool KdTreeTri::intersect(const Ray& ray, Intersection& isect){
 	traverse(root, ray, isect);
 }
 
