@@ -20,6 +20,7 @@ namespace Raytracer {
 
 const int TRACEDEPTH = 5;
 const int MAX_K_NEAREST = 112345;
+const int MAX_KDTREE_LEAF_SIZE = 7;
 const real PI = acos(-1.);
 const real INF = 1e18;
 

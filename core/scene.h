@@ -25,7 +25,7 @@ public:
 		mLights.push_back(aLight);
 	}
 	void addObject(Primitive *aObject){
-		if (aObject->getType() == "233333"){ //TriangleMesh
+		if (aObject->getType() == "TriangleMesh"){
 			TriangleMesh* triMesh = dynamic_cast<TriangleMesh*>(aObject);
 			for (Triangle* tri : triMesh->getTriangles())
 				mAggregate.add(tri);
@@ -33,6 +33,7 @@ public:
 			mPrimitives.push_back(aObject);
 	}
 	void construct(){
+		KdTreeTri::debug = false;
 		mAggregate.construct();
 	}
 	real calcShade(Light* light, Vec3f pos, Vec3f& dir);

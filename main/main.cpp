@@ -22,7 +22,7 @@ int main()
 	puts("Camera constructed");
 
 	Scene* scene = new Scene(WHITE / 5);
-	int useScene = 3;
+	int useScene = 1;
 	int debug = 0;
 
 	if (useScene == 0){

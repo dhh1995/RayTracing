@@ -14,6 +14,8 @@ public:
 		mMin = Vec3f(INF, INF, INF);
 		mMax = -mMin;
 	}
+	Box(const Vec3f &A):mMin(A), mMax(A){
+	}
 	void init(const Vec3f &A){
 		mMin = mMax = A;
 	}
@@ -27,6 +29,9 @@ public:
 	void update(const Box &A){
 		minimize(mMin, A.mMin);
 		maximize(mMax, A.mMax);
+	}
+	real getMid(int dim){
+		return (mMax[dim] + mMin[dim]) / 2.0f;
 	}
 	real minDist(Vec3f pos){
 		//TODO

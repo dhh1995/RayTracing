@@ -6,47 +6,76 @@
 ACCELERATORS_BRUTE_H	accelerators/brute.h	3;"	d
 Brute	accelerators/brute.h	/^class Brute{$/;"	c
 Raytracer	core/camera.cpp	/^namespace Raytracer {$/;"	n	file:
-generateRay	core/camera.cpp	/^Ray ProjectiveCamera::generateRay(int i, int j){$/;"	f	class:Raytracer::ProjectiveCamera
+generateRay	core/camera.cpp	/^Ray ProjectiveCamera::generateRay(real dx, real dy, int i, int j){$/;"	f	class:Raytracer::ProjectiveCamera
 generateRays	core/camera.cpp	/^vector<Ray> ProjectiveCamera::generateRays(){$/;"	f	class:Raytracer::ProjectiveCamera
 CORE_CAMERA_H	core/camera.h	3;"	d
-Camera	core/camera.h	/^	Camera(){$/;"	f	class:Raytracer::Camera
+Camera	core/camera.h	/^	Camera(Vec3f aPos) : mPos(aPos){$/;"	f	class:Raytracer::Camera
 Camera	core/camera.h	/^class Camera{$/;"	c	namespace:Raytracer
+PerspectiveCamera	core/camera.h	/^	PerspectiveCamera(Vec3f aPos, Vec3f aLookAt, Vec3f aI, real aFov, real aLensRadius, real aFocalDistance)$/;"	f	class:Raytracer::PerspectiveCamera
+PerspectiveCamera	core/camera.h	/^class PerspectiveCamera : public ProjectiveCamera{$/;"	c	namespace:Raytracer
 ProjectiveCamera	core/camera.h	/^	ProjectiveCamera(Vec3f aPos, Vec3f aLookAt, Vec3f aI, real aFov)$/;"	f	class:Raytracer::ProjectiveCamera
 ProjectiveCamera	core/camera.h	/^class ProjectiveCamera : public Camera{$/;"	c	namespace:Raytracer
 Raytracer	core/camera.h	/^namespace Raytracer {$/;"	n
 getFilm	core/camera.h	/^	Film* getFilm(){$/;"	f	class:Raytracer::Camera
+getPos	core/camera.h	/^	Vec3f getPos(){$/;"	f	class:Raytracer::Camera
+mArc	core/camera.h	/^	real mFov, mArc;$/;"	m	class:Raytracer::ProjectiveCamera
 mFilm	core/camera.h	/^	Film* mFilm;$/;"	m	class:Raytracer::Camera
-mFocalDistance	core/camera.h	/^	real mLensRadius, mFocalDistance;$/;"	m	class:Raytracer::ProjectiveCamera
-mFov	core/camera.h	/^	real mFov;$/;"	m	class:Raytracer::ProjectiveCamera
+mFocalDistance	core/camera.h	/^	real mLensRadius, mFocalDistance;$/;"	m	class:Raytracer::PerspectiveCamera
+mFov	core/camera.h	/^	real mFov, mArc;$/;"	m	class:Raytracer::ProjectiveCamera
 mI	core/camera.h	/^	Vec3f mI, mJ;$/;"	m	class:Raytracer::ProjectiveCamera
 mJ	core/camera.h	/^	Vec3f mI, mJ;$/;"	m	class:Raytracer::ProjectiveCamera
-mLensRadius	core/camera.h	/^	real mLensRadius, mFocalDistance;$/;"	m	class:Raytracer::ProjectiveCamera
+mLensRadius	core/camera.h	/^	real mLensRadius, mFocalDistance;$/;"	m	class:Raytracer::PerspectiveCamera
 mLookAt	core/camera.h	/^	Vec3f mLookAt;$/;"	m	class:Raytracer::ProjectiveCamera
-mPos	core/camera.h	/^	Vec3f mPos;$/;"	m	class:Raytracer::ProjectiveCamera
+mPos	core/camera.h	/^	Vec3f mPos;$/;"	m	class:Raytracer::Camera
 setFilm	core/camera.h	/^	void setFilm(Film* aFilm){$/;"	f	class:Raytracer::Camera
+setPos	core/camera.h	/^	void setPos(Vec3f aPos){$/;"	f	class:Raytracer::Camera
 ~Camera	core/camera.h	/^	virtual ~Camera(){$/;"	f	class:Raytracer::Camera
-BLACK	core/common.h	/^const Color BLACK = Color(1., 1., 1.);$/;"	m	namespace:Raytracer
+BACKGROUND	core/common.h	/^const Color BACKGROUND = BLACK;$/;"	m	namespace:Raytracer
+BLACK	core/common.h	/^const Color BLACK	= Color(0., 0., 0.);$/;"	m	namespace:Raytracer
+BLUE	core/common.h	/^const Color BLUE	= Color(0., 0., 1.);$/;"	m	namespace:Raytracer
 CORE_COMMON_H	core/common.h	3;"	d
+CYAN	core/common.h	/^const Color CYAN 		= Color( 0 , 255, 255) \/ 255.;$/;"	m	namespace:Raytracer
 Color	core/common.h	/^typedef Vec3f Color;$/;"	t	namespace:Raytracer
-HIT	core/common.h	15;"	d
+DARKBLUE	core/common.h	/^const Color DARKBLUE	= Color( 0 ,  0 , 139) \/ 255.;$/;"	m	namespace:Raytracer
+DARKGREEN	core/common.h	/^const Color DARKGREEN	= Color( 0 , 100,  0 ) \/ 255.;$/;"	m	namespace:Raytracer
+GREEN	core/common.h	/^const Color GREEN	= Color(0., 1., 0.);$/;"	m	namespace:Raytracer
+HIT	core/common.h	17;"	d
 INF	core/common.h	/^const real INF = 1e18;$/;"	m	namespace:Raytracer
-INPRIM	core/common.h	17;"	d
-MISS	core/common.h	16;"	d
+INPRIM	core/common.h	19;"	d
+LIGHTGREEN	core/common.h	/^const Color LIGHTGREEN	= Color(144, 238, 144) \/ 255.;$/;"	m	namespace:Raytracer
+LIGHTPINK	core/common.h	/^const Color LIGHTPINK	= Color(255, 182, 193) \/ 255.;$/;"	m	namespace:Raytracer
+MAX_KDTREE_LEAF_SIZE	core/common.h	/^const int MAX_KDTREE_LEAF_SIZE = 3;$/;"	m	namespace:Raytracer
+MAX_K_NEAREST	core/common.h	/^const int MAX_K_NEAREST = 112345;$/;"	m	namespace:Raytracer
+MISS	core/common.h	18;"	d
+ORIGINAL	core/common.h	/^const Vec3f ORIGINAL = Vec3f(0., 0., 0.);$/;"	m	namespace:Raytracer
+PI	core/common.h	/^const real PI = acos(-1.);$/;"	m	namespace:Raytracer
+PINK	core/common.h	/^const Color PINK 		= Color(255, 192, 203) \/ 255.;$/;"	m	namespace:Raytracer
+PURPLE	core/common.h	/^const Color PURPLE		= Color(128,  0 , 128) \/ 255.;$/;"	m	namespace:Raytracer
+RED	core/common.h	/^const Color RED		= Color(1., 0., 0.);$/;"	m	namespace:Raytracer
 Raytracer	core/common.h	/^namespace Raytracer {$/;"	n
+SKYBLUE	core/common.h	/^const Color SKYBLUE 	= Color(135, 206, 235) \/ 255.;$/;"	m	namespace:Raytracer
+TRACEDEPTH	core/common.h	/^const int TRACEDEPTH = 5;$/;"	m	namespace:Raytracer
+VIOLET	core/common.h	/^const Color VIOLET		= Color(238, 130, 238) \/ 255.;$/;"	m	namespace:Raytracer
+WHITE	core/common.h	/^const Color WHITE	= Color(1., 1., 1.);$/;"	m	namespace:Raytracer
+YELLOW	core/common.h	/^const Color YELLOW 		= Color(255, 255,  0 ) \/ 255.;$/;"	m	namespace:Raytracer
+ZERO	core/common.h	/^const Vec3f ZERO 	 = Vec3f(0., 0., 0.);$/;"	m	namespace:Raytracer
 Raytracer	core/film.cpp	/^namespace Raytracer {$/;"	n	file:
 CORE_FILM_H	core/film.h	3;"	d
-Film	core/film.h	/^	Film(){$/;"	f	class:Raytracer::Film
+Film	core/film.h	/^	Film(int w, int h):w(w), h(h){$/;"	f	class:Raytracer::Film
 Film	core/film.h	/^class Film{$/;"	c	namespace:Raytracer
 Raytracer	core/film.h	/^namespace Raytracer {$/;"	n
+getH	core/film.h	/^	int getH(){$/;"	f	class:Raytracer::Film
+getW	core/film.h	/^	int getW(){$/;"	f	class:Raytracer::Film
 h	core/film.h	/^	int w, h;$/;"	m	class:Raytracer::Film
 mName	core/film.h	/^	char *mName;$/;"	m	class:Raytracer::Film
 setName	core/film.h	/^	void setName(char *aName){$/;"	f	class:Raytracer::Film
 w	core/film.h	/^	int w, h;$/;"	m	class:Raytracer::Film
 Raytracer	core/geometry.cpp	/^namespace Raytracer {$/;"	n	file:
 CORE_GEOMETRY_H	core/geometry.h	3;"	d
-L2Norm_Sqr	core/geometry.h	/^	inline real L2Norm_Sqr(){$/;"	f	class:Raytracer::Vec3f
-Normalize	core/geometry.h	/^	inline void Normalize(){$/;"	f	class:Raytracer::Vec3f
-Ray	core/geometry.h	/^	Ray(const Vec3f &o, const Vec3f &d):o(o), d(d){$/;"	f	class:Raytracer::Ray
+EPS	core/geometry.h	/^const real EPS = 1e-5;$/;"	m	namespace:Raytracer
+L2	core/geometry.h	/^	inline real L2(){$/;"	f	class:Raytracer::Vec3f
+Normalize	core/geometry.h	/^	inline Vec3f Normalize(){$/;"	f	class:Raytracer::Vec3f
+Ray	core/geometry.h	/^	Ray(const Vec3f &o, const Vec3f &d, int aFilmX = -1, int aFilmY = -1)$/;"	f	class:Raytracer::Ray
 Ray	core/geometry.h	/^class Ray{$/;"	c	namespace:Raytracer
 Raytracer	core/geometry.h	/^namespace Raytracer {$/;"	n
 Vec3f	core/geometry.h	/^	Vec3f(){$/;"	f	class:Raytracer::Vec3f
@@ -55,36 +84,44 @@ Vec3f	core/geometry.h	/^	Vec3f(real x,real y, real z):$/;"	f	class:Raytracer::Ve
 Vec3f	core/geometry.h	/^class Vec3f{$/;"	c	namespace:Raytracer
 _len	core/geometry.h	/^	enum {_len = 3};$/;"	e	enum:Raytracer::Vec3f::__anon5
 _p	core/geometry.h	/^			real _p[3];$/;"	m	struct:Raytracer::Vec3f::__anon1::__anon2
+argMax	core/geometry.h	/^	int argMax() const{$/;"	f	class:Raytracer::Vec3f
 b	core/geometry.h	/^			real r,g,b;$/;"	m	struct:Raytracer::Vec3f::__anon1::__anon4
 cross	core/geometry.h	/^inline Vec3f cross(const Vec3f &A, const Vec3f &B){$/;"	f	namespace:Raytracer
 d	core/geometry.h	/^	Vec3f d;$/;"	m	class:Raytracer::Ray
+det	core/geometry.h	/^inline real det(const Vec3f &A, const Vec3f &B, const Vec3f &C){$/;"	f	namespace:Raytracer
 dot	core/geometry.h	/^inline real dot(const Vec3f &A, const Vec3f &B){$/;"	f	namespace:Raytracer
 g	core/geometry.h	/^			real r,g,b;$/;"	m	struct:Raytracer::Vec3f::__anon1::__anon4
 length	core/geometry.h	/^	inline real length(){$/;"	f	class:Raytracer::Vec3f
+mFilmX	core/geometry.h	/^	int mFilmX, mFilmY;$/;"	m	class:Raytracer::Ray
+mFilmY	core/geometry.h	/^	int mFilmX, mFilmY;$/;"	m	class:Raytracer::Ray
+maximize	core/geometry.h	/^inline void maximize(Vec3f &A, const Vec3f &B){$/;"	f	namespace:Raytracer
+minimize	core/geometry.h	/^inline void minimize(Vec3f &A, const Vec3f &B){$/;"	f	namespace:Raytracer
 o	core/geometry.h	/^	Vec3f o;$/;"	m	class:Raytracer::Ray
+operator !=	core/geometry.h	/^	inline bool operator !=(const Vec3f &v) const{$/;"	f	class:Raytracer::Vec3f
 operator ()	core/geometry.h	/^	inline Vec3f operator()(real t) const {$/;"	f	class:Raytracer::Ray
-operator *	core/geometry.h	/^	inline Vec3f operator *(const Vec3f&v) const{$/;"	f	class:Raytracer::Vec3f
-operator *	core/geometry.h	/^	inline Vec3f operator *(real f) const{$/;"	f	class:Raytracer::Vec3f
+operator *	core/geometry.h	/^	friend inline Vec3f operator * ( const Vec3f& v, real f ) { return Vec3f( v.x * f, v.y * f, v.z * f ); }$/;"	f	class:Raytracer::Vec3f
+operator *	core/geometry.h	/^	friend inline Vec3f operator * ( const Vec3f& v1, const Vec3f& v2 ) { return Vec3f( v1.x * v2.x, v1.y * v2.y, v1.z * v2.z ); }$/;"	f	class:Raytracer::Vec3f
+operator *	core/geometry.h	/^	friend inline Vec3f operator * ( real f, const Vec3f& v ) { return Vec3f( v.x * f, v.y * f, v.z * f ); }$/;"	f	class:Raytracer::Vec3f
 operator *=	core/geometry.h	/^	inline void operator *=(const Vec3f& v){$/;"	f	class:Raytracer::Vec3f
 operator *=	core/geometry.h	/^	inline void operator *=(real f){$/;"	f	class:Raytracer::Vec3f
-operator +	core/geometry.h	/^	inline Vec3f operator +(const Vec3f&v) const{$/;"	f	class:Raytracer::Vec3f
-operator +	core/geometry.h	/^	inline Vec3f operator +(real f) const{$/;"	f	class:Raytracer::Vec3f
+operator +	core/geometry.h	/^	friend inline Vec3f operator + ( const Vec3f& v1, const Vec3f& v2 ) { return Vec3f( v1.x + v2.x, v1.y + v2.y, v1.z + v2.z ); }$/;"	f	class:Raytracer::Vec3f
 operator +=	core/geometry.h	/^	inline void operator +=(const Vec3f& v){$/;"	f	class:Raytracer::Vec3f
 operator +=	core/geometry.h	/^	inline void operator +=(real f){$/;"	f	class:Raytracer::Vec3f
+operator -	core/geometry.h	/^	friend inline Vec3f operator - ( const Vec3f& v1, const Vec3f& v2 ) { return Vec3f( v1.x - v2.x, v1.y - v2.y, v1.z - v2.z ); }$/;"	f	class:Raytracer::Vec3f
 operator -	core/geometry.h	/^	inline Vec3f operator - () const {$/;"	f	class:Raytracer::Vec3f
-operator -	core/geometry.h	/^	inline Vec3f operator -(const Vec3f&v) const{$/;"	f	class:Raytracer::Vec3f
-operator -	core/geometry.h	/^	inline Vec3f operator -(real f) const{$/;"	f	class:Raytracer::Vec3f
 operator -=	core/geometry.h	/^	inline void operator -=(const Vec3f& v){$/;"	f	class:Raytracer::Vec3f
 operator -=	core/geometry.h	/^	inline void operator -=(real f){$/;"	f	class:Raytracer::Vec3f
-operator /	core/geometry.h	/^	inline Vec3f operator \/(const Vec3f&v) const{$/;"	f	class:Raytracer::Vec3f
-operator /	core/geometry.h	/^	inline Vec3f operator \/(real f) const{$/;"	f	class:Raytracer::Vec3f
+operator /	core/geometry.h	/^	friend inline Vec3f operator \/ ( const Vec3f& v, real f ) { return Vec3f( v.x \/ f, v.y \/ f, v.z \/ f ); }$/;"	f	class:Raytracer::Vec3f
 operator /=	core/geometry.h	/^	inline void operator \/=(const Vec3f& v){$/;"	f	class:Raytracer::Vec3f
 operator /=	core/geometry.h	/^	inline void operator \/=(real f){$/;"	f	class:Raytracer::Vec3f
 operator =	core/geometry.h	/^	inline Vec3f& operator = (const Vec3f& v){$/;"	f	class:Raytracer::Vec3f
 operator []	core/geometry.h	/^	inline const real& operator [](int index) const{$/;"	f	class:Raytracer::Vec3f
 operator []	core/geometry.h	/^	inline real& operator [](int index){$/;"	f	class:Raytracer::Vec3f
-print	core/geometry.h	/^	void print(){$/;"	f	class:Raytracer::Vec3f
+print	core/geometry.h	/^	void print() const{$/;"	f	class:Raytracer::Vec3f
+prt	core/geometry.h	/^	void prt() const{$/;"	f	class:Raytracer::Ray
+prt	core/geometry.h	/^	void prt() const{$/;"	f	class:Raytracer::Vec3f
 r	core/geometry.h	/^			real r,g,b;$/;"	m	struct:Raytracer::Vec3f::__anon1::__anon4
+read	core/geometry.h	/^	void read(){$/;"	f	class:Raytracer::Vec3f
 real	core/geometry.h	/^typedef double real;$/;"	t	namespace:Raytracer
 x	core/geometry.h	/^			real x,y,z;$/;"	m	struct:Raytracer::Vec3f::__anon1::__anon3
 y	core/geometry.h	/^			real x,y,z;$/;"	m	struct:Raytracer::Vec3f::__anon1::__anon3
@@ -92,54 +129,148 @@ z	core/geometry.h	/^			real x,y,z;$/;"	m	struct:Raytracer::Vec3f::__anon1::__ano
 ~Vec3f	core/geometry.h	/^	virtual ~Vec3f(){}$/;"	f	class:Raytracer::Vec3f
 Raytracer	core/intersection.cpp	/^namespace Raytracer {$/;"	n	file:
 CORE_INTERSECTION_H	core/intersection.h	3;"	d
-Intersection	core/intersection.h	/^	Intersection():mDist(0){$/;"	f	class:Raytracer::Intersection
-Intersection	core/intersection.h	/^	Intersection(real aDist):mDist(aDist){$/;"	f	class:Raytracer::Intersection
+Intersection	core/intersection.h	/^	Intersection(Primitive* aPrim = NULL, Vec3f aPos = ORIGINAL, real aDist = INF) : mPrim(aPrim), mPos(aPos), mDist(aDist){$/;"	f	class:Raytracer::Intersection
 Intersection	core/intersection.h	/^class Intersection{$/;"	c	namespace:Raytracer
 Raytracer	core/intersection.h	/^namespace Raytracer {$/;"	n
-getColor	core/intersection.h	/^	Color getColor(){$/;"	f	class:Raytracer::Intersection
-getPos	core/intersection.h	/^	Vec3f getPos(){$/;"	f	class:Raytracer::Intersection
+getColor	core/intersection.h	/^	Color getColor() const{$/;"	f	class:Raytracer::Intersection
+getDist	core/intersection.h	/^	real getDist()  const{$/;"	f	class:Raytracer::Intersection
+getNorm	core/intersection.h	/^	Vec3f getNorm() const{$/;"	f	class:Raytracer::Intersection
+getPos	core/intersection.h	/^	Vec3f getPos() const{$/;"	f	class:Raytracer::Intersection
+getPrim	core/intersection.h	/^	Primitive* getPrim() const{$/;"	f	class:Raytracer::Intersection
+mColor	core/intersection.h	/^	Color mColor;$/;"	m	class:Raytracer::Intersection
 mDist	core/intersection.h	/^	real mDist;$/;"	m	class:Raytracer::Intersection
+mNorm	core/intersection.h	/^	Vec3f mNorm;$/;"	m	class:Raytracer::Intersection
 mPos	core/intersection.h	/^	Vec3f mPos;$/;"	m	class:Raytracer::Intersection
+mPrim	core/intersection.h	/^	Primitive* mPrim;$/;"	m	class:Raytracer::Intersection
+setColor	core/intersection.h	/^	void setColor(Color aColor){$/;"	f	class:Raytracer::Intersection
 setDist	core/intersection.h	/^	void setDist(real aDist){$/;"	f	class:Raytracer::Intersection
+setNorm	core/intersection.h	/^	void setNorm(Vec3f aNorm){$/;"	f	class:Raytracer::Intersection
+setPos	core/intersection.h	/^	void setPos(Vec3f aPos){$/;"	f	class:Raytracer::Intersection
+setPrim	core/intersection.h	/^	void setPrim(Primitive* aPrim){$/;"	f	class:Raytracer::Intersection
+PhotonCmp	core/kdtree.cpp	/^bool PhotonCmp(const Photon* A, const Photon* B){$/;"	f	namespace:Raytracer
+Raytracer	core/kdtree.cpp	/^namespace Raytracer {$/;"	n	file:
+addToHeap	core/kdtree.cpp	/^void KdTree::addToHeap(Photon* t){$/;"	f	class:Raytracer::KdTree
+build	core/kdtree.cpp	/^void KdTree::build(int root, int l, int r){$/;"	f	class:Raytracer::KdTree
+build	core/kdtree.cpp	/^void KdTreeTri::build(KdNode* root, const vector<Triangle* > a, short lastDim){$/;"	f	class:Raytracer::KdTreeTri
+buildLeaf	core/kdtree.cpp	/^void KdTreeTri::buildLeaf(KdNode *root, const vector<Triangle* > a, int l, int r){$/;"	f	class:Raytracer::KdTreeTri
+construct	core/kdtree.cpp	/^void KdTreeTri::construct(){$/;"	f	class:Raytracer::KdTreeTri
+del	core/kdtree.cpp	/^void KdTreeTri::del(KdNode* root){$/;"	f	class:Raytracer::KdTreeTri
+findKNearest	core/kdtree.cpp	/^void KdTree::findKNearest(int root){$/;"	f	class:Raytracer::KdTree
+getKNearest	core/kdtree.cpp	/^int KdTree::getKNearest(const Vec3f& pos, int K){$/;"	f	class:Raytracer::KdTree
+mDim	core/kdtree.cpp	/^int KdTree::mDim;$/;"	m	class:Raytracer::KdTree	file:
+naiveSplit	core/kdtree.cpp	/^void KdTreeTri::naiveSplit(Box *A, short &dim, real &split){$/;"	f	class:Raytracer::KdTreeTri
+CORE_KDTREE_H	core/kdtree.h	3;"	d
+KdNode	core/kdtree.h	/^		KdNode(){$/;"	f	struct:Raytracer::KdTreeTri::KdNode
+KdNode	core/kdtree.h	/^	struct KdNode{$/;"	s	class:Raytracer::KdTree
+KdNode	core/kdtree.h	/^	struct KdNode{$/;"	s	class:Raytracer::KdTreeTri
+KdTree	core/kdtree.h	/^	KdTree(int MaxK = MAX_K_NEAREST){$/;"	f	class:Raytracer::KdTree
+KdTree	core/kdtree.h	/^class KdTree{$/;"	c	namespace:Raytracer
+KdTreeTri	core/kdtree.h	/^	KdTreeTri(){$/;"	f	class:Raytracer::KdTreeTri
+KdTreeTri	core/kdtree.h	/^class KdTreeTri{$/;"	c	namespace:Raytracer
+Raytracer	core/kdtree.h	/^namespace Raytracer {$/;"	n
+a	core/kdtree.h	/^	KdNode* a;$/;"	m	class:Raytracer::KdTree
+aPos	core/kdtree.h	/^	Vec3f aPos;$/;"	m	class:Raytracer::KdTree
+add	core/kdtree.h	/^	void add(Photon* x){$/;"	f	class:Raytracer::KdTree
+add	core/kdtree.h	/^	void add(Triangle* x){$/;"	f	class:Raytracer::KdTreeTri
+b	core/kdtree.h	/^		Box* b;$/;"	m	struct:Raytracer::KdTree::KdNode
+ch	core/kdtree.h	/^		short ch;$/;"	m	struct:Raytracer::KdTree::KdNode
+clear	core/kdtree.h	/^	void clear(){$/;"	f	class:Raytracer::KdTree
+clear	core/kdtree.h	/^	void clear(){$/;"	f	class:Raytracer::KdTreeTri
+construct	core/kdtree.h	/^	void construct(){$/;"	f	class:Raytracer::KdTree
+dim	core/kdtree.h	/^		short dim;$/;"	m	struct:Raytracer::KdTree::KdNode
+dim	core/kdtree.h	/^		short isLeaf, dim;$/;"	m	struct:Raytracer::KdTreeTri::KdNode
+getKthPhoton	core/kdtree.h	/^	pair<real, Photon* > getKthPhoton(int k){$/;"	f	class:Raytracer::KdTree
+isLeaf	core/kdtree.h	/^		short isLeaf, dim;$/;"	m	struct:Raytracer::KdTreeTri::KdNode
+left	core/kdtree.h	/^		KdNode* left;$/;"	m	struct:Raytracer::KdTreeTri::KdNode
+m	core/kdtree.h	/^	int n, m;$/;"	m	class:Raytracer::KdTree
+mData	core/kdtree.h	/^	vector<Photon* > mData;$/;"	m	class:Raytracer::KdTree
+mData	core/kdtree.h	/^	vector<Triangle* > mData;$/;"	m	class:Raytracer::KdTreeTri
+mDim	core/kdtree.h	/^	int mDim;$/;"	m	class:Raytracer::KdTreeTri
+mDim	core/kdtree.h	/^	static int mDim;$/;"	m	class:Raytracer::KdTree
+mDist	core/kdtree.h	/^	real mDist;$/;"	m	class:Raytracer::KdTree
+mLimit	core/kdtree.h	/^	int mLimit;$/;"	m	class:Raytracer::KdTree
+n	core/kdtree.h	/^	int n, m;$/;"	m	class:Raytracer::KdTree
+n	core/kdtree.h	/^	int n;$/;"	m	class:Raytracer::KdTreeTri
+rec_limit	core/kdtree.h	/^	const int rec_limit = 1000;$/;"	m	class:Raytracer::KdTreeTri
+recurse	core/kdtree.h	/^	int recurse;$/;"	m	class:Raytracer::KdTreeTri
+res	core/kdtree.h	/^	pair<real, Photon* > * res;$/;"	m	class:Raytracer::KdTree
+right	core/kdtree.h	/^		KdNode* right;$/;"	m	struct:Raytracer::KdTreeTri::KdNode
+root	core/kdtree.h	/^	KdNode* root;$/;"	m	class:Raytracer::KdTreeTri
+split	core/kdtree.h	/^		real split;$/;"	m	struct:Raytracer::KdTree::KdNode
+split	core/kdtree.h	/^		real split;$/;"	m	struct:Raytracer::KdTreeTri::KdNode
+t	core/kdtree.h	/^		Photon* t;$/;"	m	struct:Raytracer::KdTree::KdNode
+x	core/kdtree.h	/^		Triangle* x;$/;"	m	struct:Raytracer::KdTreeTri::KdNode
+~KdTree	core/kdtree.h	/^	~KdTree(){$/;"	f	class:Raytracer::KdTree
+~KdTreeTri	core/kdtree.h	/^	~KdTreeTri(){$/;"	f	class:Raytracer::KdTreeTri
 Raytracer	core/light.cpp	/^namespace Raytracer {$/;"	n	file:
+AreaLight	core/light.h	/^	AreaLight(Vec3f aColor, Color aPos, Vec3f aNorm, Vec3f aU)$/;"	f	class:Raytracer::AreaLight
+AreaLight	core/light.h	/^class AreaLight : public Light{$/;"	c	namespace:Raytracer
 CORE_LIGHT_H	core/light.h	3;"	d
-Light	core/light.h	/^	Light(Vec3f aPos, Color aColor) : mPos(aPos), mColor(aColor){$/;"	f	class:Raytracer::Light
+Light	core/light.h	/^	Light(Color aColor, Vec3f aPos) : mColor(aColor), mPos(aPos){$/;"	f	class:Raytracer::Light
 Light	core/light.h	/^class Light{$/;"	c	namespace:Raytracer
 Raytracer	core/light.h	/^namespace Raytracer {$/;"	n
+getColor	core/light.h	/^	Vec3f getColor(){$/;"	f	class:Raytracer::Light
+getPos	core/light.h	/^	Vec3f getPos(){$/;"	f	class:Raytracer::Light
+getPos	core/light.h	/^	Vec3f getPos(real u, real v){$/;"	f	class:Raytracer::AreaLight
+getPos	core/light.h	/^	virtual Vec3f getPos(real u, real v){$/;"	f	class:Raytracer::Light
+getType	core/light.h	/^	string getType(){$/;"	f	class:Raytracer::AreaLight
+getType	core/light.h	/^	virtual string getType(){$/;"	f	class:Raytracer::Light
 mColor	core/light.h	/^	Color mColor;$/;"	m	class:Raytracer::Light
+mNorm	core/light.h	/^	Vec3f mNorm, mU, mV;$/;"	m	class:Raytracer::AreaLight
 mPos	core/light.h	/^	Vec3f mPos;$/;"	m	class:Raytracer::Light
+mU	core/light.h	/^	Vec3f mNorm, mU, mV;$/;"	m	class:Raytracer::AreaLight
+mV	core/light.h	/^	Vec3f mNorm, mU, mV;$/;"	m	class:Raytracer::AreaLight
 Raytracer	core/material.cpp	/^namespace Raytracer {$/;"	n	file:
 CORE_MATERIAL_H	core/material.h	3;"	d
-GetSpecular	core/material.h	/^	real GetSpecular(){$/;"	f	class:Raytracer::Material
-Material	core/material.h	/^	Material(Color aColor, real aRefl, real aDiff):mColor(aColor), mRefl(aRefl), mDiff(aDiff){$/;"	f	class:Raytracer::Material
+Material	core/material.h	/^	Material(Color aColor, real aRefl, real aRefr, real aDiff, real aSpec, real aRIndex = 1, Color Ka = BLACK)$/;"	f	class:Raytracer::Material
 Material	core/material.h	/^class Material{$/;"	c	namespace:Raytracer
 Raytracer	core/material.h	/^namespace Raytracer {$/;"	n
 getColor	core/material.h	/^	Color getColor(){$/;"	f	class:Raytracer::Material
+getColor	core/material.h	/^	Color getColor(real u, real v){$/;"	f	class:Raytracer::Material
 getDiffuse	core/material.h	/^	real getDiffuse(){$/;"	f	class:Raytracer::Material
+getKa	core/material.h	/^	Color getKa(){$/;"	f	class:Raytracer::Material
+getNorm	core/material.h	/^	Vec3f getNorm(real u, real v){$/;"	f	class:Raytracer::Material
 getReflection	core/material.h	/^	real getReflection(){$/;"	f	class:Raytracer::Material
+getRefrIndex	core/material.h	/^	real getRefrIndex(){$/;"	f	class:Raytracer::Material
+getRefraction	core/material.h	/^	real getRefraction(){$/;"	f	class:Raytracer::Material
+getSpecular	core/material.h	/^	real getSpecular(){$/;"	f	class:Raytracer::Material
+getTexture	core/material.h	/^	Texture* getTexture(){$/;"	f	class:Raytracer::Material
+haveTexture	core/material.h	/^	bool haveTexture(){$/;"	f	class:Raytracer::Material
 mColor	core/material.h	/^	Color mColor;$/;"	m	class:Raytracer::Material
-mDiff	core/material.h	/^	real mDiff;$/;"	m	class:Raytracer::Material
-mRefl	core/material.h	/^	real mRefl;$/;"	m	class:Raytracer::Material
+mDiff	core/material.h	/^	real mDiff, mSpec;$/;"	m	class:Raytracer::Material
+mKa	core/material.h	/^	Color mKa;$/;"	m	class:Raytracer::Material
+mRIndex	core/material.h	/^	real mRIndex;$/;"	m	class:Raytracer::Material
+mRefl	core/material.h	/^	real mRefl, mRefr;$/;"	m	class:Raytracer::Material
+mRefr	core/material.h	/^	real mRefl, mRefr;$/;"	m	class:Raytracer::Material
+mSpec	core/material.h	/^	real mDiff, mSpec;$/;"	m	class:Raytracer::Material
+mTexture	core/material.h	/^	Texture* mTexture;$/;"	m	class:Raytracer::Material
 setColor	core/material.h	/^	void setColor(Color &aColor){$/;"	f	class:Raytracer::Material
 setDiffuse	core/material.h	/^	void setDiffuse(real aDiff){$/;"	f	class:Raytracer::Material
+setKa	core/material.h	/^	void setKa(Color Ka){$/;"	f	class:Raytracer::Material
 setReflection	core/material.h	/^	void setReflection(real aRefl){$/;"	f	class:Raytracer::Material
+setRefrIndex	core/material.h	/^	void setRefrIndex(real aRIndex){$/;"	f	class:Raytracer::Material
+setRefraction	core/material.h	/^	void setRefraction(real aRefr){$/;"	f	class:Raytracer::Material
+setSpecular	core/material.h	/^	void setSpecular(real aDiff){$/;"	f	class:Raytracer::Material
+setTexture	core/material.h	/^	void setTexture(Texture* aTexture){$/;"	f	class:Raytracer::Material
+Raytracer	core/photon.cpp	/^namespace Raytracer {$/;"	n	file:
+CORE_PHOTON_H	core/photon.h	3;"	d
+Photon	core/photon.h	/^class Photon{$/;"	c	namespace:Raytracer
+Raytracer	core/photon.h	/^namespace Raytracer {$/;"	n
+getAxis	core/photon.h	/^	real getAxis(int dim) const{$/;"	f	class:Raytracer::Photon
+getPos	core/photon.h	/^	Vec3f getPos() const{$/;"	f	class:Raytracer::Photon
+mPos	core/photon.h	/^	Vec3f mPos;$/;"	m	class:Raytracer::Photon
 Raytracer	core/primitive.cpp	/^namespace Raytracer {$/;"	n	file:
-setName	core/primitive.cpp	/^void Primitive::setName(char* aName)$/;"	f	class:Raytracer::Primitive
 CORE_PRIMITIVE_H	core/primitive.h	3;"	d
-Primitive	core/primitive.h	/^	Primitive():mShape(NULL),mMaterial(NULL){$/;"	f	class:Raytracer::Primitive
+Primitive	core/primitive.h	/^	Primitive():mMaterial(NULL){$/;"	f	class:Raytracer::Primitive
 Primitive	core/primitive.h	/^class Primitive{$/;"	c	namespace:Raytracer
 Raytracer	core/primitive.h	/^namespace Raytracer {$/;"	n
+getColor	core/primitive.h	/^	virtual Color getColor(Vec3f pos){$/;"	f	class:Raytracer::Primitive
 getMaterial	core/primitive.h	/^	Material* getMaterial(){$/;"	f	class:Raytracer::Primitive
 getName	core/primitive.h	/^	char* getName(){$/;"	f	class:Raytracer::Primitive
-getShape	core/primitive.h	/^	Shape* getShape(){$/;"	f	class:Raytracer::Primitive
-intersect	core/primitive.h	/^	int intersect(Ray& aRay, Intersection& aIsect){$/;"	f	class:Raytracer::Primitive
-intersectP	core/primitive.h	/^	int intersectP(Ray& aRay){$/;"	f	class:Raytracer::Primitive
 mMaterial	core/primitive.h	/^	Material* mMaterial;$/;"	m	class:Raytracer::Primitive
 mName	core/primitive.h	/^	char* mName;$/;"	m	class:Raytracer::Primitive
-mShape	core/primitive.h	/^	Shape* mShape;$/;"	m	class:Raytracer::Primitive
 setMaterial	core/primitive.h	/^	void setMaterial(Material* aMaterial){$/;"	f	class:Raytracer::Primitive
-setShape	core/primitive.h	/^	void setShape(Shape* aShape){$/;"	f	class:Raytracer::Primitive
-~Primitive	core/primitive.h	/^	virtual ~Primitive(){$/;"	f	class:Raytracer::Primitive
+setName	core/primitive.h	/^	void setName(char* aName){$/;"	f	class:Raytracer::Primitive
 BSDF	core/reflection.cpp	/^BSDF::BSDF(){$/;"	f	class:Raytracer::BSDF
 Raytracer	core/reflection.cpp	/^namespace Raytracer {$/;"	n	file:
 BSDF	core/reflection.h	/^class BSDF{$/;"	c	namespace:Raytracer
@@ -150,6 +281,8 @@ CORE_RENDERER_H	core/renderer.h	3;"	d
 Raytracer	core/renderer.h	/^namespace Raytracer {$/;"	n
 Renderer	core/renderer.h	/^	Renderer() : mCamera(NULL), mScene(NULL){$/;"	f	class:Raytracer::Renderer
 Renderer	core/renderer.h	/^class Renderer{$/;"	c	namespace:Raytracer
+getCamera	core/renderer.h	/^	Camera* getCamera(){$/;"	f	class:Raytracer::Renderer
+getScene	core/renderer.h	/^	Scene* getScene(){$/;"	f	class:Raytracer::Renderer
 mCamera	core/renderer.h	/^	Camera* mCamera;$/;"	m	class:Raytracer::Renderer
 mScene	core/renderer.h	/^	Scene* mScene;$/;"	m	class:Raytracer::Renderer
 setCamera	core/renderer.h	/^	void setCamera(Camera* aCamera){$/;"	f	class:Raytracer::Renderer
@@ -159,25 +292,37 @@ CORE_SAMPLER_H	core/sampler.h	3;"	d
 Raytracer	core/sampler.h	/^namespace Raytracer {$/;"	n
 Sampler	core/sampler.h	/^class Sampler{$/;"	c	namespace:Raytracer
 Raytracer	core/scene.cpp	/^namespace Raytracer {$/;"	n	file:
+calcShade	core/scene.cpp	/^real Scene::calcShade(Light* light, Vec3f pos, Vec3f& dir){$/;"	f	class:Raytracer::Scene
+getLi	core/scene.cpp	/^Color Scene::getLi(const Ray& ray, const Intersection& isect){$/;"	f	class:Raytracer::Scene
+intersect	core/scene.cpp	/^int Scene::intersect(const Ray& ray, Intersection& isect){$/;"	f	class:Raytracer::Scene
+intersectP	core/scene.cpp	/^int Scene::intersectP(const Ray& ray){$/;"	f	class:Raytracer::Scene
 CORE_SCENE_H	core/scene.h	3;"	d
 Raytracer	core/scene.h	/^namespace Raytracer {$/;"	n
-Scene	core/scene.h	/^	Scene(){$/;"	f	class:Raytracer::Scene
+Scene	core/scene.h	/^	Scene(Color aAmbient = BLACK): mAmbient(aAmbient){$/;"	f	class:Raytracer::Scene
 Scene	core/scene.h	/^class Scene{$/;"	c	namespace:Raytracer
 addLight	core/scene.h	/^	void addLight(Light *aLight){$/;"	f	class:Raytracer::Scene
 addObject	core/scene.h	/^	void addObject(Primitive *aObject){$/;"	f	class:Raytracer::Scene
-getLi	core/scene.h	/^	real getLi(Vec3f pos){$/;"	f	class:Raytracer::Scene
-intersect	core/scene.h	/^	int intersect(Ray& aRay, Intersection& aDist){$/;"	f	class:Raytracer::Scene
-intersectP	core/scene.h	/^	int intersectP(Ray& aRay){$/;"	f	class:Raytracer::Scene
-mAggregate	core/scene.h	/^	vector<Primitive* > mAggregate;$/;"	m	class:Raytracer::Scene
+construct	core/scene.h	/^	void construct(){$/;"	f	class:Raytracer::Scene
+mAggregate	core/scene.h	/^	KdTreeTri mAggregate;$/;"	m	class:Raytracer::Scene
+mAmbient	core/scene.h	/^	Color mAmbient;$/;"	m	class:Raytracer::Scene
 mLights	core/scene.h	/^	vector<Light* > mLights;$/;"	m	class:Raytracer::Scene
-Raytracer	core/shape.cpp	/^namespace Raytracer {$/;"	n	file:
-lastShapeID	core/shape.cpp	/^int Shape::lastShapeID = 0;$/;"	m	class:Raytracer::Shape	file:
-CORE_SHAPE_H	core/shape.h	3;"	d
-Raytracer	core/shape.h	/^namespace Raytracer {$/;"	n
-Shape	core/shape.h	/^	Shape(){$/;"	f	class:Raytracer::Shape
-Shape	core/shape.h	/^class Shape{$/;"	c	namespace:Raytracer
-lastShapeID	core/shape.h	/^	static int lastShapeID;$/;"	m	class:Raytracer::Shape
-shapeID	core/shape.h	/^	int shapeID;$/;"	m	class:Raytracer::Shape
+mPrimitives	core/scene.h	/^	vector<Primitive* > mPrimitives;$/;"	m	class:Raytracer::Scene
+Raytracer	core/texture.cpp	/^namespace Raytracer {$/;"	n	file:
+getColor	core/texture.cpp	/^Color Texture::getColor(real u, real v)$/;"	f	class:Raytracer::Texture
+BUMP	core/texture.h	/^		BUMP,$/;"	e	enum:Raytracer::Texture::TYPE
+BumpTexture	core/texture.h	/^class BumpTexture : public ImgTexture{$/;"	c	namespace:Raytracer
+CORE_TEXTURE_H	core/texture.h	3;"	d
+IMAGE	core/texture.h	/^		IMAGE,$/;"	e	enum:Raytracer::Texture::TYPE
+ImgTexture	core/texture.h	/^class ImgTexture : public Texture{$/;"	c	namespace:Raytracer
+Raytracer	core/texture.h	/^namespace Raytracer {$/;"	n
+TYPE	core/texture.h	/^	enum TYPE{$/;"	g	class:Raytracer::Texture
+Texture	core/texture.h	/^	Texture(Film* aImg, int aUScale = 1, int aVScale = 1){$/;"	f	class:Raytracer::Texture
+Texture	core/texture.h	/^class Texture{$/;"	c	namespace:Raytracer
+mImg	core/texture.h	/^	Film* mImg;$/;"	m	class:Raytracer::Texture
+mType	core/texture.h	/^	int mType;$/;"	m	class:Raytracer::Texture
+mUScale	core/texture.h	/^	int mUScale, mVScale;$/;"	m	class:Raytracer::Texture
+mVScale	core/texture.h	/^	int mUScale, mVScale;$/;"	m	class:Raytracer::Texture
+mod	core/texture.h	/^	int mod(int x, int y){$/;"	f	class:Raytracer::Texture
 Matrix44	core/transform.cpp	/^Matrix44::Matrix44(){$/;"	f	class:Raytracer::Matrix44
 Matrix44	core/transform.cpp	/^Matrix44::Matrix44(real mat[4][4]){$/;"	f	class:Raytracer::Matrix44
 Matrix44	core/transform.cpp	/^Matrix44::Matrix44(real t00, real t01, real t02, real t03,$/;"	f	class:Raytracer::Matrix44
@@ -193,11 +338,15 @@ Transform	core/transform.h	/^class Transform{$/;"	c	namespace:Raytracer
 m	core/transform.h	/^	Matrix44 m;$/;"	m	class:Raytracer::Transform
 m	core/transform.h	/^	real m[4][4];$/;"	m	struct:Raytracer::Matrix44
 Raytracer	film/image.cpp	/^namespace Raytracer {$/;"	n	file:
-convert	film/image.cpp	/^Vec3b Image::convert(const Vec3f &c){$/;"	f	class:Raytracer::Image
+getColor	film/image.cpp	/^Color Image::getColor(int x, int y){$/;"	f	class:Raytracer::Image
+read	film/image.cpp	/^void Image::read(string path){$/;"	f	class:Raytracer::Image
+setColor	film/image.cpp	/^void Image::setColor(int x, int y, const Color &color){$/;"	f	class:Raytracer::Image
 show	film/image.cpp	/^void Image::show(){$/;"	f	class:Raytracer::Image
-write	film/image.cpp	/^void Image::write(int x, int y, const Vec3f &color){$/;"	f	class:Raytracer::Image
+toColor	film/image.cpp	/^Color Image::toColor(const Vec3b &c){$/;"	f	class:Raytracer::Image
+toVec3b	film/image.cpp	/^Vec3b Image::toVec3b(const Color &c){$/;"	f	class:Raytracer::Image
 FILM_IMAGE_H	film/image.h	3;"	d
-Image	film/image.h	/^	Image(){$/;"	f	class:Raytracer::Image
+Image	film/image.h	/^	Image(int w, int h):Film(w, h){$/;"	f	class:Raytracer::Image
+Image	film/image.h	/^	Image(string path):Film(-1, -1){$/;"	f	class:Raytracer::Image
 Image	film/image.h	/^class Image : public Film {$/;"	c	namespace:Raytracer
 Raytracer	film/image.h	/^namespace Raytracer {$/;"	n
 mImg	film/image.h	/^	Mat mImg;$/;"	m	class:Raytracer::Image
@@ -226,29 +375,83 @@ operator []	obj_parser/SimpleObject.h	/^        T& operator[] (int i)$/;"	f	clas
 operator []	obj_parser/SimpleObject.h	/^        const T& operator[] (int i) const $/;"	f	class:Raytracer::Array
 t_Val	obj_parser/SimpleObject.h	/^        typedef T t_Val; $/;"	t	class:Raytracer::Array
 Raytracer	renderers/testrenderer.cpp	/^namespace Raytracer {$/;"	n	file:
-rayTracing	renderers/testrenderer.cpp	/^Color TestRenderer::rayTracing(Ray ray){$/;"	f	class:Raytracer::TestRenderer
+rayTracing	renderers/testrenderer.cpp	/^void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real &aDist){$/;"	f	class:Raytracer::TestRenderer
 render	renderers/testrenderer.cpp	/^void TestRenderer::render(){$/;"	f	class:Raytracer::TestRenderer
+show	renderers/testrenderer.cpp	/^void TestRenderer::show(){$/;"	f	class:Raytracer::TestRenderer
 CORE_TESTRENDER_H	renderers/testrenderer.h	3;"	d
 Raytracer	renderers/testrenderer.h	/^namespace Raytracer {$/;"	n
-TestRenderer	renderers/testrenderer.h	/^	TestRenderer(){$/;"	f	class:Raytracer::TestRenderer
+TestRenderer	renderers/testrenderer.h	/^	TestRenderer():mRaysCast(0){$/;"	f	class:Raytracer::TestRenderer
 TestRenderer	renderers/testrenderer.h	/^class TestRenderer : public Renderer {$/;"	c	namespace:Raytracer
-mCamera	renderers/testrenderer.h	/^	Camera* mCamera;$/;"	m	class:Raytracer::TestRenderer
-mScene	renderers/testrenderer.h	/^	Scene* mScene;$/;"	m	class:Raytracer::TestRenderer
-setCamera	renderers/testrenderer.h	/^	void setCamera(Camera* aCamera){$/;"	f	class:Raytracer::TestRenderer
-setScene	renderers/testrenderer.h	/^	void setScene(Scene* aScene){$/;"	f	class:Raytracer::TestRenderer
+mRaysCast	renderers/testrenderer.h	/^	int mRaysCast;$/;"	m	class:Raytracer::TestRenderer
+Raytracer	shapes/box.cpp	/^namespace Raytracer {$/;"	n	file:
+intersect	shapes/box.cpp	/^int Box::intersect(const Ray& ray, Intersection& isect){$/;"	f	class:Raytracer::Box
+intersectP	shapes/box.cpp	/^int Box::intersectP(const Ray& aRay){$/;"	f	class:Raytracer::Box
+setIsect	shapes/box.cpp	/^void Box::setIsect(Intersection& isect, real dist, Vec3f pos, bool backSide){$/;"	f	class:Raytracer::Box
+Box	shapes/box.h	/^	Box(){$/;"	f	class:Raytracer::Box
+Box	shapes/box.h	/^	Box(const Vec3f &A):mMin(A), mMax(A){$/;"	f	class:Raytracer::Box
+Box	shapes/box.h	/^class Box : public Primitive{$/;"	c	namespace:Raytracer
+Raytracer	shapes/box.h	/^namespace Raytracer {$/;"	n
+SHAPES_BOX_H	shapes/box.h	3;"	d
+argMaxDiff	shapes/box.h	/^	int argMaxDiff(){$/;"	f	class:Raytracer::Box
+getMid	shapes/box.h	/^	real getMid(int dim){$/;"	f	class:Raytracer::Box
+getType	shapes/box.h	/^	string getType(){$/;"	f	class:Raytracer::Box
+init	shapes/box.h	/^	void init(const Vec3f &A){$/;"	f	class:Raytracer::Box
+mMax	shapes/box.h	/^	Vec3f mMin, mMax;$/;"	m	class:Raytracer::Box
+mMin	shapes/box.h	/^	Vec3f mMin, mMax;$/;"	m	class:Raytracer::Box
+minDist	shapes/box.h	/^	real minDist(Vec3f pos){$/;"	f	class:Raytracer::Box
+update	shapes/box.h	/^	void update(const Box &A){$/;"	f	class:Raytracer::Box
+update	shapes/box.h	/^	void update(const Vec3f &A){$/;"	f	class:Raytracer::Box
+Raytracer	shapes/plane.cpp	/^namespace Raytracer {$/;"	n	file:
+intersect	shapes/plane.cpp	/^int Plane::intersect(const Ray& ray, Intersection& isect){$/;"	f	class:Raytracer::Plane
+intersectP	shapes/plane.cpp	/^int Plane::intersectP(const Ray& aRay){$/;"	f	class:Raytracer::Plane
+setIsect	shapes/plane.cpp	/^void Plane::setIsect(Intersection& isect, real dist, Vec3f pos, bool backSide){$/;"	f	class:Raytracer::Plane
+Plane	shapes/plane.h	/^	Plane(Vec3f aNorm, Vec3f aU, Vec3f aPos) : mNorm(aNorm), mU(aU){$/;"	f	class:Raytracer::Plane
+Plane	shapes/plane.h	/^	Plane(Vec3f aNorm, Vec3f aU, real aD) : mNorm(aNorm), mU(aU), mD(aD){$/;"	f	class:Raytracer::Plane
+Plane	shapes/plane.h	/^class Plane : public Primitive{$/;"	c	namespace:Raytracer
+Raytracer	shapes/plane.h	/^namespace Raytracer {$/;"	n
+SHAPES_PLANE_H	shapes/plane.h	3;"	d
+getType	shapes/plane.h	/^	string getType(){$/;"	f	class:Raytracer::Plane
+mD	shapes/plane.h	/^	real mD;$/;"	m	class:Raytracer::Plane
+mNorm	shapes/plane.h	/^	Vec3f mNorm;$/;"	m	class:Raytracer::Plane
+mU	shapes/plane.h	/^	Vec3f mU, mV;$/;"	m	class:Raytracer::Plane
+mV	shapes/plane.h	/^	Vec3f mU, mV;$/;"	m	class:Raytracer::Plane
 Raytracer	shapes/sphere.cpp	/^namespace Raytracer {$/;"	n	file:
-intersect	shapes/sphere.cpp	/^int Sphere::intersect(Ray& aRay, Intersection& aIsect){$/;"	f	class:Raytracer::Sphere
-intersectP	shapes/sphere.cpp	/^int Sphere::intersectP(Ray& aRay){$/;"	f	class:Raytracer::Sphere
+intersect	shapes/sphere.cpp	/^int Sphere::intersect(const Ray& ray, Intersection& isect){$/;"	f	class:Raytracer::Sphere
+intersectP	shapes/sphere.cpp	/^int Sphere::intersectP(const Ray& aRay){$/;"	f	class:Raytracer::Sphere
+setIsect	shapes/sphere.cpp	/^void Sphere::setIsect(Intersection& isect, real dist, Vec3f pos, bool backSide){$/;"	f	class:Raytracer::Sphere
 Raytracer	shapes/sphere.h	/^namespace Raytracer {$/;"	n
 SHAPES_SPHERE_H	shapes/sphere.h	3;"	d
 Sphere	shapes/sphere.h	/^	Sphere(Vec3f aCentre, real aRadius) : mCentre(aCentre), mRadius(aRadius){$/;"	f	class:Raytracer::Sphere
-Sphere	shapes/sphere.h	/^class Sphere : public Shape{$/;"	c	namespace:Raytracer
+Sphere	shapes/sphere.h	/^class Sphere : public Primitive{$/;"	c	namespace:Raytracer
+getType	shapes/sphere.h	/^	string getType(){$/;"	f	class:Raytracer::Sphere
 mCentre	shapes/sphere.h	/^	Vec3f mCentre;$/;"	m	class:Raytracer::Sphere
 mRadius	shapes/sphere.h	/^	real mRadius;$/;"	m	class:Raytracer::Sphere
 mSqRadius	shapes/sphere.h	/^	real mSqRadius;$/;"	m	class:Raytracer::Sphere
 Raytracer	shapes/trianglemesh.cpp	/^namespace Raytracer {$/;"	n	file:
-TriangleMesh	shapes/trianglemesh.cpp	/^TriangleMesh::TriangleMesh(){$/;"	f	class:Raytracer::TriangleMesh
+TriangleMesh	shapes/trianglemesh.cpp	/^TriangleMesh::TriangleMesh(string objFile, Material* aMaterial, Vec3f trans){$/;"	f	class:Raytracer::TriangleMesh
+inside	shapes/trianglemesh.cpp	/^bool Triangle::inside(const Vec3f pos){$/;"	f	class:Raytracer::Triangle
+intersect	shapes/trianglemesh.cpp	/^int Triangle::intersect(const Ray& ray, Intersection& isect){$/;"	f	class:Raytracer::Triangle
+intersect	shapes/trianglemesh.cpp	/^int TriangleMesh::intersect(const Ray& ray, Intersection& isect){$/;"	f	class:Raytracer::TriangleMesh
+intersectP	shapes/trianglemesh.cpp	/^int Triangle::intersectP(const Ray& ray){$/;"	f	class:Raytracer::Triangle
+setIsect	shapes/trianglemesh.cpp	/^void Triangle::setIsect(Intersection& isect, real dist, Vec3f pos, bool backSide){$/;"	f	class:Raytracer::Triangle
+A	shapes/trianglemesh.h	/^	Vec3f A, B, C, mNorm; \/\/, mU, mV;$/;"	m	class:Raytracer::Triangle
+B	shapes/trianglemesh.h	/^	Vec3f A, B, C, mNorm; \/\/, mU, mV;$/;"	m	class:Raytracer::Triangle
+C	shapes/trianglemesh.h	/^	Vec3f A, B, C, mNorm; \/\/, mU, mV;$/;"	m	class:Raytracer::Triangle
 Raytracer	shapes/trianglemesh.h	/^namespace Raytracer {$/;"	n
 SHAPES_TRIANGLEMESH_H	shapes/trianglemesh.h	3;"	d
-Triangle	shapes/trianglemesh.h	/^class Triangle{$/;"	c	namespace:Raytracer
-TriangleMesh	shapes/trianglemesh.h	/^class TriangleMesh{$/;"	c	namespace:Raytracer
+Triangle	shapes/trianglemesh.h	/^	Triangle(Vec3f A, Vec3f B, Vec3f C):A(A), B(B), C(C){$/;"	f	class:Raytracer::Triangle
+Triangle	shapes/trianglemesh.h	/^class Triangle : public Primitive{$/;"	c	namespace:Raytracer
+TriangleMesh	shapes/trianglemesh.h	/^class TriangleMesh : public Primitive{$/;"	c	namespace:Raytracer
+chg	shapes/trianglemesh.h	/^	int chg(int x){$/;"	f	class:Raytracer::TriangleMesh
+getBBox	shapes/trianglemesh.h	/^	Box getBBox(){$/;"	f	class:Raytracer::Triangle
+getNorm	shapes/trianglemesh.h	/^	Vec3f getNorm(Vec3f pos){}$/;"	f	class:Raytracer::TriangleMesh
+getSide	shapes/trianglemesh.h	/^	int getSide(int dim, real split){$/;"	f	class:Raytracer::Triangle
+getTriangles	shapes/trianglemesh.h	/^	vector<Triangle*> getTriangles(){$/;"	f	class:Raytracer::TriangleMesh
+getType	shapes/trianglemesh.h	/^	string getType(){$/;"	f	class:Raytracer::Triangle
+getType	shapes/trianglemesh.h	/^	string getType(){$/;"	f	class:Raytracer::TriangleMesh
+intersectP	shapes/trianglemesh.h	/^	int intersectP(const Ray& ray){}$/;"	f	class:Raytracer::TriangleMesh
+mBoundingBox	shapes/trianglemesh.h	/^	Box* mBoundingBox;$/;"	m	class:Raytracer::TriangleMesh
+mD	shapes/trianglemesh.h	/^	real mD;$/;"	m	class:Raytracer::Triangle
+mNorm	shapes/trianglemesh.h	/^	Vec3f A, B, C, mNorm; \/\/, mU, mV;$/;"	m	class:Raytracer::Triangle
+mTriangles	shapes/trianglemesh.h	/^	vector<Triangle*> mTriangles;$/;"	m	class:Raytracer::TriangleMesh
+mVertexs	shapes/trianglemesh.h	/^	vector<Vec3f> mVertexs;$/;"	m	class:Raytracer::TriangleMesh

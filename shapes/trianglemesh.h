@@ -20,6 +20,24 @@ public:
 		mNorm = cross(B - A, C - A).Normalize();
 		mD = - dot(A, mNorm);
 	}
+	Box getBBox(){
+		Box box(A);
+		box.update(B);
+		box.update(C);
+		return box;
+	}
+	int getSide(int dim, real split){
+		int cnt[2] = {0, 0};
+		split -= EPS;
+		++ cnt[A[dim] < split];
+		++ cnt[B[dim] < split];
+		++ cnt[C[dim] < split];
+		if (cnt[0] == 3)
+			return -1;
+		if (cnt[1] == 3)
+			return 1;
+		return 0;
+	}
 	void setIsect(Intersection& isect, real dist, Vec3f pos, bool backSide);
 	bool inside(const Vec3f pos);
 	int intersect(const Ray& ray, Intersection& isect);

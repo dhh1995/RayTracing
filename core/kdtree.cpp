@@ -21,9 +21,9 @@ void KdTree::build(int root, int l, int r){
 	cur->t = mData[m];
 	cur->split = cur->t->getAxis(cur->dim);
 	cur->ch = 0;
-	if (l + 1 < m)
+	if (l < m)
 		build(root * 2, l, m), cur->ch |= 1;
-	if (m + 2 < r)
+	if (m + 1 < r)
 		build(root * 2 + 1, m + 1, r), cur->ch |= 2;
 }
 
@@ -64,9 +64,96 @@ int KdTree::getKNearest(const Vec3f& pos, int K){
 // } TO be validate
 
 
+//KdTree for Triangle*
+
+bool KdTreeTri::debug;
+
+void KdTreeTri::naiveSplit(Box *A, short &dim, real &split){
+	if (dim == -1)
+		dim = A->argMaxDiff();
+	else
+		if (++ dim > 2)
+			dim = 0;
+	split = A->getMid(dim);
+}
+
+void KdTreeTri::buildLeaf(KdNode *root, const vector<Triangle* > a, int l, int r){
+	if (++ recurse > rec_limit)
+		return;
+	if (root == NULL)
+		root = new KdNode();
+	root->isLeaf = r - l;
+	if (debug){
+		printf("recurse %d\n", recurse);
+		printf("build in leaf, size = %d\n", r - l);
+	}
+	int m = (l + r) / 2;
+	root->x = a[m];
+	if (l < m)
+		buildLeaf(root->left, a, l, m);
+	if (m + 1 < r)
+		buildLeaf(root->right, a, m+1, r);
+}
+
+void KdTreeTri::build(KdNode* root, const vector<Triangle* > a, short lastDim){
+	if (++ recurse > rec_limit)
+		return;
+	if (a.empty())
+		return;
+	int m = a.size();
+	if (m <= MAX_KDTREE_LEAF_SIZE){
+		buildLeaf(root, a, 0, m);
+		return;
+	}
+	if (debug){
+		printf("recurse %d\n", recurse);
+		printf("building, size = %d\n",m);
+	}
+	if (root == NULL)
+		root = new KdNode();
+
+	root->dim = lastDim;
+	Box* b = new Box;
+	for (Triangle* i : a)
+		b->update(i->getBBox());
+	naiveSplit(b, root->dim, root->split);
+
+	vector<Triangle* > aL, aR;
+	for (Triangle* i : a){
+		int res = i->getSide(root->dim, root->split);
+		if (res <= 0)
+			aL.push_back(i);
+		if (res >= 0)
+			aR.push_back(i);
+	}
+	build(root->left, aL, root->dim);
+	build(root->right, aR, root->dim);
+}
+
 void KdTreeTri::construct(){
+	build(root, mData);
+}
 
+int KdTreeTri::traverse(KdNode *root, const Ray& ray, Intersection& isect){
+	if (root == NULL)
+		return 0;
+	if (root->isLeaf){
+		traverse(root->left, ray, isect);
+		traverse(root->left, ray, isect);
+		return;
+	}
+}
 
+int KdTreeTri::intersect(const Ray& ray, Intersection& isect){
+	traverse(root, ray, isect);
+}
+
+void KdTreeTri::del(KdNode* root){
+	if (root != NULL){
+		del(root->left);
+		del(root->right);
+		delete root;
+	}
 }
 
 }; // namespace Raytracer

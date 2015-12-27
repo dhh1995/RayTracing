@@ -5,10 +5,9 @@ namespace Raytracer {
 int Scene::intersect(const Ray& ray, Intersection& isect){
 	//return mAggregate->intersect(aRay, aDist);
 	isect.setDist(INF);
-	int ans = MISS;
+	int ans = mAggregate.intersect(ray, isect);
 	for (Primitive* obj : mPrimitives){
 		Intersection tmp;
-		//printf("%d\n", obj);
 		int retval = obj->intersect(ray, tmp);
 		if (retval != 0){
 			if (tmp.getDist() < isect.getDist()){
@@ -22,7 +21,11 @@ int Scene::intersect(const Ray& ray, Intersection& isect){
 }
 
 int Scene::intersectP(const Ray& ray){
-	
+	// int ans = mAggregate->intersectP(ray);
+	// for (Primitive* obj : mPrimitives)
+	// 	if (obj->intersectP(ray) != 0)
+	// 		return 1;
+	return 0;
 }
 
 real Scene::calcShade(Light* light, Vec3f pos, Vec3f& dir){
