@@ -52,9 +52,16 @@ using std::vector;
 using std::string;
 using std::pair;
 using std::make_pair;
+using std::swap;
 using std::cout;
 using std::endl;
 using std::min;
+
+inline bool same(real x, real y){
+	if (x < y + EPS && y < x + EPS)
+		return true;
+	return false;
+}
 
 // template<class T>
 // class KdTree;

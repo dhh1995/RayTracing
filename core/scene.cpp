@@ -3,16 +3,11 @@
 namespace Raytracer {
 
 bool Scene::intersect(const Ray& ray, Intersection& isect){
-	//return mAggregate->intersect(aRay, aDist);
 	isect.setDist(INF);
 	bool ans = mAggregate.intersect(ray, isect);
 	for (Primitive* obj : mPrimitives){
-		Intersection tmp;
-		if (obj->intersect(ray, tmp) == HIT){
+		if (obj->intersect(ray, isect) == HIT)
 			ans = HIT;
-			if (tmp.getDist() < isect.getDist())
-				isect = tmp;
-		}
 	}
 	return ans;
 }
@@ -22,7 +17,7 @@ bool Scene::intersectP(const Ray& ray){
 	// for (Primitive* obj : mPrimitives)
 	// 	if (obj->intersectP(ray) != 0)
 	// 		return 1;
-	return 0;
+	return MISS;
 }
 
 real Scene::calcShade(Light* light, Vec3f pos, Vec3f& dir){

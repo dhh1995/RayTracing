@@ -117,9 +117,9 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real
 void TestRenderer::render(){
 	//assert(mCamera != NULL);
 	vector<Ray> rays = mCamera->generateRays();
-	int nRays = rays.size(), cnt = 0, tot = 100;
+	int nRays = rays.size(), cnt = 0, tot = 10;
 	int lastShow = -1;
-	cout << nRays << endl;
+	cout << "number of pixels " << nRays << endl;
 	for (Ray ray : rays){
 		++cnt;
 		int percent = cnt * tot / nRays;
@@ -133,6 +133,7 @@ void TestRenderer::render(){
 		//	printf("%d %d\n", x, y);
 		//if (x % 30 == 0 && y % 40 == 0)
 		//ray.prt();
+
 		Color res;
 		real dist;
 		rayTracing(ray, res, 0, 1, dist);

@@ -12,7 +12,7 @@ vector<Ray> ProjectiveCamera::generateRays(){
 	int w = getFilm()->getW(), h = getFilm()->getH();
 	//real di = mFov / 180 * PI / (w-1), dj = mFov /  180 * PI / (h-1);
 	real l = tan(- mArc / 2), r = tan(mArc / 2);
-	printf("%lf %lf\n",l,r);
+	printf("camera left = %lf right = %lf\n",l,r);
 	for (int i=0;i<w;++i)
 		for (int j=0;j<h;++j){
 			//if (i != w/2 || j != h/2) continue;

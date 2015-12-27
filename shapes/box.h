@@ -14,10 +14,12 @@ public:
 		mMin = Vec3f(INF, INF, INF);
 		mMax = -mMin;
 	}
-	Box(const Vec3f &A):mMin(A), mMax(A){
+	Box(Vec3f A):mMin(A), mMax(A){
 	}
-	void init(const Vec3f &A){
-		mMin = mMax = A;
+	Box(Vec3f A, Vec3f B){
+		mMin = A;
+		mMax = A;
+		update(B);
 	}
 	int argMaxDiff(){
 		return (mMax - mMin).argMax();
@@ -36,6 +38,21 @@ public:
 	real minDist(Vec3f pos){
 		//TODO
 	}
+	Vec3f getNorm(Vec3f pos){
+		if (pos[0] < mMin[0] + EPS)
+			return Vec3f(-1, 0, 0);
+		if (pos[0] > mMax[0] - EPS)
+			return Vec3f(1, 0, 0);
+		if (pos[1] < mMin[1] + EPS)
+			return Vec3f(0, -1, 0);
+		if (pos[1] > mMax[1] - EPS)
+			return Vec3f(0, 1, 0);
+		if (pos[2] < mMin[2] + EPS)
+			return Vec3f(0, 0, -1);
+		if (pos[2] > mMax[2] - EPS)
+			return Vec3f(0, 0, 1);
+	}
+	void getNearFar(const Ray& ray, real& near, real& far);
 	string getType(){
 		return "Box";
 	}

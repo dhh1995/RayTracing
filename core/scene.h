@@ -33,7 +33,7 @@ public:
 			mPrimitives.push_back(aObject);
 	}
 	void construct(){
-		KdTreeTri::debug = false;
+		KdTreeTri::debug = true;
 		mAggregate.construct();
 	}
 	real calcShade(Light* light, Vec3f pos, Vec3f& dir);

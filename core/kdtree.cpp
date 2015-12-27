@@ -137,16 +137,29 @@ void KdTreeTri::construct(){
 bool KdTreeTri::traverse(KdNode *root, const Ray& ray, Intersection& isect){
 	if (root == NULL)
 		return MISS;
+	bool res = MISS;
 	if (root->isLeaf){
-		traverse(root->left, ray, isect);
-		traverse(root->left, ray, isect);
-		return MISS;
+		res = root->x->intersect(ray, isect);
+		if (traverse(root->left, ray, isect) == HIT)
+			res = HIT;
+		if (traverse(root->right, ray, isect) == HIT)
+			res = HIT;
+		return res;
 	}
-	return 0;
+	KdNode* first = root->left;
+	KdNode* second = root->right;
+	if (first == NULL)
+		swap(first, second);
+	//TODO
+	if (traverse(first, ray, isect) == HIT)
+		return HIT;
+	if (traverse(second, ray, isect) == HIT)
+		return HIT;
+	return MISS;
 }
 
 bool KdTreeTri::intersect(const Ray& ray, Intersection& isect){
-	traverse(root, ray, isect);
+	return traverse(root, ray, isect);
 }
 
 void KdTreeTri::del(KdNode* root){

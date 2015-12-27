@@ -79,8 +79,8 @@ TriangleMesh::TriangleMesh(string objFile, Material* aMaterial, Vec3f trans){
 			real x, y, z;
 			fscanf(fp, "%lf %lf %lf", &x, &y, &z);
 			Vec3f vex(x, y, z);
-			//vex.prt();
 			vex += trans;
+			vex.prt();
 			mBoundingBox->update(vex);
 			mVertexs.push_back(vex);
 		}else if (type[0] == 'f'){
@@ -101,15 +101,10 @@ TriangleMesh::TriangleMesh(string objFile, Material* aMaterial, Vec3f trans){
 }
 
 bool TriangleMesh::intersect(const Ray& ray, Intersection& isect){
-	Intersection tmp;
-	isect.setDist(INF);
 	int retval = MISS;
 	for (Triangle* triangle : mTriangles){
-		if (triangle->intersect(ray, tmp) == HIT){
+		if (triangle->intersect(ray, isect) == HIT)
 			retval = HIT;
-			if (tmp.getDist() < isect.getDist())
-				isect = tmp;
-		}
 	}
 	return retval;
 }

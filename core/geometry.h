@@ -14,6 +14,33 @@ namespace Raytracer {
 typedef double real;
 const real EPS = 1e-5;
 
+inline real min(real x, real y, real z){
+	if (x < y)
+		if (x < z)
+			return x;
+		else
+			return z;
+	else
+		if (y < z)
+			return y;
+		else
+			return z;
+}
+
+inline real max(real x, real y, real z){
+	if (x > y)
+		if (x > z)
+			return x;
+		else
+			return z;
+	else
+		if (y > z)
+			return y;
+		else
+			return z;
+}
+
+
 class Vec3f{
 public:
 	//Constructors
@@ -167,7 +194,13 @@ public:
 	// void read(FILE* fp){
 	// 	fscanf(fp, "%lf %lf %lf", &x, &y, &z);
 	// }
-	int argMax() const{
+	inline real getMin(){
+		return min(x, y, z);
+	}
+	inline real getMax(){
+		return max(x, y, z);
+	}
+	inline int argMax() const{
 		if (x > y)
 			if (x > z)
 				return 0;
