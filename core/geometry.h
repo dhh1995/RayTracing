@@ -166,8 +166,14 @@ public:
 	inline Vec3f operator - () const {
 		return Vec3f(-x, -y, -z);
 	}
+	inline bool operator <(const Vec3f &v) const{
+		return x < v.x && y < v.y && z < v.z;
+	}
 	inline bool operator !=(const Vec3f &v) const{
 		return abs(x-v.x)>EPS || abs(y-v.y)>EPS || abs(z-v.z)>EPS ;
+	}
+	inline bool operator >(const Vec3f &v) const{
+		return x > v.x && y > v.y && z > v.z;
 	}
 
 	friend inline Vec3f operator + ( const Vec3f& v1, const Vec3f& v2 ) { return Vec3f( v1.x + v2.x, v1.y + v2.y, v1.z + v2.z ); }
@@ -244,6 +250,9 @@ public:
 	Ray(const Vec3f &o, const Vec3f &d, int aFilmX = -1, int aFilmY = -1)
 		: o(o), d(d), mFilmX(aFilmX), mFilmY(aFilmY){
 		this->d.Normalize();
+	}
+	void setDir(Vec3f dir){
+		d = dir;
 	}
 	inline Vec3f operator()(real t) const {
 		return o + d * t;

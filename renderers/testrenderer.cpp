@@ -139,6 +139,8 @@ void TestRenderer::render(){
 		rayTracing(ray, res, 0, 1, dist);
 		//printf("%d %d\n",x,y);
 		mCamera->getFilm()->setColor(x, y, res);
+		// if (res < WHITE / 14)
+		// 	ray.prt();
 	}
 }
 

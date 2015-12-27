@@ -60,7 +60,7 @@ bool Triangle::intersectP(const Ray& ray){
 }
 
 
-TriangleMesh::TriangleMesh(string objFile, Material* aMaterial, Vec3f trans){
+TriangleMesh::TriangleMesh(string objFile, Material* aMaterial, Vec3f trans, real scale){
 	FILE* fp = fopen(objFile.c_str(), "r");
 	mMaterial = aMaterial;
 	mBoundingBox = new Box();
@@ -69,7 +69,7 @@ TriangleMesh::TriangleMesh(string objFile, Material* aMaterial, Vec3f trans){
 		printf("No such file: %s !", objFile.c_str());
 		return;
 	}
-	puts("start loading");
+	progressMessage("start loading obj");
 	char type[5];
 	char buf[1005];
 	while (fscanf(fp, "%s", type)!=EOF){
@@ -80,7 +80,8 @@ TriangleMesh::TriangleMesh(string objFile, Material* aMaterial, Vec3f trans){
 			fscanf(fp, "%lf %lf %lf", &x, &y, &z);
 			Vec3f vex(x, y, z);
 			vex += trans;
-			vex.prt();
+			vex *= scale;
+			//vex.prt();
 			mBoundingBox->update(vex);
 			mVertexs.push_back(vex);
 		}else if (type[0] == 'f'){
@@ -97,7 +98,8 @@ TriangleMesh::TriangleMesh(string objFile, Material* aMaterial, Vec3f trans){
 			//tri->mNorm.prt();
 		}
 	}
-	puts("done loading");
+	mBoundingBox->prt();
+	progressMessage("done loading");
 }
 
 bool TriangleMesh::intersect(const Ray& ray, Intersection& isect){

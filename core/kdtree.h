@@ -79,7 +79,9 @@ public:
 			dim = -1;
 			left = right = NULL;
 			x = NULL;
+			b = NULL;
 		}
+		void naiveSplit();
 		short isLeaf, dim;
 		real split;
 		Box* b;
@@ -99,9 +101,8 @@ public:
 	void add(Triangle* x){
 		mData.push_back(x);
 	}
-	void naiveSplit(Box *A, short &dim, real &split);
-	void buildLeaf(KdNode *root, const vector<Triangle* > a, int l, int r);
-	void build(KdNode* root, const vector<Triangle* > a, short lastDim = -1);
+	void buildLeaf(KdNode*& root, const vector<Triangle* > a, int l, int r);
+	void build(KdNode*& root, const vector<Triangle* > a, Box* Bbox, short lastDim = -1);
 	void construct();
 
 	bool traverse(KdNode *root, const Ray& ray, Intersection& isect);
@@ -121,7 +122,8 @@ private:
 	KdNode* root;
 	//for debug
 	int recurse;
-	const int rec_limit = 100;
+	const int rec_limit = 1123456;
+	const int MAX_KDTREE_LEAF_SIZE = 30;
 };
 
 }; // namespace Raytrace

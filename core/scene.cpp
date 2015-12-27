@@ -26,10 +26,16 @@ real Scene::calcShade(Light* light, Vec3f pos, Vec3f& dir){
 	if (light->getType() == "Point"){
 		real dist = dir.length();
 		dir /= dist;
+		//printf("%lf\n",dist);
 		Intersection isect;
-		if (intersect(Ray(center, -dir), isect) == HIT)
+		if (intersect(Ray(center, -dir), isect) == HIT){
+			// center.prt();
+			// pos.prt();
+			// printf("%lf\n",isect.getDist());
+			// isect.getPos().prt();
 			if (isect.getDist() + EPS < dist)
 				return 0.;
+		}
 		return 1.;
 	}
 
@@ -56,7 +62,7 @@ Color Scene::getLi(const Ray& ray, const Intersection& isect){
 	Vec3f N = isect.getNorm();
 	Color color = isect.getColor();
 	Material* matter = isect.getPrim()->getMaterial();
-	
+
 	Color res = mAmbient * matter->getKa();
 	for (Light* light : mLights){
 		Vec3f L;

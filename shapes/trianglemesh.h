@@ -20,6 +20,12 @@ public:
 		mNorm = cross(B - A, C - A).Normalize();
 		mD = - dot(A, mNorm);
 	}
+	void prt(){
+		colorMessage("Triangle:", 3);
+		A.prt();
+		B.prt();
+		C.prt();
+	}
 	Box getBBox(){
 		Box box(A);
 		box.update(B);
@@ -32,9 +38,9 @@ public:
 		++ cnt[A[dim] < split];
 		++ cnt[B[dim] < split];
 		++ cnt[C[dim] < split];
-		if (cnt[0] == 3)
-			return -1;
 		if (cnt[1] == 3)
+			return -1;
+		if (cnt[0] == 3)
 			return 1;
 		return 0;
 	}
@@ -49,7 +55,7 @@ public:
 
 class TriangleMesh : public Primitive{
 public:
-	TriangleMesh(string objFile, Material* aMaterial, Vec3f trans = ORIGINAL);
+	TriangleMesh(string objFile, Material* aMaterial, Vec3f trans = ORIGINAL, real scale = 1.0f);
 	string getType(){
 		return "TriangleMesh";
 	}

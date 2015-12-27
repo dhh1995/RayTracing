@@ -21,6 +21,14 @@ public:
 		mMax = A;
 		update(B);
 	}
+	Box* split(int dim, int side, real split) const{
+		Vec3f newMin = mMin, newMax = mMax;
+		if (side == 0)
+			newMax[dim] = split;
+		else
+			newMin[dim] = split;
+		return new Box(newMin, newMax);
+	}
 	int argMaxDiff(){
 		return (mMax - mMin).argMax();
 	}
@@ -34,6 +42,11 @@ public:
 	}
 	real getMid(int dim){
 		return (mMax[dim] + mMin[dim]) / 2.0f;
+	}
+	void prt(){
+		puts("Bounding Box:");
+		mMin.prt();
+		mMax.prt();
 	}
 	real minDist(Vec3f pos){
 		//TODO

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <cmath>
 #include <algorithm>
@@ -22,7 +23,7 @@ const bool MISS = false;
 
 const int TRACEDEPTH = 5;
 const int MAX_K_NEAREST = 112345;
-const int MAX_KDTREE_LEAF_SIZE = 7;
+//const int MAX_KDTREE_LEAF_SIZE = 7;
 const real PI = acos(-1.);
 const real INF = 1e18;
 
@@ -61,6 +62,17 @@ inline bool same(real x, real y){
 	if (x < y + EPS && y < x + EPS)
 		return true;
 	return false;
+}
+
+inline void colorMessage(string message, int color){
+	char* cmd = new char[message.size() + 50];
+	sprintf(cmd, "echo '\e[1;%dm%s\e[0m'", color + 30, message.c_str());
+	system(cmd);
+	delete[] cmd;
+}
+
+inline void progressMessage(string message){
+	colorMessage(message, 2); //red
 }
 
 // template<class T>

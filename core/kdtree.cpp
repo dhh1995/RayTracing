@@ -64,20 +64,22 @@ int KdTree::getKNearest(const Vec3f& pos, int K){
 // } TO be validate
 
 
+
+
 //KdTree for Triangle*
 
 bool KdTreeTri::debug;
 
-void KdTreeTri::naiveSplit(Box *A, short &dim, real &split){
+void KdTreeTri::KdNode::naiveSplit(){
 	if (dim == -1)
-		dim = A->argMaxDiff();
+		dim = b->argMaxDiff();
 	else
 		if (++ dim > 2)
 			dim = 0;
-	split = A->getMid(dim);
+	split = b->getMid(dim);
 }
 
-void KdTreeTri::buildLeaf(KdNode *root, const vector<Triangle* > a, int l, int r){
+void KdTreeTri::buildLeaf(KdNode*& root, const vector<Triangle* > a, int l, int r){
 	if (++ recurse > rec_limit)
 		return;
 	if (root == NULL)
@@ -95,7 +97,7 @@ void KdTreeTri::buildLeaf(KdNode *root, const vector<Triangle* > a, int l, int r
 		buildLeaf(root->right, a, m+1, r);
 }
 
-void KdTreeTri::build(KdNode* root, const vector<Triangle* > a, short lastDim){
+void KdTreeTri::build(KdNode*& root, const vector<Triangle* > a, Box* Bbox, short lastDim){
 	if (++ recurse > rec_limit)
 		return;
 	if (a.empty())
@@ -113,33 +115,51 @@ void KdTreeTri::build(KdNode* root, const vector<Triangle* > a, short lastDim){
 		root = new KdNode();
 
 	root->dim = lastDim;
-	Box* b = new Box;
-	for (Triangle* i : a)
-		b->update(i->getBBox());
-	naiveSplit(b, root->dim, root->split);
+	root->b = Bbox;
+	//for (Triangle* i : a)
+	//	root->b->update(i->getBBox());
+	//root->b->prt();
+	root->naiveSplit();
+	// printf("%d %lf\n", root->dim, root->split);
+	// root->b->split(root->dim, 0, root->split)->prt();
 
 	vector<Triangle* > aL, aR;
 	for (Triangle* i : a){
 		int res = i->getSide(root->dim, root->split);
+		// if (debug){
+		// 	printf("res = %d dim = %d split = %lf\n", res, root->dim, root->split);
+		// 	i->prt();
+		// }
 		if (res <= 0)
 			aL.push_back(i);
 		if (res >= 0)
 			aR.push_back(i);
 	}
-	build(root->left, aL, root->dim);
-	build(root->right, aR, root->dim);
+	// build(root->left, aL, root->b, root->dim);
+	// build(root->right, aR, root->b, root->dim);
+	build(root->left, aL, root->b->split(root->dim, 0, root->split), root->dim);
+	build(root->right, aR, root->b->split(root->dim, 1, root->split), root->dim);
 }
 
 void KdTreeTri::construct(){
-	build(root, mData);
+	Box* Bbox = new Box;
+	for (Triangle* i : mData)
+		Bbox->update(i->getBBox());
+	build(root, mData, Bbox);
 }
 
 bool KdTreeTri::traverse(KdNode *root, const Ray& ray, Intersection& isect){
 	if (root == NULL)
 		return MISS;
+	//puts("!");
 	bool res = MISS;
 	if (root->isLeaf){
+		if (debug){
+			puts("in Leaf");
+			root->x->prt();
+		}
 		res = root->x->intersect(ray, isect);
+		
 		if (traverse(root->left, ray, isect) == HIT)
 			res = HIT;
 		if (traverse(root->right, ray, isect) == HIT)
@@ -148,13 +168,64 @@ bool KdTreeTri::traverse(KdNode *root, const Ray& ray, Intersection& isect){
 	}
 	KdNode* first = root->left;
 	KdNode* second = root->right;
-	if (first == NULL)
+
+	real near = -1, far = -1;
+	int dim = root->dim;
+	root->b->getNearFar(ray, near, far);
+	if (debug){
+		ray.prt();
+		root->b->prt();
+		printf("%d %lf\n",root->dim, root->split);
+		printf("near = %lf far = %lf\n", near, far);
+	}
+	if (near > far || far < -1)
+		return MISS;
+	real split = root->split;//(root->split - ray.o[dim]) / ray.d[dim];
+	real nearX = ray(near)[dim];
+	real farX  = ray(far)[dim];
+	bool ignore = false, swaped = false;
+	if (nearX > split){
 		swap(first, second);
+		swaped = true;
+		if (farX > split)
+			ignore = true;
+	}
+	if (nearX < split && farX < split)
+		ignore = true;
 	//TODO
-	if (traverse(first, ray, isect) == HIT)
-		return HIT;
-	if (traverse(second, ray, isect) == HIT)
-		return HIT;
+	if (debug){
+		ray.prt();
+		printf("near = %lf far = %lf\n", near, far);
+		printf("nearX = %lf farX = %lf\n", nearX, farX);
+		printf("first is left %d\n", first == root->left);
+		colorMessage("step into first child", 5);
+	}
+	double tmpDist = isect.getDist();
+	if (traverse(first, ray, isect) == HIT){
+		//printf("%d %lf\n", dim, root->split);
+		//printf("!dist = %lf split = %lf\n", isect.getDist(), split);
+		//colorMessage("Important", 1);
+		//isect.getPos().prt();
+		//printf("%d %lf | %d %d\n", dim, split, !swaped && isect.getPos()[dim] < split + EPS, swaped && isect.getPos()[dim] > split - EPS);
+		if (ignore)
+			return HIT;
+		if (!swaped && isect.getPos()[dim] < split + EPS)
+			return HIT;
+		if (swaped && isect.getPos()[dim] > split - EPS)
+			return HIT;
+		isect.setDist(tmpDist);
+	}
+	if (debug)
+		colorMessage("step into second child", 5);
+	if (!ignore && traverse(second, ray, isect) == HIT){
+		// if (near < 0 && far > 0 && nearX < split && split < farX){
+		// 	printf("near = %lf far = %lf\n", near, far);
+		// }
+		//printf("%d %lf\n", dim, root->split);
+		//printf("!dist = %lf far = %lf \n", isect.getDist(), far);
+		if (isect.getDist() < far + EPS)
+			return HIT;
+	}
 	return MISS;
 }
 

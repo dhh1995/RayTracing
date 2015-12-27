@@ -32,6 +32,8 @@ public:
 		return mNorm;
 	}
 	void setDist(real aDist){
+		// colorMessage("Setting dist", 6);
+		// printf("dist seted to %lf\n", aDist);
 		mDist = aDist;
 	}
 	real getDist()  const{
