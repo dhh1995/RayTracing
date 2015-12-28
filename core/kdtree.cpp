@@ -175,7 +175,7 @@ bool KdTreeTri::traverse(KdNode *root, const Ray& ray, Intersection& isect){
 	if (debug){
 		ray.prt();
 		root->b->prt();
-		printf("%d %lf\n",root->dim, root->split);
+		printf("dim = %d split = %lf\n",root->dim, root->split);
 		printf("near = %lf far = %lf\n", near, far);
 	}
 	if (near > far || far < -1)
@@ -225,6 +225,7 @@ bool KdTreeTri::traverse(KdNode *root, const Ray& ray, Intersection& isect){
 		//printf("!dist = %lf far = %lf \n", isect.getDist(), far);
 		if (isect.getDist() < far + EPS)
 			return HIT;
+		isect.setDist(tmpDist);
 	}
 	return MISS;
 }

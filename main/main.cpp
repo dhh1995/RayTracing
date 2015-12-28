@@ -11,9 +11,31 @@
 
 using namespace Raytracer;
 
+void emitDebugRay(Renderer* renderer, Ray ray){
+
+// ray = Ray(Vec3f(-20, 0, 0), Vec3f(1,0,0));
+// for (int i = -10; i <= 0; ++ i)
+// for (int j = 0; j <= 10 ; ++ j){
+// 	ray.setDir(Vec3f(1, i * 0.01, j * 0.01).Normalize());
+
+	Color res;
+	real dist = 0;
+	renderer->rayTracing(ray, res, 0, 1, dist);
+	// if (!(res != BLACK)){
+	//	printf("%d %d\n",i,j);
+		ray.prt();
+		printf("dist = %lf\n", dist);
+		ray(dist).prt();
+		printf("res = ");
+		res.prt();
+	// }
+// }
+
+}
+
 int main()
 {
-	Film* film = new Image(1000, 1000);
+	Film* film = new Image(500, 500);
 	film->setName("test");
 	Camera* camera = new ProjectiveCamera(Vec3f(0, 0, 0), Vec3f(1, 0, 0), Vec3f(0, 0, 1), 90);
 	//Camera *camera = new ProjectiveCamera(Vector(0, 5, 10), Vector(0, 0, -1), Vector(0, 1, 0), 90); 
@@ -22,7 +44,7 @@ int main()
 	progressMessage("Camera constructed");
 
 	Scene* scene = new Scene(WHITE / 5);
-	int useScene = 2;
+	int useScene = 3;
 	int debug = 0;
 	int useBox = 1;
 
@@ -33,7 +55,7 @@ int main()
 	debugRay.setDir(Vec3f(1, 0, 0.2).Normalize());
 	//filmX 218, filmY 250
 	//debugRay.setDir(Vec3f(0.992107, -0.005965, 0.125256));
-	//debugRay = Ray(Vec3f(1.000000, 0.500000, 2.000000), Vec3f(1, 0.5, -0.6).Normalize());
+	debugRay = Ray(Vec3f(-20.000000, 0.000000, 0.000000), Vec3f(1, -0.1, 0.1).Normalize());
 
 	camera->setPos(Vec3f(0, 0, 1));
 
@@ -59,7 +81,7 @@ int main()
 	Texture* texture3 = new Texture(image3, 50, 50);
 	floor3->setTexture(texture3);
 
-	Material* mat4 = new Material(WHITE, 0, 0., 0.5, 0.5, 1.0, WHITE/5);
+	Material* mat4 = new Material(WHITE, 0.5, 0., 0.5, 0.5, 1.0, WHITE/5);
 
 	//--------------------------------------test_scene 1----------------------------
 	if (useScene == 1){
@@ -128,16 +150,19 @@ int main()
 	//--------------------------------------test_scene 2----------------------------
 	if (useScene == 2){
 		Primitive* obj0 = new TriangleMesh("test_data/dinosaur.2k.obj",
-			mat1, Vec3f(0, 0, 0), 0.5);
+			mat2, Vec3f(0, 0, 0), 0.5);
 		scene->addObject(obj0);
 
-		camera->setPos(Vec3f(-80, 0, 0));
-		Light* light1 = new Light(PINK , Vec3f(-40, 0, 0));
+		camera->setPos(Vec3f(-40, 0, 0));
+		//Light* light0 = new Light(WHITE, Vec3f(-20, 0, 0));
+		//scene->addLight(light0);
+
+		Light* light1 = new Light(PINK / 2 , Vec3f(-40, 0, 0));
 		scene->addLight(light1);
 		Light* light2 = new Light(WHITE / 3, Vec3f(0, 0, 40) );
-		//scene->addLight(light2);
+		scene->addLight(light2);
 		Light* light3 = new Light(WHITE / 3, Vec3f(-30, 0, 0) );
-		//scene->addLight(light3);
+		scene->addLight(light3);
 		Light* light4 = new Light(BLUE / 2, Vec3f(0, 0, 30));
 		//scene->addLight(light4);
 
@@ -164,7 +189,7 @@ int main()
 
 	if (useScene == 3){
 		Primitive* obj0 = new TriangleMesh("test_data/block.obj",
-			mat1, Vec3f(0, 0, 0), 1);
+			mat2, Vec3f(0, 0, 0), 1);
 		scene->addObject(obj0);
 
 		camera->setPos(Vec3f(-40, 0, 0));
@@ -197,7 +222,7 @@ int main()
 		obj9->setMaterial(mat4);
 		scene->addObject(obj9);
 
-		camera->setPos(Vec3f(-2,0,0) );
+		camera->setPos(Vec3f(-40,0,0) );
 	}
 
 	//--------------------------------------test_scene 3----------------------------
@@ -267,13 +292,7 @@ int main()
 //	renderer->getCamera()->setPos(Vec3f(i,0,0));
 	progressMessage("Rendering");
 	if (debug){
-		Color res;
-		real dist;
-		renderer->rayTracing(debugRay, res, 0, 1, dist);
-		printf("dist = %lf\n", dist);
-		debugRay(dist).prt();
-		printf("res = ");
-		res.prt();
+		emitDebugRay(renderer, debugRay);
 	}else
 		renderer->render();
 
