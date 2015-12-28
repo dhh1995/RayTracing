@@ -279,10 +279,8 @@ int main()
 
 	progressMessage("Done");
 
-#ifdef LOCAL
 	if (!debug)
 		renderer->show();
-#endif
 //}
 	return 0;
 }

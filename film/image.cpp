@@ -26,11 +26,12 @@ void Image::read(string path){
 }
 
 void Image::show(){
-	// Mat a = imread("/home/dhh1995/RayTracing/lena.jpg");
 	string imgName = mName;
 	imgName += ".jpg";
 	imwrite(imgName, mImg);
+#ifdef LOCAL
 	imshow(mName, mImg);
+#endif
 	waitKey(0);
 }
 
