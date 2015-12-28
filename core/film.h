@@ -9,9 +9,11 @@ namespace Raytracer {
 class Film{
 public:
 	Film(int w, int h):w(w), h(h){
+		mName = NULL;
 	}
 	void setName(char *aName){
-		delete mName;
+		if (mName != NULL)
+			delete[] mName;
 		mName = new char[strlen(aName) + 1]; 
 		strcpy(mName, aName);
 	}
