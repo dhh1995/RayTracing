@@ -1,8 +1,11 @@
 #include "testrenderer.h"
 
+bool debug = false;
+
 namespace Raytracer {
 
 void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real &aDist){
+	if (debug) ray.prt();
 	Intersection isect;
 	if (mScene->intersect(ray, isect) == MISS){
 		res = BACKGROUND;
@@ -38,6 +41,7 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real
 			n = rindex;
 			N = -N;
 		}
+		//printf("%lf\n",n);
 		real cosI = -dot(N, ray.d);
 		real cosT2 = 1.0f - n * n * (1.0f - cosI * cosI);
 		if (cosT2 > 0.0f)
@@ -129,6 +133,7 @@ void TestRenderer::render(){
 		}
 
 		int x = ray.mFilmX, y = ray.mFilmY;
+		debug = (x==255 && y== 255);
 		//if (x>=45 && x<=88)
 		//	printf("%d %d\n", x, y);
 		//if (x % 30 == 0 && y % 40 == 0)

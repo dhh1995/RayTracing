@@ -9,35 +9,53 @@
 
 namespace Raytracer {
 
+class Vertex{
+public:
+	Vertex(Vec3f aPos):mPos(aPos){
+	}
+	Vec3f getPos(){
+		return mPos;
+	}
+	void prt(){
+		printf("pos = ");
+		mPos.prt();
+		printf("norm = ");
+		mNorm.prt();
+	}
+private:
+	Vec3f mPos; // pos
+	Vec3f mNorm; // norm
+};
+
 class Triangle : public Primitive{
 public:
 	string getType(){
 		return "Triangle";
 	}
-	Triangle(Vec3f A, Vec3f B, Vec3f C):A(A), B(B), C(C){
+	Triangle(Vertex* A, Vertex* B, Vertex* C):A(A), B(B), C(C){
 		//mV = (B - A).Normalize();
 		//mU = (C - A).Normalize();
-		mNorm = cross(B - A, C - A).Normalize();
-		mD = - dot(A, mNorm);
+		mNorm = cross(B->getPos() - A->getPos(), C->getPos() - A->getPos()).Normalize();
+		mD = - dot(A->getPos(), mNorm);
 	}
 	void prt(){
 		colorMessage("Triangle:", 3);
-		A.prt();
-		B.prt();
-		C.prt();
+		A->prt();
+		B->prt();
+		C->prt();
 	}
 	Box getBBox(){
-		Box box(A);
-		box.update(B);
-		box.update(C);
+		Box box(A->getPos());
+		box.update(B->getPos());
+		box.update(C->getPos());
 		return box;
 	}
 	int getSide(int dim, real split){
 		int cnt[2] = {0, 0};
 		split -= EPS;
-		++ cnt[A[dim] < split];
-		++ cnt[B[dim] < split];
-		++ cnt[C[dim] < split];
+		++ cnt[A->getPos()[dim] < split];
+		++ cnt[B->getPos()[dim] < split];
+		++ cnt[C->getPos()[dim] < split];
 		if (cnt[1] == 3)
 			return -1;
 		if (cnt[0] == 3)
@@ -48,7 +66,11 @@ public:
 	bool inside(const Vec3f pos);
 	bool intersect(const Ray& ray, Intersection& isect);
 	bool intersectP(const Ray& ray);
-	Vec3f A, B, C, mNorm; //, mU, mV;
+private:
+	Vertex* A;
+	Vertex* B;
+	Vertex* C;
+	Vec3f mNorm; //, mU, mV;
 	real mD;
 //private:
 };
@@ -72,7 +94,7 @@ private:
 		return x - 1;
 	}
 	//friend class Triangle;
-	vector<Vec3f> mVertexs;
+	vector<Vertex* > mVertexs;
 	vector<Triangle*> mTriangles;
 	Box* mBoundingBox;
 };

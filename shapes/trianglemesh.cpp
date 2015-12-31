@@ -32,9 +32,9 @@ void Triangle::setIsect(Intersection& isect, real dist, Vec3f pos, bool backSide
 // }
 
 bool Triangle::inside(const Vec3f pos){
-	return dot(cross(B - A, pos - A), mNorm) >= 0
-		&& dot(cross(C - B, pos - B), mNorm) >= 0
-		&& dot(cross(A - C, pos - C), mNorm) >= 0;
+	return dot(cross(B->getPos() - A->getPos(), pos - A->getPos()), mNorm) >= 0
+		&& dot(cross(C->getPos() - B->getPos(), pos - B->getPos()), mNorm) >= 0
+		&& dot(cross(A->getPos() - C->getPos(), pos - C->getPos()), mNorm) >= 0;
 }
 
 bool Triangle::intersect(const Ray& ray, Intersection& isect){
@@ -78,15 +78,16 @@ TriangleMesh::TriangleMesh(string objFile, Material* aMaterial, Vec3f trans, rea
 		else if (type[0] == 'v'){
 			real x, y, z;
 			fscanf(fp, "%lf %lf %lf", &x, &y, &z);
-			Vec3f vex(x, y, z);
-			vex += trans;
-			vex *= scale;
+			Vec3f pos(x, y, z);
+			pos += trans;
+			pos *= scale;
+			Vertex* vex = new Vertex(pos);
 			//vex.prt();
-			mBoundingBox->update(vex);
+			mBoundingBox->update(pos);
 			mVertexs.push_back(vex);
 		}else if (type[0] == 'f'){
 			int a, b, c;
-			fscanf(fp, "%d %d %d",&a, &b, &c);
+			fscanf(fp, "%d %d %d", &a, &b, &c);
 			a = chg(a), b = chg(b), c = chg(c);
 			// printf("%d %d %d\n",a,b,c);
 			// mVertexs[a].prt();

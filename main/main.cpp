@@ -37,14 +37,14 @@ int main()
 {
 	Film* film = new Image(500, 500);
 	film->setName("test");
-	Camera* camera = new ProjectiveCamera(Vec3f(0, 0, 0), Vec3f(1, 0, 0), Vec3f(0, 0, 1), 90);
+	Camera* camera = new ProjectiveCamera(Vec3f(0, 0, 0), Vec3f(1, 0, -0.5), Vec3f(0, 0, 1), 90);
 	//Camera *camera = new ProjectiveCamera(Vector(0, 5, 10), Vector(0, 0, -1), Vector(0, 1, 0), 90); 
 	camera->setFilm(film);
 
 	progressMessage("Camera constructed");
 
 	Scene* scene = new Scene(WHITE / 5);
-	int useScene = 3;
+	int useScene = 1;
 	int debug = 0;
 	int useBox = 1;
 
@@ -57,13 +57,13 @@ int main()
 	//debugRay.setDir(Vec3f(0.992107, -0.005965, 0.125256));
 	debugRay = Ray(Vec3f(-20.000000, 0.000000, 0.000000), Vec3f(1, -0.1, 0.1).Normalize());
 
-	camera->setPos(Vec3f(0, 0, 1));
+	camera->setPos(Vec3f(0, 0, 3));
 
 	if (useScene == 0){
 		scene->loadObj();
 	}
 
-	Vec3f testTransForCube(2, -0.5, 0.5);
+	Vec3f testTransForCube(2, -1.5, 0.5);
 
 	//Material(Color aColor, real aRefl, real aRefr, real aDiff, real aSpec, real aRIndex = 1, Color Ka = BLACK)
 	Material* matPINK = new Material(PINK, 1, 0, 0.3, 0.6, 2, WHITE / 5);
@@ -95,7 +95,7 @@ int main()
 		// }
 
 
-		Primitive* obj1 = new Sphere(Vec3f(3, 0, 1), 0.2);
+		Primitive* obj1 = new Sphere(Vec3f(7, 0, 1), 0.2);
 		obj1->setMaterial(mat1);
 		//scene->addObject(obj1);
 
@@ -125,7 +125,7 @@ int main()
 		obj9->setMaterial(mat2);
 		//scene->addObject(obj9);
 
-		Primitive* obj8 = new Box(testTransForCube, testTransForCube + Vec3f(1,1,1));
+		Primitive* obj8 = new Box(testTransForCube, testTransForCube + Vec3f(1, 1, 1));
 		obj8->setMaterial(mat2);
 		//scene->addObject(obj8);
 
@@ -188,6 +188,10 @@ int main()
 	}
 
 	if (useScene == 3){
+		// render [block.obj] takes about 40s (pc without charge)
+		// Material* mat1 = new Material(CYAN, 0, 0, 0.6, 0.4, 1, WHITE / 5);
+		// Material* mat2 = new Material(WHITE, 0, 1, 0.5, 0.1, 1.5, WHITE / 5);
+		// Material* mat4 = new Material(WHITE, 0.5, 0., 0.5, 0.5, 1.0, WHITE / 5);
 		Primitive* obj0 = new TriangleMesh("test_data/block.obj",
 			mat2, Vec3f(0, 0, 0), 1);
 		scene->addObject(obj0);
