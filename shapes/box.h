@@ -48,8 +48,12 @@ public:
 		mMin.prt();
 		mMax.prt();
 	}
-	real minDist(Vec3f pos){
-		//TODO
+	real minDist2(Vec3f pos){
+		Vec3f dist = Vec3f(
+			pos.x < mMin.x ? mMin.x - pos.x : pos.x > mMax.x ? pos.x - mMax.x : 0,
+			pos.y < mMin.y ? mMin.y - pos.y : pos.y > mMax.y ? pos.y - mMax.y : 0,
+			pos.z < mMin.z ? mMin.z - pos.z : pos.z > mMax.z ? pos.z - mMax.z : 0);
+		return dist.L2(); //if count dim < 2 , do not need sqrt;
 	}
 	Vec3f getNorm(Vec3f pos){
 		if (pos[0] < mMin[0] + EPS)

@@ -103,6 +103,24 @@ TriangleMesh::TriangleMesh(string objFile, Material* aMaterial, Vec3f trans, rea
 	progressMessage("done loading");
 }
 
+
+void TriangleMesh::decimation(real percent, real threshold){
+	int n = mVertexs.size();
+	int m = mTriangles.size(), need = int(m * percent);
+	for (Vertex* vex : mVertexs)
+		mVexCloud.add(vex);
+	mVexCloud.construct();
+	for (Vertex* vex : mVertexs){
+		vector<VertexPair> res;
+		mVexCloud.getKNearest(res, m);
+	}
+	while (!Q.empty() && n > need){
+		VertexPair pair = Q.top();
+		Q.pop();
+
+	}
+}
+
 bool TriangleMesh::intersect(const Ray& ray, Intersection& isect){
 	int retval = MISS;
 	for (Triangle* triangle : mTriangles){

@@ -10,6 +10,7 @@
 #include <cmath>
 #include <algorithm>
 #include <vector>
+#include <queue>
 #include <assert.h>
 #include "geometry.h"
 
@@ -49,6 +50,7 @@ const Color YELLOW 		= Color(255, 255,  0 ) / 255.;
 
 const Color BACKGROUND = BLACK;
 
+using std::priority_queue;
 using std::vector;
 using std::string;
 using std::pair;
@@ -75,13 +77,11 @@ inline void progressMessage(string message){
 	colorMessage(message, 2); //red
 }
 
-template<class T>
-class KdTree;
-
+template<class T> class KdTree;
 class Photon;
 typedef KdTree<Photon> PhotonMap;
 class Vertex;
-typedef KdTree<Vertex> VexCloud;
+typedef KdTree<Vertex> VertexCloud;
 
 class Scene;
 class Camera;

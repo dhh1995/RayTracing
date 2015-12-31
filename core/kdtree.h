@@ -44,13 +44,14 @@ public:
 		if (a != NULL)
 			delete[] a;
 		a = new KdNode[N];
-
+		root = 1;
 		build(1, 0, n);
 	}
 	pair<real, T* > getKthT(int k){
 		return res[k];
 	}
 	int getKNearest(const Vec3f& pos, int K);
+	void findInBall(vector<T> &res, int root, const Vec3f& pos, real radius2);
 	~KdTree(){
 		if (a != NULL)
 			delete[] a;
@@ -61,9 +62,11 @@ public:
 private:
 	void findKNearest(int root);
 	void addToHeap(T* t);
+
 	int mLimit;
 	real mDist;
 	int n, m;
+	int root;
 	KdNode* a;
 	vector<T* > mData;
 	pair<real, T* > * res;

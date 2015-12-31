@@ -5,16 +5,21 @@
 #include "core/common.h"
 #include "core/primitive.h"
 #include "core/intersection.h"
+#include "core/kdtree.h"
 #include "shapes/box.h"
 
 namespace Raytracer {
 
+class Triangle;
 class Vertex{
 public:
 	Vertex(Vec3f aPos):mPos(aPos){
 	}
 	Vec3f getPos(){
 		return mPos;
+	}
+	real getAxis(int dim){
+		return mPos[dim];
 	}
 	void prt(){
 		printf("pos = ");
@@ -25,6 +30,20 @@ public:
 private:
 	Vec3f mPos; // pos
 	Vec3f mNorm; // norm
+	Matrix44* mQuad;
+	vector<Triangle* > mAdjecent;
+};
+
+struct VertexPair{
+	Vertex* A;
+	Vertex* B;
+	real error;
+	bool operator < (const VertexPair &O) const{
+		return error > O.error;
+	}
+	// bool operator > (const VertexPair &O) const{
+	// 	return error < O.error;
+	// }
 };
 
 class Triangle : public Primitive{
@@ -84,7 +103,10 @@ public:
 	vector<Triangle*> getTriangles(){
 		return mTriangles;
 	}
-	bool intersect(const Ray& ray, Intersection& isect);
+	//HomeWork 2 Mesh decimation.
+	void decimation(real percent, real threshold = 0);
+
+	bool intersect(const Ray& ray, Intersection& isect); //brute force, use kd-tree for whole scene instead.
 	bool intersectP(const Ray& ray){}
 	Vec3f getNorm(Vec3f pos){}
 private:
@@ -97,6 +119,9 @@ private:
 	vector<Vertex* > mVertexs;
 	vector<Triangle*> mTriangles;
 	Box* mBoundingBox;
+
+	priority_queue<VertexPair> Q;
+	VertexCloud *mVexCloud;
 };
 
 

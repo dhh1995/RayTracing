@@ -67,6 +67,24 @@ int KdTree<T>::getKNearest(const Vec3f& pos, int K){
 	findKNearest(1);
 	return m;
 }
+
+template<class T>
+void KdTree<T>::findInBall(vector<T> &res, int root, const Vec3f& pos, real radius2){
+	KdNode* cur = &a[root];
+	int first = aPos[cur->dim] > cur->split, second = !first;
+	real dist = (cur->t->getPos() - aPos).L2();
+	if (dist < radius2)
+		res.push_back();
+	if ((cur->ch >> first) & 1){
+		if (m < mLimit || a[root * 2 + first].b->minDist(aPos) < res[0].first)
+			findInBall(res, root * 2 + first, pos, radius2);
+	}
+	if ((cur->ch >> second) & 1){
+		if (m < mLimit || a[root * 2 + second].b->minDist(aPos) < res[0].first)
+			findInBall(res, root * 2 + second, pos, radius2);
+	}
+}
+
 // } TO be validate
 
 

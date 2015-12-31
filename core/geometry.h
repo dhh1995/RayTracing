@@ -243,6 +243,33 @@ public:
 	enum {_len = 3};
 };
 
+
+inline real dot(const Vec3f &A, const Vec3f &B){
+	return A.x * B.x + A.y * B.y + A.z * B.z;
+}
+
+inline Vec3f cross(const Vec3f &A, const Vec3f &B){
+	return Vec3f(A.y * B.z - A.z * B.y, A.z * B.x - A.x * B.z, A.x * B.y - A.y * B.x);
+}
+
+inline real det(const Vec3f &A, const Vec3f &B, const Vec3f &C){
+	return A[0] * B[1] * C[2] + A[1] * B[2] * C[0] + A[2] * B[0] * C[1]
+		 - A[2] * B[1] * C[0] - A[1] * B[0] * C[2] + A[0] * B[2] * C[1];
+}
+
+inline void minimize(Vec3f &A, const Vec3f &B){
+	for (int i=0;i<3;++i)
+		if (B[i] < A[i])
+			A[i] = B[i];
+}
+
+inline void maximize(Vec3f &A, const Vec3f &B){
+	for (int i=0;i<3;++i)
+		if (B[i] > A[i])
+			A[i] = B[i];
+}
+
+
 class Ray{
 public:
 	Ray();
@@ -273,30 +300,21 @@ public:
 	//real energy;
 };
 
-inline real dot(const Vec3f &A, const Vec3f &B){
-	return A.x * B.x + A.y * B.y + A.z * B.z;
-}
+struct Matrix44{
+	Matrix44();
+	Matrix44(real mat[4][4]);
+    Matrix44(real t00, real t01, real t02, real t03,
+              real t10, real t11, real t12, real t13,
+              real t20, real t21, real t22, real t23,
+              real t30, real t31, real t32, real t33);
+    /*real* operator[](int id){
+    	assert(id>=0 && id<=3);
+    	return m[id];
+    }*/
+	Matrix44 Transpose();
+	real m[4][4];
+};
 
-inline Vec3f cross(const Vec3f &A, const Vec3f &B){
-	return Vec3f(A.y * B.z - A.z * B.y, A.z * B.x - A.x * B.z, A.x * B.y - A.y * B.x);
-}
-
-inline real det(const Vec3f &A, const Vec3f &B, const Vec3f &C){
-	return A[0] * B[1] * C[2] + A[1] * B[2] * C[0] + A[2] * B[0] * C[1]
-		 - A[2] * B[1] * C[0] - A[1] * B[0] * C[2] + A[0] * B[2] * C[1];
-}
-
-inline void minimize(Vec3f &A, const Vec3f &B){
-	for (int i=0;i<3;++i)
-		if (B[i] < A[i])
-			A[i] = B[i];
-}
-
-inline void maximize(Vec3f &A, const Vec3f &B){
-	for (int i=0;i<3;++i)
-		if (B[i] > A[i])
-			A[i] = B[i];
-}
 
 }; // namespace Raytracer
 
