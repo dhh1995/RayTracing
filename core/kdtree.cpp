@@ -4,20 +4,23 @@ namespace Raytracer {
 
 //TO be validate {
 
-int KdTree::mDim;
+template<class T>
+int KdTree<T>::mDim;
 
-bool PhotonCmp(const Photon* A, const Photon* B){
-	return A->getAxis(KdTree::mDim) < B->getAxis(KdTree::mDim);
+template<class T>
+bool CmpT(const T* A, const T* B){
+	return A->getAxis(KdTree<T>::mDim) < B->getAxis(KdTree<T>::mDim);
 }
 
-void KdTree::build(int root, int l, int r){
+template<class T>
+void KdTree<T>::build(int root, int l, int r){
 	KdNode* cur = &a[root];
 	cur->b = new Box;
 	for (int i = l; i < r; ++ i)
 		cur->b->update(mData[i]->getPos());
 	cur->dim = mDim = cur->b->argMaxDiff();
 	int m = (l + r) / 2;
-	nth_element(mData.begin() + l, mData.begin() + m, mData.begin() + r, PhotonCmp);
+	nth_element(mData.begin() + l, mData.begin() + m, mData.begin() + r, CmpT);
 	cur->t = mData[m];
 	cur->split = cur->t->getAxis(cur->dim);
 	cur->ch = 0;
@@ -27,7 +30,8 @@ void KdTree::build(int root, int l, int r){
 		build(root * 2 + 1, m + 1, r), cur->ch |= 2;
 }
 
-void KdTree::addToHeap(Photon* t){
+template<class T>
+void KdTree<T>::addToHeap(T* t){
 	real dist = (t->getPos() - aPos).L2();
 	if (m == mLimit){
 		if (res[0].first < dist)
@@ -41,7 +45,8 @@ void KdTree::addToHeap(Photon* t){
 		make_heap(res, res + m);
 }
 
-void KdTree::findKNearest(int root){
+template<class T>
+void KdTree<T>::findKNearest(int root){
 	KdNode* cur = &a[root];
 	int first = aPos[cur->dim] > cur->split, second = !first;
 	addToHeap(cur->t);
@@ -55,7 +60,8 @@ void KdTree::findKNearest(int root){
 	}
 }
 
-int KdTree::getKNearest(const Vec3f& pos, int K){
+template<class T>
+int KdTree<T>::getKNearest(const Vec3f& pos, int K){
 	m = 0, mLimit = K;
 	aPos = pos;
 	findKNearest(1);

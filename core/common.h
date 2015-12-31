@@ -75,11 +75,13 @@ inline void progressMessage(string message){
 	colorMessage(message, 2); //red
 }
 
-// template<class T>
-// class KdTree;
+template<class T>
+class KdTree;
 
-// class Photon;
-// typedef KdTree<Photon* > PhotonMap;
+class Photon;
+typedef KdTree<Photon> PhotonMap;
+class Vertex;
+typedef KdTree<Vertex> VexCloud;
 
 class Scene;
 class Camera;

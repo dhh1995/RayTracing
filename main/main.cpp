@@ -37,7 +37,7 @@ int main()
 {
 	Film* film = new Image(500, 500);
 	film->setName("test");
-	Camera* camera = new ProjectiveCamera(Vec3f(0, 0, 0), Vec3f(1, 0, -0.5), Vec3f(0, 0, 1), 90);
+	Camera* camera = new ProjectiveCamera(Vec3f(0, 0, 0), Vec3f(1, 0, 0), Vec3f(0, 0, 1), 90);
 	//Camera *camera = new ProjectiveCamera(Vector(0, 5, 10), Vector(0, 0, -1), Vector(0, 1, 0), 90); 
 	camera->setFilm(film);
 
@@ -144,16 +144,16 @@ int main()
 			scene->addObject(obj8);
 		if (useBox & 1)
 			scene->addObject(obj4);
+
 	}
 
 
 	//--------------------------------------test_scene 2----------------------------
 	if (useScene == 2){
 		Primitive* obj0 = new TriangleMesh("test_data/dinosaur.2k.obj",
-			mat2, Vec3f(0, 0, 0), 0.5);
+			mat1, Vec3f(0, 0, 0), 0.5);
 		scene->addObject(obj0);
 
-		camera->setPos(Vec3f(-40, 0, 0));
 		//Light* light0 = new Light(WHITE, Vec3f(-20, 0, 0));
 		//scene->addLight(light0);
 
@@ -185,16 +185,18 @@ int main()
 		Primitive* obj9 = new Plane(Vec3f(0, 0, -1), Vec3f(-1, 0, 0), 60);
 		obj9->setMaterial(mat4);
 		scene->addObject(obj9);
+
+		camera->setPos(Vec3f(-40, 0, 0));
+
 	}
 
 	if (useScene == 3){
-		// render [block.obj] takes about 40s (pc without charge)
-		// Material* mat1 = new Material(CYAN, 0, 0, 0.6, 0.4, 1, WHITE / 5);
-		// Material* mat2 = new Material(WHITE, 0, 1, 0.5, 0.1, 1.5, WHITE / 5);
-		// Material* mat4 = new Material(WHITE, 0.5, 0., 0.5, 0.5, 1.0, WHITE / 5);
+		Primitive* dragon = new TriangleMesh("test_data/fixed.perfect.dragon.100K.0.07.obj",
+			mat1, Vec3f(0, 0, 0), 20);
+		scene->addObject(dragon);
 		Primitive* obj0 = new TriangleMesh("test_data/block.obj",
 			mat2, Vec3f(0, 0, 0), 1);
-		scene->addObject(obj0);
+		//scene->addObject(obj0);
 
 		camera->setPos(Vec3f(-40, 0, 0));
 		Light* light1 = new Light(WHITE / 3 , Vec3f(-20, 0, 0));
@@ -283,6 +285,49 @@ int main()
 
 		Light* light4 = new AreaLight(WHITE, Vec3f(10, 0, 9.9), Vec3f(0, 0, -1), Vec3f(1, 0, 0));
 		//scene->addLight(light4);
+	}
+
+
+	if (useScene == 6){ // test speed of diff-split kdtree
+		// render [block.obj] takes about 40s (pc without charge)
+		// Material* mat1 = new Material(CYAN, 0, 0, 0.6, 0.4, 1, WHITE / 5);
+		// Material* mat2 = new Material(WHITE, 0, 1, 0.5, 0.1, 1.5, WHITE / 5);
+		// Material* mat4 = new Material(WHITE, 0.5, 0., 0.5, 0.5, 1.0, WHITE / 5);
+		Primitive* obj0 = new TriangleMesh("test_data/block.obj",
+			mat2, Vec3f(0, 0, 0), 1);
+		scene->addObject(obj0);
+
+		camera->setPos(Vec3f(-40, 0, 0));
+		Light* light1 = new Light(WHITE / 3 , Vec3f(-20, 0, 0));
+		scene->addLight(light1);
+		Light* light2 = new Light(WHITE / 3, Vec3f(0, 0, 20) );
+		scene->addLight(light2);
+		Light* light3 = new Light(PINK / 2, Vec3f(-15, 0, 0) );
+		scene->addLight(light3);
+		Light* light4 = new Light(YELLOW / 2, Vec3f(0, 0, 15));
+		scene->addLight(light4);
+
+		Primitive* obj5 = new Plane(Vec3f(-1, 0, 0), Vec3f(0, -1, 0), 30);
+		obj5->setMaterial(mat4);
+		scene->addObject(obj5);
+
+		Primitive* obj6 = new Plane(Vec3f(0, 1, 0), Vec3f(-1, 0, 0), 30);
+		obj6->setMaterial(mat4);
+		scene->addObject(obj6);
+
+		Primitive* obj7 = new Plane(Vec3f(0, 0, 1), Vec3f(1, 0, 0), 30);
+		obj7->setMaterial(mat4);
+		scene->addObject(obj7);
+	
+		Primitive* obj8 = new Plane(Vec3f(0, -1, 0), Vec3f(1, 0, 0), 30);
+		obj8->setMaterial(mat4);
+		scene->addObject(obj8);
+
+		Primitive* obj9 = new Plane(Vec3f(0, 0, -1), Vec3f(-1, 0, 0), 30);
+		obj9->setMaterial(mat4);
+		scene->addObject(obj9);
+
+		camera->setPos(Vec3f(-40,0,0) );
 	}
 	
 	scene->construct(debug);

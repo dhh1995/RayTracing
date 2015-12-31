@@ -11,13 +11,14 @@ namespace Raytracer {
 
 //balanced KdTree for Photon
 
-bool PhotonCmp(const Photon* A, const Photon* B);
+template<class T>
+bool CmpT(const T* A, const T* B);
 
-//template <class T>
+template <class T>
 class KdTree{
 public:
 	struct KdNode{
-		Photon* t;
+		T* t;
 		Box* b;
 		real split;
 		short ch;
@@ -25,14 +26,14 @@ public:
 	};
 	KdTree(int MaxK = MAX_K_NEAREST){
 		a = NULL;
-		res = new pair<real, Photon* >[MaxK];
+		res = new pair<real, T* >[MaxK];
 		clear();
 	}
 	void clear(){
 		n = 0;
 		mData.clear();
 	}
-	void add(Photon* x){
+	void add(T* x){
 		++ n;
 		mData.push_back(x);
 	}
@@ -46,7 +47,7 @@ public:
 
 		build(1, 0, n);
 	}
-	pair<real, Photon* > getKthPhoton(int k){
+	pair<real, T* > getKthT(int k){
 		return res[k];
 	}
 	int getKNearest(const Vec3f& pos, int K);
@@ -59,13 +60,13 @@ public:
 	static int mDim;
 private:
 	void findKNearest(int root);
-	void addToHeap(Photon* t);
+	void addToHeap(T* t);
 	int mLimit;
 	real mDist;
 	int n, m;
 	KdNode* a;
-	vector<Photon* > mData;
-	pair<real, Photon* > * res;
+	vector<T* > mData;
+	pair<real, T* > * res;
 	Vec3f aPos;
 };
 

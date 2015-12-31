@@ -133,7 +133,7 @@ void TestRenderer::render(){
 		}
 
 		int x = ray.mFilmX, y = ray.mFilmY;
-		debug = (x==255 && y== 255);
+		//debug = (x==255 && y== 255);
 		//if (x>=45 && x<=88)
 		//	printf("%d %d\n", x, y);
 		//if (x % 30 == 0 && y % 40 == 0)
