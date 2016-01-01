@@ -16,40 +16,23 @@ void KdTreeTri::KdNode::naiveSplit(){
 	split = b->getMid(dim);
 }
 
-void KdTreeTri::buildLeaf(KdNode*& root, const vector<Triangle* > a, int l, int r){
-	if (++ recurse > rec_limit)
-		return;
-	if (root == NULL)
-		root = new KdNode();
-	root->isLeaf = r - l;
-	if (debug){
-		printf("recurse %d\n", recurse);
-		printf("build in leaf, size = %d\n", r - l);
-	}
-	int m = (l + r) / 2;
-	root->x = a[m];
-	if (l < m)
-		buildLeaf(root->left, a, l, m);
-	if (m + 1 < r)
-		buildLeaf(root->right, a, m+1, r);
-}
-
 void KdTreeTri::build(KdNode*& root, const vector<Triangle* > a, Box* Bbox, short lastDim){
 	if (++ recurse > rec_limit)
 		return;
 	if (a.empty())
 		return;
+	if (root == NULL)
+		root = new KdNode();
 	int m = a.size();
 	if (m <= MAX_KDTREE_LEAF_SIZE){
-		buildLeaf(root, a, 0, m);
+		root->triangles = a;
+		root->isLeaf = true;
 		return;
 	}
 	if (debug){
 		printf("recurse %d\n", recurse);
 		printf("building, size = %d\n",m);
 	}
-	if (root == NULL)
-		root = new KdNode();
 
 	root->dim = lastDim;
 	root->b = Bbox;
@@ -85,22 +68,21 @@ void KdTreeTri::construct(){
 	build(root, mData, Bbox);
 }
 
-bool KdTreeTri::traverse(KdNode *root, const Ray& ray, Intersection& isect){
+bool KdTreeTri::_traverse(KdNode *root, const Ray& ray, Intersection& isect){
 	if (root == NULL)
 		return MISS;
 	//puts("!");
 	bool res = MISS;
 	if (root->isLeaf){
 		if (debug){
-			puts("in Leaf");
-			root->x->prt();
+			puts("is Leaf");
+			for (Triangle* tri : root->triangles)
+				tri->prt();
 		}
-		res = root->x->intersect(ray, isect);
-		
-		if (traverse(root->left, ray, isect) == HIT)
-			res = HIT;
-		if (traverse(root->right, ray, isect) == HIT)
-			res = HIT;
+		res = MISS;
+		for (Triangle* tri : root->triangles)
+			if (tri->intersect(ray, isect) == HIT)
+				res = HIT;
 		return res;
 	}
 	KdNode* first = root->left;
@@ -138,7 +120,7 @@ bool KdTreeTri::traverse(KdNode *root, const Ray& ray, Intersection& isect){
 		colorMessage("step into first child", 5);
 	}
 	double tmpDist = isect.getDist();
-	if (traverse(first, ray, isect) == HIT){
+	if (_traverse(first, ray, isect) == HIT){
 		//printf("%d %lf\n", dim, root->split);
 		//printf("!dist = %lf split = %lf\n", isect.getDist(), split);
 		//colorMessage("Important", 1);
@@ -154,7 +136,7 @@ bool KdTreeTri::traverse(KdNode *root, const Ray& ray, Intersection& isect){
 	}
 	if (debug)
 		colorMessage("step into second child", 5);
-	if (!ignore && traverse(second, ray, isect) == HIT){
+	if (!ignore && _traverse(second, ray, isect) == HIT){
 		// if (near < 0 && far > 0 && nearX < split && split < farX){
 		// 	printf("near = %lf far = %lf\n", near, far);
 		// }
@@ -168,7 +150,7 @@ bool KdTreeTri::traverse(KdNode *root, const Ray& ray, Intersection& isect){
 }
 
 bool KdTreeTri::intersect(const Ray& ray, Intersection& isect){
-	return traverse(root, ray, isect);
+	return _traverse(root, ray, isect);
 }
 
 void KdTreeTri::del(KdNode* root){

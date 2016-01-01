@@ -81,7 +81,7 @@ public:
 	int getKNearest(const Vec3f& pos, int K){
 		m = 0, mLimit = K;
 		aPos = pos;
-		findKNearest(1);
+		_findKNearest(1);
 		return m;
 	}
 	void findInBall(vector<T* > &res, int root, const Vec3f& pos, real radius2){
@@ -108,20 +108,7 @@ public:
 public:
 	int root;
 private:
-	void findKNearest(int root){
-		KdNode* cur = &a[root];
-		int first = aPos[cur->dim] > cur->split, second = !first;
-		addToHeap(cur->t);
-		if ((cur->ch >> first) & 1){
-			if (m < mLimit || a[root * 2 + first].b->minDist2(aPos) < res[0].first)
-				findKNearest(root * 2 + first);
-		}
-		if ((cur->ch >> second) & 1){
-			if (m < mLimit || a[root * 2 + second].b->minDist2(aPos) < res[0].first)
-				findKNearest(root * 2 + second);
-		}
-	}
-	void addToHeap(T* t){
+	void _addToHeap(T* t){
 		real dist = (t->getPos() - aPos).L2();
 		if (m == mLimit){
 			if (res[0].first < dist)
@@ -133,6 +120,19 @@ private:
 		res[m ++] = make_pair(dist, t);
 		if (m == mLimit)
 			make_heap(res, res + m);
+	}
+	void _findKNearest(int root){
+		KdNode* cur = &a[root];
+		int first = aPos[cur->dim] > cur->split, second = !first;
+		_addToHeap(cur->t);
+		if ((cur->ch >> first) & 1){
+			if (m < mLimit || a[root * 2 + first].b->minDist2(aPos) < res[0].first)
+				_findKNearest(root * 2 + first);
+		}
+		if ((cur->ch >> second) & 1){
+			if (m < mLimit || a[root * 2 + second].b->minDist2(aPos) < res[0].first)
+				_findKNearest(root * 2 + second);
+		}
 	}
 
 	int mDim;
@@ -157,14 +157,14 @@ public:
 			isLeaf = 0;
 			dim = -1;
 			left = right = NULL;
-			x = NULL;
+			triangles.clear();
 			b = NULL;
 		}
 		void naiveSplit();
 		short isLeaf, dim;
 		real split;
 		Box* b;
-		Triangle* x;
+		vector<Triangle*> triangles;
 		KdNode* left;
 		KdNode* right;
 	};
@@ -184,7 +184,6 @@ public:
 	void build(KdNode*& root, const vector<Triangle* > a, Box* Bbox, short lastDim = -1);
 	void construct();
 
-	bool traverse(KdNode *root, const Ray& ray, Intersection& isect);
 	bool intersect(const Ray& ray, Intersection& isect);
 	bool intersectP(const Ray& ray){}
 
@@ -195,6 +194,7 @@ public:
 public:
 	static bool debug;
 private:
+	bool _traverse(KdNode *root, const Ray& ray, Intersection& isect);
 	int mDim;
 	int n;
 	vector<Triangle* > mData;
