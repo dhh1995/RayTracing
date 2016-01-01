@@ -16,10 +16,14 @@ public:
 		return "Triangle";
 	}
 	Triangle(Vertex* A, Vertex* B, Vertex* C):A(A), B(B), C(C){
-		//mV = (B - A).Normalize();
-		//mU = (C - A).Normalize();
-		mNorm = cross(B->getPos() - A->getPos(), C->getPos() - A->getPos()).Normalize();
-		mD = - dot(A->getPos(), mNorm);
+		a = b = c = -1;
+		_computeNorm();
+	}
+	Triangle(const vector<Vertex*> vex, int a, int b, int c):a(a), b(b), c(c), A(vex[a]), B(vex[b]), C(vex[c]){
+		_computeNorm();
+	}
+	int getVexID(int i){
+		return i == 0 ? a : i == 1 ? b : c;
 	}
 	void prt(){
 		colorMessage("Triangle:", 3);
@@ -50,6 +54,13 @@ public:
 	bool intersect(const Ray& ray, Intersection& isect);
 	bool intersectP(const Ray& ray);
 private:
+	void _computeNorm(){
+		//mV = (B - A).Normalize();
+		//mU = (C - A).Normalize();
+		mNorm = cross(B->getPos() - A->getPos(), C->getPos() - A->getPos()).Normalize();
+		mD = - dot(A->getPos(), mNorm);
+	}
+	int a, b, c;
 	Vertex* A;
 	Vertex* B;
 	Vertex* C;

@@ -99,6 +99,9 @@ public:
 				findInBall(res, root * 2 + second, pos, radius2);
 		}
 	}
+	vector<T*>& getData(){
+		return mData;
+	}
 
 	~KdTree(){
 		if (a != NULL)

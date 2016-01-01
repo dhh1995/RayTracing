@@ -13,8 +13,8 @@ public:
 	Vec3f getPos(){
 		return mPos;
 	}
-	real getAxis(int dim) const{
-		return mPos[dim];
+	Vec3f getNorm(){
+		return mNorm;
 	}
 	void prt(){
 		printf("pos = ");
@@ -22,23 +22,9 @@ public:
 		printf("norm = ");
 		mNorm.prt();
 	}
-private:
-	Vec3f mPos; // pos
-	Vec3f mNorm; // norm
-	Matrix44* mQuad;
-	//vector<Triangle* > mAdjecent;
-};
-
-struct VertexPair{
-	Vertex* A;
-	Vertex* B;
-	real error;
-	bool operator < (const VertexPair &O) const{
-		return error > O.error;
-	}
-	// bool operator > (const VertexPair &O) const{
-	// 	return error < O.error;
-	// }
+protected:
+	Vec3f mPos;
+	Vec3f mNorm;
 };
 
 }; // namespace Raytrace

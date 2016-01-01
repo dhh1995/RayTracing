@@ -5,9 +5,8 @@
 #include "core/common.h"
 #include "core/primitive.h"
 #include "core/intersection.h"
-#include "core/vertex.h"
+#include "core/meshvertex.h"
 #include "core/kdtree.h"
-//#include "core/kdtree.cpp"
 #include "shapes/triangle.h"
 #include "shapes/box.h"
 
@@ -23,6 +22,7 @@ public:
 		return mTriangles;
 	}
 	//HomeWork 2 Mesh decimation.
+  	void contraction(VertexPair P);
 	void decimation(real percent, real threshold = 0);
 
 	bool intersect(const Ray& ray, Intersection& isect); //brute force, use kd-tree for whole scene instead.

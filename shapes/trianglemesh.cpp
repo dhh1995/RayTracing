@@ -35,7 +35,7 @@ TriangleMesh::TriangleMesh(string objFile, Material* aMaterial, Vec3f trans, rea
 			// mVertexs[a].prt();
 			// mVertexs[b].prt();
 			// mVertexs[c].prt();
- 			Triangle* tri = new Triangle(mVertexs[a], mVertexs[b], mVertexs[c]);
+ 			Triangle* tri = new Triangle(mVertexs, a, b, c);
  			tri->setMaterial(mMaterial);
 			mTriangles.push_back(tri);
 			//tri->mNorm.prt();
@@ -45,16 +45,26 @@ TriangleMesh::TriangleMesh(string objFile, Material* aMaterial, Vec3f trans, rea
 	progressMessage("done loading");
 }
 
+void TriangleMesh::contraction(VertexPair P){
+
+}
 
 void TriangleMesh::decimation(real percent, real threshold){
 	int n = mVertexs.size();
 	int m = mTriangles.size(), need = int(m * percent);
-	for (Vertex* vex : mVertexs)
-		mVexCloud.add(vex);
-	mVexCloud.construct();
 	for (Vertex* vex : mVertexs){
-		vector<Vertex* > res;
+		MeshVertex* meshVex = new MeshVertex(*vex);
+		mVexCloud.add(meshVex);
+	}
+	vector<MeshVertex*> meshVertexs = mVexCloud.getData();
+	mVexCloud.construct();
+	for (Triangle* tri : mTriangles){
+		
+	}
+	for (MeshVertex* vex : meshVertexs){
+		vector<MeshVertex* > res;
 		mVexCloud.findInBall(res, mVexCloud.root, vex->getPos(), threshold * threshold);
+
 	}
 	while (!Q.empty() && n > need){
 		VertexPair pair = Q.top();

@@ -80,8 +80,8 @@ inline void progressMessage(string message){
 template<class T> class KdTree;
 class Photon;
 typedef KdTree<Photon> PhotonMap;
-class Vertex;
-typedef KdTree<Vertex> VertexCloud;
+class MeshVertex;
+typedef KdTree<MeshVertex> VertexCloud;
 
 //class Triangle;
 class Scene;
