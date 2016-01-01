@@ -14,4 +14,4 @@ Transform::Transform(const Matrix44 &mat)
 		
 }
 
-}; // namespace Raytrace
+}; // namespace Raytracer

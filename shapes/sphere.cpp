@@ -60,4 +60,4 @@ bool Sphere::intersectP(const Ray& aRay){
 	return false;
 }
 
-}; // namespace Raytrace
+}; // namespace Raytracer

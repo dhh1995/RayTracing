@@ -72,7 +72,7 @@ private:
 //private:
 };
 
-}; // namespace Raytrace
+}; // namespace Raytracer
 
 
 #endif // SHAPES_TRIANGLE_H

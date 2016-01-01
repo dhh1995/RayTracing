@@ -32,6 +32,6 @@ protected:
 //private:
 };
 
-}; // namespace Raytrace
+}; // namespace Raytracer
 
 #endif // CORE_RENDERER_H

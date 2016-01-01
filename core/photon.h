@@ -21,6 +21,6 @@ private:
 
 
 
-}; // namespace Raytrace
+}; // namespace Raytracer
 
 #endif // CORE_PHOTON_H

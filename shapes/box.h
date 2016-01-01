@@ -80,6 +80,6 @@ private:
 	Vec3f mMin, mMax;
 };
 
-}; // namespace Raytrace
+}; // namespace Raytracer
 
 #endif // SHAPES_BOX_H

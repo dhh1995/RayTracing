@@ -27,6 +27,6 @@ protected:
 	Vec3f mNorm;
 };
 
-}; // namespace Raytrace
+}; // namespace Raytracer
 
 #endif // CORE_VERTEX_H

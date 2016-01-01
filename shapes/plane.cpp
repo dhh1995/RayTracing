@@ -37,4 +37,4 @@ bool Plane::intersectP(const Ray& aRay){
 
 }
 
-}; // namespace Raytrace
+}; // namespace Raytracer

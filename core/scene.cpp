@@ -95,4 +95,4 @@ Color Scene::getLi(const Ray& ray, const Intersection& isect){
 	return res;
 }
 
-}; // namespace Raytrace
+}; // namespace Raytracer

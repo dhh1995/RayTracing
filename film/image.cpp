@@ -35,4 +35,4 @@ void Image::show(){
 	waitKey(0);
 }
 
-}; // namespace Raytrace
+}; // namespace Raytracer

@@ -34,6 +34,6 @@ private:
 	real mD;
 };
 
-}; // namespace Raytrace
+}; // namespace Raytracer
 
 #endif // SHAPES_PLANE_H

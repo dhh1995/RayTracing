@@ -39,6 +39,6 @@ public:
 	Mat mImg;
 };
 
-}; // namespace Raytrace
+}; // namespace Raytracer
 
 #endif // FILM_IMAGE_H

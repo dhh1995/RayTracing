@@ -47,6 +47,6 @@ private:
 	Color mAmbient;
 };
 
-}; // namespace Raytrace
+}; // namespace Raytracer
 
 #endif // CORE_SCENE_H

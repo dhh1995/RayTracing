@@ -7,4 +7,4 @@ namespace Raytracer {
 	
 //}
 
-}; // namespace Raytrace
+}; // namespace Raytracer

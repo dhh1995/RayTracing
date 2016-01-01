@@ -51,4 +51,4 @@ bool Box::intersectP(const Ray& aRay){
 	
 }
 
-}; // namespace Raytrace
+}; // namespace Raytracer

@@ -1,9 +1,9 @@
 #include "meshvertex.h"
 
-namespace Raytracer {
+namespace Decimation {
 
 real MeshVertex::computeCost(MeshVertex* A, MeshVertex* B, Vec3f& target){
 
 }
 
-}; // namespace Raytracer
+}; // namespace Decimation

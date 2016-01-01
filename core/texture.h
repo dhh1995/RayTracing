@@ -42,6 +42,6 @@ class BumpTexture : public ImgTexture{
 	
 };
 
-}; // namespace Raytrace
+}; // namespace Raytracer
 
 #endif // CORE_TEXTURE_H

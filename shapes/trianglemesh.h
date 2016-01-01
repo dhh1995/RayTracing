@@ -21,15 +21,11 @@ public:
 	vector<Triangle*> getTriangles(){
 		return mTriangles;
 	}
-	//HomeWork 2 Mesh decimation.
-  	void contraction(VertexPair P);
-	void decimation(real percent, real threshold = 0);
-
 	bool intersect(const Ray& ray, Intersection& isect); //brute force, use kd-tree for whole scene instead.
 	bool intersectP(const Ray& ray){}
 	Vec3f getNorm(Vec3f pos){}
 	~TriangleMesh();
-private:
+protected:
 	int chg(int x){
 		if (x < 0)
 			return mVertexs.size() + x - 1;
@@ -39,13 +35,10 @@ private:
 	vector<Vertex* > mVertexs;
 	vector<Triangle*> mTriangles;
 	Box* mBoundingBox;
-
-	priority_queue<VertexPair> Q;
-	VertexCloud mVexCloud;
 };
 
 
-}; // namespace Raytrace
+}; // namespace Raytracer
 
 
 #endif // SHAPES_TRIANGLEMESH_H

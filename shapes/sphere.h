@@ -25,6 +25,6 @@ private:
 	real mSqRadius;
 };
 
-}; // namespace Raytrace
+}; // namespace Raytracer
 
 #endif // SHAPES_SPHERE_H

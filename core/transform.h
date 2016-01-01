@@ -16,6 +16,6 @@ private:
 	Matrix44 m;
 };
 
-}; // namespace Raytrace
+}; // namespace Raytracer
 
 #endif // CORE_TRANSFORM_H

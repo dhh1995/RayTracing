@@ -13,6 +13,6 @@ public:
 //private:
 };
 
-}; // namespace Raytrace
+}; // namespace Raytracer
 
 #endif // CORE_REFLECTION_H

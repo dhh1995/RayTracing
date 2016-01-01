@@ -208,6 +208,6 @@ private:
 	const int MAX_KDTREE_LEAF_SIZE = 30;
 };
 
-}; // namespace Raytrace
+}; // namespace Raytracer
 
 #endif // CORE_KDTREE_H

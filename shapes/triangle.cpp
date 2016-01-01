@@ -60,4 +60,4 @@ bool Triangle::intersectP(const Ray& ray){
 }
 
 
-}; // namespace Raytrace
+}; // namespace Raytracer

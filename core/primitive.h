@@ -38,6 +38,6 @@ protected:
 	char* mName;
 };
 
-}; // namespace Raytrace
+}; // namespace Raytracer
 
 #endif // CORE_PRIMITIVE_H
