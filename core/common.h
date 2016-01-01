@@ -83,6 +83,7 @@ typedef KdTree<Photon> PhotonMap;
 class Vertex;
 typedef KdTree<Vertex> VertexCloud;
 
+//class Triangle;
 class Scene;
 class Camera;
 class Primitive;

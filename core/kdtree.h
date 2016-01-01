@@ -4,15 +4,15 @@
 
 #include "common.h"
 #include "photon.h"
-#include "shapes/trianglemesh.h"
+#include "vertex.h"
+#include "shapes/triangle.h"
 #include "shapes/box.h"
 
 namespace Raytracer {
 
 //balanced KdTree for Photon
 
-template<class T>
-bool CmpT(const T* A, const T* B);
+//TO be validate {
 
 template <class T>
 class KdTree{
@@ -23,6 +23,15 @@ public:
 		real split;
 		short ch;
 		short dim;
+	};
+
+	struct KdCmp {
+		KdCmp(short dim = 0) : mDim(dim) {
+		}
+		bool operator ()(const T *A, const T *B) {
+			return A->getAxis(mDim) < B->getAxis(mDim);
+		}
+		short mDim;
 	};
 	KdTree(int MaxK = MAX_K_NEAREST){
 		a = NULL;
@@ -37,7 +46,23 @@ public:
 		++ n;
 		mData.push_back(x);
 	}
-	void build(int root, int l, int r);
+	void build(int root, int l, int r){
+		KdNode* cur = &a[root];
+		cur->b = new Box;
+		for (int i = l; i < r; ++ i)
+			cur->b->update(mData[i]->getPos());
+		cur->dim = mDim = cur->b->argMaxDiff();
+		KdCmp cmp = KdCmp(mDim);
+		int m = (l + r) / 2;
+		nth_element(mData.begin() + l, mData.begin() + m, mData.begin() + r, cmp);
+		cur->t = mData[m];
+		cur->split = cur->t->getAxis(cur->dim);
+		cur->ch = 0;
+		if (l < m)
+			build(root * 2, l, m), cur->ch |= 1;
+		if (m + 1 < r)
+			build(root * 2 + 1, m + 1, r), cur->ch |= 2;
+	}
 	void construct(){
 		int N = n * 2;
 
@@ -50,28 +75,75 @@ public:
 	pair<real, T* > getKthT(int k){
 		return res[k];
 	}
-	int getKNearest(const Vec3f& pos, int K);
-	void findInBall(vector<T> &res, int root, const Vec3f& pos, real radius2);
+	int getKNearest(const Vec3f& pos, int K){
+		m = 0, mLimit = K;
+		aPos = pos;
+		findKNearest(1);
+		return m;
+	}
+	void findInBall(vector<T* > &res, int root, const Vec3f& pos, real radius2){
+		KdNode* cur = &a[root];
+		int first = aPos[cur->dim] > cur->split, second = !first;
+		real dist = (cur->t->getPos() - aPos).L2();
+		if (dist < radius2)
+			res.push_back(cur->t);
+		if ((cur->ch >> first) & 1){
+			if (m < mLimit || a[root * 2 + first].b->minDist2(aPos) < radius2)
+				findInBall(res, root * 2 + first, pos, radius2);
+		}
+		if ((cur->ch >> second) & 1){
+			if (m < mLimit || a[root * 2 + second].b->minDist2(aPos) < radius2)
+				findInBall(res, root * 2 + second, pos, radius2);
+		}
+	}
+
 	~KdTree(){
 		if (a != NULL)
 			delete[] a;
 		delete[] res;
 	}
 public:
-	static int mDim;
+	int root;
 private:
-	void findKNearest(int root);
-	void addToHeap(T* t);
+	void findKNearest(int root){
+		KdNode* cur = &a[root];
+		int first = aPos[cur->dim] > cur->split, second = !first;
+		addToHeap(cur->t);
+		if ((cur->ch >> first) & 1){
+			if (m < mLimit || a[root * 2 + first].b->minDist2(aPos) < res[0].first)
+				findKNearest(root * 2 + first);
+		}
+		if ((cur->ch >> second) & 1){
+			if (m < mLimit || a[root * 2 + second].b->minDist2(aPos) < res[0].first)
+				findKNearest(root * 2 + second);
+		}
+	}
+	void addToHeap(T* t){
+		real dist = (t->getPos() - aPos).L2();
+		if (m == mLimit){
+			if (res[0].first < dist)
+				return;
+			pop_heap(res, res + m);
+			res[m] = make_pair(dist, t);
+			push_heap(res, res + m);
+		}
+		res[m ++] = make_pair(dist, t);
+		if (m == mLimit)
+			make_heap(res, res + m);
+	}
 
+	int mDim;
 	int mLimit;
 	real mDist;
 	int n, m;
-	int root;
 	KdNode* a;
 	vector<T* > mData;
 	pair<real, T* > * res;
 	Vec3f aPos;
 };
+
+// } TO be validate
+
 
 //unbalanced KdTree using SAH
 
