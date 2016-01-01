@@ -72,4 +72,12 @@ bool TriangleMesh::intersect(const Ray& ray, Intersection& isect){
 	return retval;
 }
 
+TriangleMesh::~TriangleMesh(){
+	delete mBoundingBox;
+	for (Vertex* vex : mVertexs)
+		delete vex;
+	for (Triangle* tri : mTriangles)
+		delete tri;
+}
+
 }; // namespace Raytrace

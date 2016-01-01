@@ -14,7 +14,7 @@ namespace Raytracer {
 
 //TO be validate {
 
-template <class T>
+template<class T>
 class KdTree{
 public:
 	struct KdNode{
@@ -23,6 +23,9 @@ public:
 		real split;
 		short ch;
 		short dim;
+		~KdNode(){
+			delete b;
+		}
 	};
 
 	struct KdCmp {

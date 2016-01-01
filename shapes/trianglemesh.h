@@ -28,6 +28,7 @@ public:
 	bool intersect(const Ray& ray, Intersection& isect); //brute force, use kd-tree for whole scene instead.
 	bool intersectP(const Ray& ray){}
 	Vec3f getNorm(Vec3f pos){}
+	~TriangleMesh();
 private:
 	int chg(int x){
 		if (x < 0)

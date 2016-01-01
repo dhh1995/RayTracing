@@ -44,7 +44,7 @@ int main()
 	progressMessage("Camera constructed");
 
 	Scene* scene = new Scene(WHITE / 5);
-	int useScene = 1;
+	int useScene = 2;
 	int debug = 0;
 	int useBox = 1;
 
