@@ -37,7 +37,7 @@ int main()
 {
 	Film* film = new Image(500, 500);
 	film->setName("test");
-	Camera* camera = new ProjectiveCamera(Vec3f(0, 0, 0), Vec3f(1, 0, 0), Vec3f(0, 0, 1), 90);
+	Camera* camera = new ProjectiveCamera(Vec3f(0, 0.001, -0.001), Vec3f(1, 0, 0), Vec3f(0, 0, 1), 90);
 	//Camera *camera = new ProjectiveCamera(Vector(0, 5, 10), Vector(0, 0, -1), Vector(0, 1, 0), 90); 
 	camera->setFilm(film);
 
@@ -81,7 +81,7 @@ int main()
 	Texture* texture3 = new Texture(image3, 50, 50);
 	floor3->setTexture(texture3);
 
-	Material* mat4 = new Material(WHITE, 0.5, 0., 0.5, 0.5, 1.0, WHITE/5);
+	Material* mat4 = new Material(WHITE, 0, 0., 0.5, 0.5, 1.0, WHITE/5);
 
 	//--------------------------------------test_scene 1----------------------------
 	if (useScene == 1){
@@ -151,42 +151,44 @@ int main()
 	//--------------------------------------test_scene 2----------------------------
 	if (useScene == 2){
 		Primitive* obj0 = new TriangleMesh("test_data/dinosaur.2k.obj",
-			mat1, Vec3f(0, 0, 0), 0.5);
+			mat1, Vec3f(0, 0, 0), 0.05);
 		scene->addObject(obj0);
 
 		//Light* light0 = new Light(WHITE, Vec3f(-20, 0, 0));
 		//scene->addLight(light0);
 
-		Light* light1 = new Light(PINK / 2 , Vec3f(-40, 0, 0));
+		Light* light1 = new Light(PINK / 2 , Vec3f(-4, 0, 0));
 		scene->addLight(light1);
-		Light* light2 = new Light(WHITE / 3, Vec3f(0, 0, 40) );
+		Light* light2 = new Light(WHITE / 3, Vec3f(0, 0, 4) );
 		scene->addLight(light2);
-		Light* light3 = new Light(WHITE / 3, Vec3f(-30, 0, 0) );
+		Light* light3 = new Light(WHITE / 3, Vec3f(-3, 0, 0) );
 		scene->addLight(light3);
-		Light* light4 = new Light(BLUE / 2, Vec3f(0, 0, 30));
+		Light* light4 = new Light(BLUE / 2, Vec3f(0, 0, 3));
 		//scene->addLight(light4);
 
-		Primitive* obj5 = new Plane(Vec3f(-1, 0, 0), Vec3f(0, -1, 0), 60);
+		Material* newmat4 = new Material(WHITE, 0.5, 0., 0.5, 0.5, 1.0, WHITE/5);
+
+		Primitive* obj5 = new Plane(Vec3f(-1, 0, 0), Vec3f(0, -1, 0), 6);
 		obj5->setMaterial(mat4);
 		scene->addObject(obj5);
 
-		Primitive* obj6 = new Plane(Vec3f(0, 1, 0), Vec3f(-1, 0, 0), 60);
+		Primitive* obj6 = new Plane(Vec3f(0, 1, 0), Vec3f(-1, 0, 0), 6);
 		obj6->setMaterial(mat4);
 		scene->addObject(obj6);
 
-		Primitive* obj7 = new Plane(Vec3f(0, 0, 1), Vec3f(1, 0, 0), 60);
-		obj7->setMaterial(mat4);
+		Primitive* obj7 = new Plane(Vec3f(0, 0, 1), Vec3f(1, 0, 0), 6);
+		obj7->setMaterial(newmat4);
 		scene->addObject(obj7);
 	
-		Primitive* obj8 = new Plane(Vec3f(0, -1, 0), Vec3f(1, 0, 0), 60);
+		Primitive* obj8 = new Plane(Vec3f(0, -1, 0), Vec3f(1, 0, 0), 6);
 		obj8->setMaterial(mat4);
 		scene->addObject(obj8);
 
-		Primitive* obj9 = new Plane(Vec3f(0, 0, -1), Vec3f(-1, 0, 0), 60);
-		obj9->setMaterial(mat4);
+		Primitive* obj9 = new Plane(Vec3f(0, 0, -1), Vec3f(-1, 0, 0), 6);
+		obj9->setMaterial(newmat4);
 		scene->addObject(obj9);
 
-		camera->setPos(Vec3f(-40, 0, 0));
+		camera->setPos(Vec3f(-4, 0, 0));
 
 	}
 

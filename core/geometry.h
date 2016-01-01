@@ -12,7 +12,7 @@ using std::abs;
 namespace Raytracer {
 
 typedef double real;
-const real EPS = 1e-5;
+const real EPS = 1e-4;
 
 inline real min(real x, real y, real z){
 	if (x < y)
