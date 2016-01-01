@@ -12,28 +12,36 @@ namespace Raytracer {
 
 class MeshVertex : public Vertex{
 public:
-	MeshVertex(const Vertex A) : Vertex(A){
-		
+	MeshVertex(const Vertex &A, int id) : Vertex(A), id(id){
+		mQuad = Matrix44(0.0f);
 	}
-
+	void merge(Matrix44 aQuad){
+		mQuad += aQuad;
+	}
 	real getAxis(int dim) const{
 		return mPos[dim];
 	}
+	static real computeCost(MeshVertex* A, MeshVertex* B, Vec3f &target);
 private:
-	Matrix44* mQuad;
+	int id;
+	Matrix44 mQuad;
 	vector<Triangle* > mAdjecent;
 };
 
 struct VertexPair{
-	MeshVertex* A;
-	MeshVertex* B;
-	real error;
+	VertexPair(MeshVertex* A, MeshVertex* B) : A(A), B(B){
+		mError = MeshVertex::computeCost(A, B, mTarget);
+	}
 	bool operator < (const VertexPair &O) const{
-		return error > O.error;
+		return mError > O.mError;
 	}
 	// bool operator > (const VertexPair &O) const{
 	// 	return error < O.error;
 	// }
+	MeshVertex* A;
+	MeshVertex* B;
+	real mError;
+	Vec3f mTarget;
 };
 
 }; // namespace Raytrace

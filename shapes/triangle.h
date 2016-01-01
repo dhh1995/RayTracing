@@ -22,6 +22,9 @@ public:
 	Triangle(const vector<Vertex*> vex, int a, int b, int c):a(a), b(b), c(c), A(vex[a]), B(vex[b]), C(vex[c]){
 		_computeNorm();
 	}
+	vector<real> getPlaneParam(){
+		return vector<real>({mNorm.x, mNorm.y, mNorm.z, mD});
+	}
 	int getVexID(int i){
 		return i == 0 ? a : i == 1 ? b : c;
 	}
