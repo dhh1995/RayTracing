@@ -19,11 +19,14 @@ public:
 	Vec3f getNorm(){
 		return mNorm;
 	}
-	void prt(){
+	void prt(FILE* out){
+		fprintf(out, "v %lf %lf %lf\n", mPos.x, mPos.y, mPos.z);
+	}
+	virtual void prt(){
 		printf("pos = ");
 		mPos.prt();
-		printf("norm = ");
-		mNorm.prt();
+		// printf("norm = ");
+		// mNorm.prt();
 	}
 protected:
 	Vec3f mPos;

@@ -14,6 +14,7 @@ namespace Raytracer {
 class TriangleMesh : public Primitive{
 public:
 	TriangleMesh(string objFile, Material* aMaterial, Vec3f trans = ORIGINAL, real scale = 1.0f);
+	void dump(string file);
 	string getType(){
 		return "TriangleMesh";
 	}

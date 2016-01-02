@@ -53,7 +53,6 @@ using std::priority_queue;
 using std::string;
 using std::pair;
 using std::make_pair;
-using std::swap;
 using std::cout;
 using std::endl;
 using std::min;

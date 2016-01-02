@@ -8,8 +8,10 @@
 #include "shapes/sphere.h"
 #include "shapes/plane.h"
 #include "shapes/trianglemesh.h"
+#include "decimation/demesh.h"
 
 using namespace Raytracer;
+using namespace Decimation;
 
 void emitDebugRay(Renderer* renderer, Ray ray){
 
@@ -44,9 +46,10 @@ int main()
 	progressMessage("Camera constructed");
 
 	Scene* scene = new Scene(WHITE / 5);
-	int useScene = 2;
+	int useScene = 666;
 	int debug = 0;
 	int useBox = 1;
+
 
 	//filmX 222, filmY 222
 	Ray debugRay = Ray(Vec3f(0.000000, 0.000000, 1.000000), Vec3f(0.988487, 0.104990, 0.108951));
@@ -82,6 +85,49 @@ int main()
 	floor3->setTexture(texture3);
 
 	Material* mat4 = new Material(WHITE, 0, 0., 0.5, 0.5, 1.0, WHITE/5);
+
+	if (useScene == 666){
+		enum OBJ{
+			DRAGON,
+			BUNNY,
+			DINASAUR,
+			CUBE,
+		};
+		int testModel = DINASAUR;
+		progressMessage("start loading");
+		switch(testModel){
+			case DRAGON:{
+				DeMesh* dragon = new DeMesh("test_data/fixed.perfect.dragon.100K.0.07.obj", mat1);
+				progressMessage("start decimation");
+				dragon->decimation(0.1);
+				dragon->dump("dragon_res.obj");
+			}
+				break;
+			case BUNNY:{
+				DeMesh* bunny = new DeMesh("test_data/bunny.fine.obj", mat1);
+				progressMessage("start decimation");
+				bunny->decimation(0.1);
+				bunny->dump("bunny_res.obj");
+			}
+				break;
+			case DINASAUR:{
+				DeMesh* dinosaur = new DeMesh("test_data/dinosaur.2k.obj", mat1);
+				progressMessage("start decimation");
+				dinosaur->decimation(0.01);
+				dinosaur->dump("dinosaur_res.obj");
+			}
+				break;
+			case CUBE:{
+				DeMesh* cube = new DeMesh("test_data/cube.obj", mat1);
+				progressMessage("start decimation");
+				cube->decimation(0.1);
+				cube->dump("dinosaur_res.obj");
+			}
+				break;
+		}
+		progressMessage("end dumping");
+		return 0;
+	}
 
 	//--------------------------------------test_scene 1----------------------------
 	if (useScene == 1){

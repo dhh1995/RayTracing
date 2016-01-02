@@ -13,7 +13,7 @@ namespace Decimation {
 
 class DeVertex : public Vertex{
 public:
-	DeVertex(const Vertex &A, int id) : Vertex(A), id(id){
+	DeVertex(const Vertex A, int id) : Vertex(A), id(id){
 		mQuad = Matrix44();
 	}
 	Matrix44 getQuadMatrix(){
@@ -21,6 +21,9 @@ public:
 	}
 	void merge(Matrix44 aQuad){
 		mQuad += aQuad;
+	}
+	void setID(int aID){
+		id = aID;
 	}
 	int getID(){
 		return id;
@@ -39,6 +42,10 @@ public:
 	}
 	void addAdjacent(DeTriangle* tri){
 		mAdjecent.push_back(tri);
+	}
+	void prt(){
+		printf("id = %d\npos = ", id);
+		mPos.prt();
 	}
 	static real computeCost(DeVertex* A, DeVertex* B, Vec3f &target);
 private:

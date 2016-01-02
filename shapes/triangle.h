@@ -28,6 +28,9 @@ public:
 		B->prt();
 		C->prt();
 	}
+	void prt(FILE* out){
+		fprintf(out, "f %d %d %d\n", a+1, b+1, c+1);
+	}
 	Box getBBox(){
 		Box box(A->getPos());
 		box.update(B->getPos());

@@ -10,11 +10,16 @@
 #include <assert.h>
 using std::abs;
 using std::vector;
+using std::swap;
 
 namespace Raytracer {
 
 typedef double real;
 const real EPS = 1e-4;
+
+inline bool equal(real x, real y){
+	return abs(x - y) < EPS;
+}
 
 inline real min(real x, real y, real z){
 	if (x < y)
@@ -41,7 +46,6 @@ inline real max(real x, real y, real z){
 		else
 			return z;
 }
-
 
 class Vec3f{
 public:
@@ -311,10 +315,10 @@ struct Matrix44{
 		m[3][0] =	m[3][1] =	m[3][2]				= 0.0;
 	}
 
-	Matrix44(real mat[4][4]){
+	Matrix44(const real mat[4][4]){
 		memcpy(m, mat, 16*sizeof(real));
 	}
-	Matrix44(vector<real> v){	//from vector 4 real m = v v^T
+	Matrix44(const vector<real> &v){	//from vector 4 real m = v v^T
 		assert(v.size() == 4);
 		for (int i = 0; i < 4; ++ i){
 			m[i][i] = v[i] * v[i];
@@ -342,8 +346,15 @@ struct Matrix44{
 				m[i][j] += A.m[i][j];
 		return *this;
 	}
+	Matrix44 operator + (const Matrix44& A) const{
+		Matrix44 res;
+		for (int i = 0; i < 4; ++ i)
+			for (int j = 0; j < 4; ++ j)
+				res.m[i][j] = m[i][j] + A.m[i][j];
+		return res;
+	}
 
-	Matrix44 operator * ( const Matrix44& A){
+	Matrix44 operator * ( const Matrix44& A) const{
 		Matrix44 res;
 		for (int k = 0; k < 4; ++ k)
 			for (int i = 0; i < 4; ++ i)
@@ -352,7 +363,7 @@ struct Matrix44{
 		return res;
 	}
 
-	Vec3f operator *(const Vec3f& A){	//assumme last row is 0,0,0,1
+	Vec3f operator *(const Vec3f& A) const{	//assumme last row is 0,0,0,1
 		Vec3f res;
 		for (int i = 0; i < 3; ++ i){
 			res[i] = m[i][3];
@@ -362,46 +373,72 @@ struct Matrix44{
 		return res;
 	}
 
-	Matrix44 transpose(){
+	Matrix44 transpose() const{
 	   return Matrix44(	m[0][0], m[1][0], m[2][0], m[3][0],
 						m[0][1], m[1][1], m[2][1], m[3][1],
 						m[0][2], m[1][2], m[2][2], m[3][2],
 						m[0][3], m[1][3], m[2][3], m[3][3]);
 	}
 
-	Matrix44 translation(const Vec3f& A){
+	Matrix44 inverse() const{
+		Matrix44 org(m), inv(1.0f);
+		for (int i = 0; i < 4; ++ i){
+			for (int j = i+1; equal(org.m[i][i], 0) && j < 4; ++ j)
+				if (!equal(org.m[i][j], 0)){
+					for (int k = i; k < 4; ++ k)
+						swap(org.m[i][k], org.m[j][k]);
+					for (int k = 0; k < 4; ++ k)
+						swap(inv.m[i][k], inv.m[j][k]);
+				}
+			if (equal)
+			for (int k = 0; k < 3; ++ k)
+				inv.m[i][k] /= org.m[i][i];
+			for (int k = 3; k >= i; --k)
+				org.m[i][k] /= org.m[i][i];
+			for (int j = 0; j < 4; ++ j) if (j != i)
+				if (!equal(org.m[j][i], 0)){
+					for (int k = 0; k < 4; ++ k)
+						inv.m[j][k] -= org.m[j][i] * inv.m[i][k];
+					for (int k = 3; k >= i; -- k)
+						org.m[j][k] -= org.m[j][i] * org.m[i][k];
+				}
+		}
+		return inv;
+	}
+
+	static Matrix44 translation(const Vec3f& A){
 		return Matrix44( 1 ,  0 ,  0 , A.x, 
 						 0 ,  1 ,  0 , A.y, 
 						 0 ,  0 ,  1 , A.z,
 						 0 ,  0 ,  0 ,  1 );
 	}
 
-	Matrix44 scale(const Vec3f& A){
+	static Matrix44 scale(const Vec3f& A){
 		return Matrix44(A.x,  0 ,  0 ,  0 , 
 						 0 , A.y,  0 ,  0 , 
 						 0 ,  0 , A.z,  0 , 
 						 0 ,  0 ,  0 ,  1 );
 	}
 
-	Matrix44 scale(real s){
+	static Matrix44 scale(real s){
 		return scale(Vec3f(s, s, s));
 	}
 
-	Matrix44 rotateX(real theta){
+	static Matrix44 rotateX(real theta){
 		return Matrix44( 0 ,	0		, 		1	  , 0, 
 						 0 , cos(theta)	, -sin(theta) , 0, 
 						 0 , sin(theta)	,  cos(theta) , 0, 
 						 0 ,	0		, 		0	  , 1);
 	}
 
-	Matrix44 rotateY(real theta){
+	static Matrix44 rotateY(real theta){
 		return Matrix44(  cos(theta) , 0 , sin(theta) , 0, 
 								0	 , 0 , 		0	  , 0, 
 						 -sin(theta) , 0 , cos(theta) , 0, 
 								0	 , 0 ,		0	  , 1);
 	}
 
-	Matrix44 rotateZ(real theta){
+	static Matrix44 rotateZ(real theta){
 		return Matrix44( cos(theta)	, -sin(theta) , 0 , 0,
 						 sin(theta)	,  cos(theta) , 0 , 0,
 							0		,		0	  , 1 , 0, 

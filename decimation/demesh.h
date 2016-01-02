@@ -19,16 +19,13 @@ public:
 	void initialize(){
 		//convert to Decimation data, except for pointers in Triangle are Vertex, not DeVertex.
 		int n = 0;
-		for (Vertex* vex : mVertexs){
-			DeVertex* meshVex = new DeVertex(*vex, n ++);
-			mVexCloud.add(meshVex);
-		}
+		mVexCloud.clear();
+		for (Vertex* vex : mVertexs)
+			mVexCloud.add(new DeVertex(*vex, n ++));
 		merged = new bool[n];
-		for (Triangle* tri : mTriangles){
-			DeTriangle* deTri= new DeTriangle(tri);
-			//deTri->setVertex();
-			mDeTriangles.push_back(deTri);
-		}
+		mDeTriangles.clear();
+		for (Triangle* tri : mTriangles)
+			mDeTriangles.push_back(new DeTriangle(*tri, mVexCloud.getData()));
 		mVexCloud.construct();
 	}
 	string getType(){

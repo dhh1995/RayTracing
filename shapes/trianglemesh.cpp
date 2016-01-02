@@ -45,6 +45,17 @@ TriangleMesh::TriangleMesh(string objFile, Material* aMaterial, Vec3f trans, rea
 	progressMessage("done loading");
 }
 
+void TriangleMesh::dump(string file){
+	file = "test_data/dump/" + file;
+	FILE* fp = fopen(file.c_str(), "w");
+	fprintf(fp, "# dumped\n");
+	for (Vertex* vex : mVertexs)
+		vex->prt(fp);
+	for (Triangle* tri : mTriangles)
+		tri->prt(fp);
+	fclose(fp);
+}
+
 bool TriangleMesh::intersect(const Ray& ray, Intersection& isect){
 	int retval = MISS;
 	for (Triangle* triangle : mTriangles){
