@@ -11,12 +11,16 @@ int DeMesh::contraction(VertexPair P){
 	//printf("A = %d B = %d\n",A->getID(), B->getID());
 	A->setPos(P.mTarget);
 	A->merge(B->getQuadMatrix());
-	merged[B->getID()] = true;
+	timeStamp[A->getID()] = ++Time;
+	timeStamp[B->getID()] = -1;
+	vector<DeVertex* >& neighbor = A->getNeighbor();
+	//neighbor.erase(find(neighbor.begin(), neighbor.end(), B));
 	for (DeVertex* vex : B->getNeighbor())
-		if (A != vex){
-			A->addNeighbor(vex);
-			Q.push(VertexPair(A,vex));
-		}
+		if (A != vex)
+			neighbor.push_back(vex);
+	//for (DeVertex* vex : neighbor)
+	//	Q.push(VertexPair(A, vex, Time));
+
 	vector<DeTriangle*> & Atriangles = A->getAdjacent();
 	vector<DeTriangle*> & Btriangles = B->getAdjacent();
 	for (DeTriangle* tri : Btriangles)
@@ -38,9 +42,8 @@ int DeMesh::contraction(VertexPair P){
 }
 
 void DeMesh::decimation(real percent, real threshold){
-	initialize();
+	initialize(threshold > 0.0f);
 	int m = mDeTriangles.size(), need = int(m * percent);
-	need = 100;
 	vector<DeVertex*> meshVertexs = mVexCloud.getData();
 	for (DeTriangle* tri : mDeTriangles){
 		Matrix44 quadMatrix(tri->getPlaneParam());
@@ -59,7 +62,7 @@ void DeMesh::decimation(real percent, real threshold){
 			mVexCloud.findInBall(neighbor, mVexCloud.root, vex->getPos(), threshold * threshold);
 		for (DeVertex* near : neighbor)
 			if (vex->getID() < near->getID())
-				Q.push(VertexPair(vex, near));
+				Q.push(VertexPair(vex, near, Time));
 	}
 
 	//printf("%d %d %d %d\n",mVertexs.size(), mTriangles.size(), meshVertexs.size(),  mDeTriangles.size());
@@ -72,20 +75,8 @@ void DeMesh::decimation(real percent, real threshold){
 			m -= contraction(pair);
 		if (debug)
 			printf("%lf\n",pair.mError);
-
-		int cnt = 0;
-		for (DeTriangle* tri : mDeTriangles)
-			if (!tri->isDegeneration())
-				++cnt;
-			else if (debug){
-				printf("deleted = %d\n", tri);
-			}
-
-		if (debug){
-			printf("%d %d\n", m, cnt);
-			if (m != cnt)
-				break;
-		}
+		if (m % 100 == 0)
+			printf("%d\n", m);
 	}
 
 	printf("%d %d\n",m, Q.size());
@@ -93,7 +84,7 @@ void DeMesh::decimation(real percent, real threshold){
 	mVertexs.clear();
 	int n = 0;
 	for (DeVertex* vex : meshVertexs){
-		if (!merged[vex->getID()]){
+		if (timeStamp[vex->getID()] >= 0){
 			vex->setID(n ++);
 			mVertexs.push_back(vex);
 		}else

@@ -56,7 +56,7 @@ private:
 };
 
 struct VertexPair{
-	VertexPair(DeVertex* A, DeVertex* B) : A(A), B(B){
+	VertexPair(DeVertex* A, DeVertex* B, int time) : A(A), B(B), mTimeStamp(time){
 		mError = DeVertex::computeCost(A, B, mTarget);
 	}
 	bool operator < (const VertexPair &O) const{
@@ -69,6 +69,7 @@ struct VertexPair{
 	DeVertex* B;
 	real mError;
 	Vec3f mTarget;
+	int mTimeStamp;
 };
 
 }; // namespace Decimation

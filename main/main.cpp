@@ -99,7 +99,7 @@ int main()
 			case DRAGON:{
 				DeMesh* dragon = new DeMesh("test_data/fixed.perfect.dragon.100K.0.07.obj", mat1);
 				progressMessage("start decimation");
-				dragon->decimation(0.1);
+				dragon->decimation(0.5);
 				dragon->dump("dragon_res.obj");
 			}
 				break;
@@ -113,7 +113,7 @@ int main()
 			case DINASAUR:{
 				DeMesh* dinosaur = new DeMesh("test_data/dinosaur.2k.obj", mat1);
 				progressMessage("start decimation");
-				dinosaur->decimation(0.01);
+				dinosaur->decimation(0.5);
 				dinosaur->dump("dinosaur_res.obj");
 			}
 				break;
