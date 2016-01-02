@@ -46,6 +46,7 @@ public:
 	void prt(){
 		printf("id = %d\npos = ", id);
 		mPos.prt();
+		mQuad.prt();
 	}
 	static real computeCost(DeVertex* A, DeVertex* B, Vec3f &target);
 private:
@@ -62,9 +63,6 @@ struct VertexPair{
 	bool operator < (const VertexPair &O) const{
 		return mError > O.mError;
 	}
-	// bool operator > (const VertexPair &O) const{
-	// 	return error < O.error;
-	// }
 	DeVertex* A;
 	DeVertex* B;
 	real mError;

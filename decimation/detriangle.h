@@ -45,23 +45,27 @@ public:
 			return C = to, true;
 		return false;
 	}
-	// int* findVertexId(int id){
-	// 	if (a == id)
-	// 		return &a;
-	// 	if (b == id)
-	// 		return &b;
-	// 	if (c == id)
-	// 		return &c;
-	// 	return NULL;
-	// }
 	Vertex* getVex(int i){
 		return i == 0 ? A : i == 1 ? B : C;
+	}
+	bool flipNorm(){
+		Vec3f norm = cross(B->getPos() - A->getPos(), C->getPos() - A->getPos()).Normalize();
+		//printf("%lf\n",dot(mNorm, norm));
+		return dot(mNorm, norm) < 0;
 	}
 	void setDegeneration(bool value = true){
 		degeneration = value;
 	}
 	bool isDegeneration(){
 		return degeneration;
+	}
+	void prt(){
+		colorMessage("Triangle:", 6);
+		printf("A: "); A->getPos().prt();
+		printf("B: "); B->getPos().prt();
+		printf("C: "); C->getPos().prt();
+		mNorm.prt();
+		printf("mD = %lf\n",mD);
 	}
 private:
 	bool degeneration;

@@ -93,13 +93,13 @@ int main()
 			DINASAUR,
 			CUBE,
 		};
-		int testModel = DINASAUR;
+		int testModel = BUNNY;
 		progressMessage("start loading");
 		switch(testModel){
 			case DRAGON:{
 				DeMesh* dragon = new DeMesh("test_data/fixed.perfect.dragon.100K.0.07.obj", mat1);
 				progressMessage("start decimation");
-				dragon->decimation(0.5);
+				dragon->decimation(0.01);
 				dragon->dump("dragon_res.obj");
 			}
 				break;
@@ -113,15 +113,15 @@ int main()
 			case DINASAUR:{
 				DeMesh* dinosaur = new DeMesh("test_data/dinosaur.2k.obj", mat1);
 				progressMessage("start decimation");
-				dinosaur->decimation(0.5);
+				dinosaur->decimation(0.3);
 				dinosaur->dump("dinosaur_res.obj");
 			}
 				break;
 			case CUBE:{
 				DeMesh* cube = new DeMesh("test_data/cube.obj", mat1);
 				progressMessage("start decimation");
-				cube->decimation(0.1);
-				cube->dump("dinosaur_res.obj");
+				cube->decimation(0.9);
+				cube->dump("cube_res.obj");
 			}
 				break;
 		}

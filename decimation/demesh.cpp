@@ -8,19 +8,49 @@ int DeMesh::contraction(VertexPair P){
 	int count = 0;
 	DeVertex* A = P.A;
 	DeVertex* B = P.B;
-	//printf("A = %d B = %d\n",A->getID(), B->getID());
+
+	//A->prt();
+	//B->prt();
+	//deal with fold over <- flip normal
+	vector<DeTriangle*> Atri = A->getAdjacent();
+	vector<DeTriangle*> Btri = B->getAdjacent();
+	Vec3f Apos = A->getPos(), Bpos = B->getPos();
 	A->setPos(P.mTarget);
+	B->setPos(P.mTarget);
+	bool forbid = false;
+	for (DeTriangle* tri : Atri)
+		if (!tri->haveVertex(B) && tri->flipNorm())
+			forbid = true;
+	for (DeTriangle* tri : Btri)
+		if (!tri->haveVertex(A) && tri->flipNorm())
+			forbid = true;
+	//printf("%d\n",forbid);
+	if (forbid){
+		A->setPos(Apos);
+		B->setPos(Bpos);
+		return 0;
+	}
+
+	if (debug){
+		A->prt();
+		B->prt();
+	}
+	//printf("A = %d B = %d\n",A->getID(), B->getID());
+	//A->setPos(P.mTarget);
 	A->merge(B->getQuadMatrix());
+	if (debug){
+		A->getPos().prt();
+		A->getQuadMatrix().prt();
+	}
 	timeStamp[A->getID()] = ++Time;
 	timeStamp[B->getID()] = -1;
 	vector<DeVertex* >& neighbor = A->getNeighbor();
-	//neighbor.erase(find(neighbor.begin(), neighbor.end(), B));
+	neighbor.erase(find(neighbor.begin(), neighbor.end(), B));
 	for (DeVertex* vex : B->getNeighbor())
 		if (A != vex)
 			neighbor.push_back(vex);
-	//for (DeVertex* vex : neighbor)
-	//	Q.push(VertexPair(A, vex, Time));
-
+	for (DeVertex* vex : neighbor)
+		Q.push(VertexPair(A, vex, Time));
 	vector<DeTriangle*> & Atriangles = A->getAdjacent();
 	vector<DeTriangle*> & Btriangles = B->getAdjacent();
 	for (DeTriangle* tri : Btriangles)
@@ -44,9 +74,12 @@ int DeMesh::contraction(VertexPair P){
 void DeMesh::decimation(real percent, real threshold){
 	initialize(threshold > 0.0f);
 	int m = mDeTriangles.size(), need = int(m * percent);
+	need = 1000;
 	vector<DeVertex*> meshVertexs = mVexCloud.getData();
 	for (DeTriangle* tri : mDeTriangles){
 		Matrix44 quadMatrix(tri->getPlaneParam());
+		//tri->prt();
+		//quadMatrix.prt();
 		DeVertex* vex[3];
 		for (int i = 0; i < 3; ++ i){
 			vex[i] = dynamic_cast<DeVertex*>(tri->getVex(i));
@@ -57,6 +90,7 @@ void DeMesh::decimation(real percent, real threshold){
 			vex[i]->addNeighbor(vex[(i+1)%3]);
 	}
 	for (DeVertex* vex : meshVertexs){
+		//vex->prt();
 		vector<DeVertex* >& neighbor = vex->getNeighbor();
 		if (threshold > 0.0f)
 			mVexCloud.findInBall(neighbor, mVexCloud.root, vex->getPos(), threshold * threshold);
@@ -74,7 +108,7 @@ void DeMesh::decimation(real percent, real threshold){
 		if (_checkValid(pair))
 			m -= contraction(pair);
 		if (debug)
-			printf("%lf\n",pair.mError);
+			printf("error = %lf\n",pair.mError);
 		if (m % 100 == 0)
 			printf("%d\n", m);
 	}

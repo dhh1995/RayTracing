@@ -445,6 +445,14 @@ struct Matrix44{
 							0		,		0	  , 0 , 1);
 	}
 
+	void prt() const{
+		for (int i = 0; i < 4; ++ i){
+			for (int j = 0; j < 4; ++ j)
+				printf("%.6lf ", m[i][j]);
+			puts("");
+		}
+	}
+
 	real m[4][4];
 };
 

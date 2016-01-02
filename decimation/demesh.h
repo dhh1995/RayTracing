@@ -40,9 +40,9 @@ public:
 	}
 private:
 	bool _checkValid(VertexPair P){
-		if (timeStamp[P.A->getID()])
+		if (timeStamp[P.A->getID()] < 0 || timeStamp[P.A->getID()] > P.mTimeStamp)
 			return false;
-		if (timeStamp[P.B->getID()])
+		if (timeStamp[P.B->getID()] < 0 || timeStamp[P.B->getID()] > P.mTimeStamp)
 			return false;
 		return true;
 	}
