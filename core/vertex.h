@@ -13,6 +13,9 @@ public:
 	Vec3f getPos(){
 		return mPos;
 	}
+	void setPos(Vec3f aPos){
+		mPos = aPos;
+	}
 	Vec3f getNorm(){
 		return mNorm;
 	}

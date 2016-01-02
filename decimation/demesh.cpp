@@ -2,36 +2,47 @@
 
 namespace Decimation {
 
-void TriangleMesh::contraction(VertexPair P){
+void DeMesh::contraction(VertexPair P){
+	DeVertex* A = P.A;
+	DeVertex* B = P.B;
+	A->setPos(P.mTarget);
+	vector<DeTriangle*> & Atriangles = A->getAdjacent();
+	vector<DeTriangle*> & Btriangles = B->getAdjacent();
 
+	//filter(Atriangles);
 }
 
-void TriangleMesh::decimation(real percent, real threshold){
-	int m = mTriangles.size(), need = int(m * percent);
-	int n = 0;
-	for (Vertex* vex : mVertexs){
-		MeshVertex* meshVex = new MeshVertex(*vex, n ++);
-		mVexCloud.add(meshVex);
-	}
-	vector<MeshVertex*> meshVertexs = mVexCloud.getData();
+void DeMesh::decimation(real percent, real threshold){
+	int m = mDeTriangles.size(), need = int(m * percent);
+	vector<DeVertex*> meshVertexs = mVexCloud.getData();
 	mVexCloud.construct();
-	for (Triangle* tri : mTriangles){
+	for (DeTriangle* tri : mDeTriangles){
 		Matrix44 quadMatrix(tri->getPlaneParam());
-		for (int i = 0; i < 3; ++ i)
-			meshVertexs[tri->getVexID(i)]->merge(quadMatrix);
-	}
-	for (MeshVertex* vex : meshVertexs){
-		vector<MeshVertex* > res;
-		mVexCloud.findInBall(res, mVexCloud.root, vex->getPos(), threshold * threshold);
-		for (MeshVertex* near : res){
-
+		DeVertex* vex[3];
+		for (int i = 0; i < 3; ++ i){
+			vex[i] = meshVertexs[tri->getVexID(i)];
+			vex[i]->addAdjacent(tri);
+			vex[i]->merge(quadMatrix);
 		}
+		for (int i = 0; i < 3; ++ i)
+			vex[i]->addNeighbor(vex[(i+1)%3]);
 	}
-	while (!Q.empty() && n > need){
+	for (DeVertex* vex : meshVertexs){
+		vector<DeVertex* >& neighbor = vex->getNeighbor();
+		mVexCloud.findInBall(neighbor, mVexCloud.root, vex->getPos(), threshold * threshold);
+		for (DeVertex* near : neighbor)
+			Q.push(VertexPair(vex, near));
+	}
+	while (!Q.empty() && m > need){
 		VertexPair pair = Q.top();
 		Q.pop();
-
+		if (_checkValid(pair))
+			contraction(pair);
 	}
+}
+
+bool DeMesh::_checkValid(VertexPair P){
+
 }
 
 }; // namespace Decimation

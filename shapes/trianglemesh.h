@@ -5,7 +5,6 @@
 #include "core/common.h"
 #include "core/primitive.h"
 #include "core/intersection.h"
-#include "core/meshvertex.h"
 #include "core/kdtree.h"
 #include "shapes/triangle.h"
 #include "shapes/box.h"

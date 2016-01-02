@@ -1,32 +1,48 @@
 // shapes/trianglemesh.h
-#ifndef SHAPES_TRIANGLEMESH_H
-#define SHAPES_TRIANGLEMESH_H
+#ifndef DECIMATION_DEMESH_H
+#define DECIMATION_DEMESH_H
 
 #include "core/common.h"
 #include "core/kdtree.h"
 #include "decimation/devertex.h"
 #include "shapes/trianglemesh.h"
 
-using namespace RayTracer;
+using namespace Raytracer;
 
 namespace Decimation {
 
-class DeMesh : public TriangleMesh{
+class DeMesh : public TriangleMesh {
 public:
 	DeMesh(string objFile, Material* aMaterial, Vec3f trans = ORIGINAL, real scale = 1.0f)
 		: TriangleMesh(objFile, aMaterial, trans, scale){
+		int n = 0;
+		for (Vertex* vex : mVertexs){
+			DeVertex* meshVex = new DeVertex(*vex, n ++);
+			mVexCloud.add(meshVex);
 		}
+		merged = new bool[n];
+		for (Triangle* tri : mTriangles){
+			DeTriangle* deTri= new DeTriangle(tri);
+			mDeTriangles.push_back(deTri);
+		}
+	}
 	string getType(){
 		return "DecimationMesh";
 	}
   	void contraction(VertexPair P);
 	void decimation(real percent, real threshold = 0);
+	~DeMesh(){
+		delete[] merged;
+	}
 private:
+	bool _checkValid(VertexPair P);
 	priority_queue<VertexPair> Q;
-	VertexCloud mVexCloud;
+	KdTree<DeVertex> mVexCloud;
+	vector<DeTriangle* > mDeTriangles;
+	bool* merged;
 };
 
 }; // namespace Decimation
 
 
-#endif // SHAPES_TRIANGLEMESH_H
+#endif // DECIMATION_DEMESH_H

@@ -84,7 +84,7 @@ public:
 		_findKNearest(1);
 		return m;
 	}
-	void findInBall(vector<T* > &res, int root, const Vec3f& pos, real radius2){
+	void findInBall(vector<T* > &res, int root, const Vec3f& pos, real radius2){ //push_back
 		KdNode* cur = &a[root];
 		int first = aPos[cur->dim] > cur->split, second = !first;
 		real dist = (cur->t->getPos() - aPos).L2();

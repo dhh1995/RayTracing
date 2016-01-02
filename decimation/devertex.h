@@ -1,19 +1,20 @@
 // core/devertex.h
-#ifndef CORE_DEVERTEX_H
-#define CORE_DEVERTEX_H
+#ifndef DECIMATION_DEVERTEX_H
+#define DECIMATION_DEVERTEX_H
 
 #include "core/common.h"
 #include "core/vertex.h"
+#include "decimation/detriangle.h"
 #include "shapes/triangle.h"
 
-using namespace RayTracer;
+using namespace Raytracer;
 
 namespace Decimation {
 
 class DeVertex : public Vertex{
 public:
 	DeVertex(const Vertex &A, int id) : Vertex(A), id(id){
-		mQuad = Matrix44(0.0f);
+		mQuad = Matrix44();
 	}
 	void merge(Matrix44 aQuad){
 		mQuad += aQuad;
@@ -21,11 +22,24 @@ public:
 	real getAxis(int dim) const{
 		return mPos[dim];
 	}
+	vector<DeVertex* >& getNeighbor(){
+		return mNeighbor;
+	}
+	vector<DeTriangle* >& getAdjacent(){
+		return mAdjecent;
+	}
+	void addNeighbor(DeVertex* nei){
+		mNeighbor.push_back(nei);
+	}
+	void addAdjacent(DeTriangle* tri){
+		mAdjecent.push_back(tri);
+	}
 	static real computeCost(DeVertex* A, DeVertex* B, Vec3f &target);
 private:
 	int id;
 	Matrix44 mQuad;
-	vector<Triangle* > mAdjecent;
+	vector<DeVertex* > mNeighbor;
+	vector<DeTriangle* > mAdjecent;
 };
 
 struct VertexPair{
@@ -46,4 +60,4 @@ struct VertexPair{
 
 }; // namespace Decimation
 
-#endif // CORE_DEVERTEX_H
+#endif // DECIMATION_DEVERTEX_H

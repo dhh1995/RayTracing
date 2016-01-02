@@ -303,7 +303,7 @@ public:
 };
 
 struct Matrix44{
-	Matrix44(real eye = 1.0f){
+	Matrix44(real eye = 0.0f){
 		m[0][0]	=	m[1][1] =	m[2][2] =	m[3][3] = eye;
 					m[0][1] =	m[0][2] =	m[0][3] =
 		m[1][0]				=	m[1][2] =	m[1][3] = 
@@ -314,7 +314,7 @@ struct Matrix44{
 	Matrix44(real mat[4][4]){
 		memcpy(m, mat, 16*sizeof(real));
 	}
-	Matrix44(vector<real> v){
+	Matrix44(vector<real> v){	//from vector 4 real m = v v^T
 		assert(v.size() == 4);
 		for (int i = 0; i < 4; ++ i){
 			m[i][i] = v[i] * v[i];
@@ -336,18 +336,76 @@ struct Matrix44{
 		assert(id>=0 && id<=3);
 		return m[id];
 	}*/
-	Matrix44 operator += (const Matrix44 &A) {
+	Matrix44 operator += (const Matrix44& A) {
 		for (int i = 0; i < 4; ++ i)
 			for (int j = 0; j < 4; ++ j)
 				m[i][j] += A.m[i][j];
 		return *this;
 	}
 
-	Matrix44 Transpose(){
+	Matrix44 operator * ( const Matrix44& A){
+		Matrix44 res;
+		for (int k = 0; k < 4; ++ k)
+			for (int i = 0; i < 4; ++ i)
+				for (int j = 0; j < 4; ++ j)
+					res.m[i][j] += m[i][k] * A.m[k][j];
+		return res;
+	}
+
+	Vec3f operator *(const Vec3f& A){	//assumme last row is 0,0,0,1
+		Vec3f res;
+		for (int i = 0; i < 3; ++ i){
+			res[i] = m[i][3];
+			for (int j = 0; j < 3; ++ j)
+				res[i] += m[i][j] * A[j];
+		}
+		return res;
+	}
+
+	Matrix44 transpose(){
 	   return Matrix44(	m[0][0], m[1][0], m[2][0], m[3][0],
 						m[0][1], m[1][1], m[2][1], m[3][1],
 						m[0][2], m[1][2], m[2][2], m[3][2],
 						m[0][3], m[1][3], m[2][3], m[3][3]);
+	}
+
+	Matrix44 translation(const Vec3f& A){
+		return Matrix44( 1 ,  0 ,  0 , A.x, 
+						 0 ,  1 ,  0 , A.y, 
+						 0 ,  0 ,  1 , A.z,
+						 0 ,  0 ,  0 ,  1 );
+	}
+
+	Matrix44 scale(const Vec3f& A){
+		return Matrix44(A.x,  0 ,  0 ,  0 , 
+						 0 , A.y,  0 ,  0 , 
+						 0 ,  0 , A.z,  0 , 
+						 0 ,  0 ,  0 ,  1 );
+	}
+
+	Matrix44 scale(real s){
+		return scale(Vec3f(s, s, s));
+	}
+
+	Matrix44 rotateX(real theta){
+		return Matrix44( 0 ,	0		, 		1	  , 0, 
+						 0 , cos(theta)	, -sin(theta) , 0, 
+						 0 , sin(theta)	,  cos(theta) , 0, 
+						 0 ,	0		, 		0	  , 1);
+	}
+
+	Matrix44 rotateY(real theta){
+		return Matrix44(  cos(theta) , 0 , sin(theta) , 0, 
+								0	 , 0 , 		0	  , 0, 
+						 -sin(theta) , 0 , cos(theta) , 0, 
+								0	 , 0 ,		0	  , 1);
+	}
+
+	Matrix44 rotateZ(real theta){
+		return Matrix44( cos(theta)	, -sin(theta) , 0 , 0,
+						 sin(theta)	,  cos(theta) , 0 , 0,
+							0		,		0	  , 1 , 0, 
+							0		,		0	  , 0 , 1);
 	}
 
 	real m[4][4];

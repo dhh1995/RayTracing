@@ -1,8 +1,8 @@
-#include "meshvertex.h"
+#include "devertex.h"
 
 namespace Decimation {
 
-real MeshVertex::computeCost(MeshVertex* A, MeshVertex* B, Vec3f& target){
+real DeVertex::computeCost(DeVertex* A, DeVertex* B, Vec3f& target){
 
 }
 

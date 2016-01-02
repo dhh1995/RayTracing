@@ -22,12 +22,6 @@ public:
 	Triangle(const vector<Vertex*> vex, int a, int b, int c):a(a), b(b), c(c), A(vex[a]), B(vex[b]), C(vex[c]){
 		_computeNorm();
 	}
-	vector<real> getPlaneParam(){
-		return vector<real>({mNorm.x, mNorm.y, mNorm.z, mD});
-	}
-	int getVexID(int i){
-		return i == 0 ? a : i == 1 ? b : c;
-	}
 	void prt(){
 		colorMessage("Triangle:", 3);
 		A->prt();
@@ -56,7 +50,7 @@ public:
 	bool inside(const Vec3f pos);
 	bool intersect(const Ray& ray, Intersection& isect);
 	bool intersectP(const Ray& ray);
-private:
+protected:
 	void _computeNorm(){
 		//mV = (B - A).Normalize();
 		//mU = (C - A).Normalize();
