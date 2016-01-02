@@ -9,9 +9,11 @@ using namespace Raytracer;
 
 namespace Decimation {
 
+// only IDs(a, b, c) are correct while decimation.
 class DeTriangle : public Triangle{
 public:
 	DeTriangle(Triangle* tri): Triangle(*tri){
+		degeneration = false;
 	}
 	string getType(){
 		return "DeTriangle";
@@ -19,16 +21,33 @@ public:
 	vector<real> getPlaneParam(){
 		return vector<real>({mNorm.x, mNorm.y, mNorm.z, mD});
 	}
+	vector<int> getVexIDs(){
+		return vector<int>({a,b,c});
+	}
+	int* findVertexID(int id){
+		if (a == id)
+			return &a;
+		if (b == id)
+			return &b;
+		if (c == id)
+			return &c;
+		return NULL;
+	}
 	int getVexID(int i){
 		return i == 0 ? a : i == 1 ? b : c;
 	}
+	void setDegeneration(bool value = true){
+		degeneration = value;
+	}
+	bool isDegeneration(){
+		return degeneration;
+	}
 	void prt(){
 		colorMessage("Triangle:", 3);
-		A->prt();
-		B->prt();
-		C->prt();
+		printf("%d %d %d\n", a, b, c);
 	}
 private:
+	bool degeneration;
 };
 
 }; // namespace Decimation

@@ -15,6 +15,9 @@ class DeMesh : public TriangleMesh {
 public:
 	DeMesh(string objFile, Material* aMaterial, Vec3f trans = ORIGINAL, real scale = 1.0f)
 		: TriangleMesh(objFile, aMaterial, trans, scale){
+	}
+	void initialize(){
+		//convert to Decimation data, except for pointers in Triangle are Vertex, not DeVertex.
 		int n = 0;
 		for (Vertex* vex : mVertexs){
 			DeVertex* meshVex = new DeVertex(*vex, n ++);
@@ -23,19 +26,28 @@ public:
 		merged = new bool[n];
 		for (Triangle* tri : mTriangles){
 			DeTriangle* deTri= new DeTriangle(tri);
+			//deTri->setVertex();
 			mDeTriangles.push_back(deTri);
 		}
+		mVexCloud.construct();
 	}
 	string getType(){
 		return "DecimationMesh";
 	}
-  	void contraction(VertexPair P);
+  	int contraction(VertexPair P);
 	void decimation(real percent, real threshold = 0);
 	~DeMesh(){
 		delete[] merged;
 	}
 private:
-	bool _checkValid(VertexPair P);
+	bool _checkValid(VertexPair P){
+		if (merged[P.A->getID()])
+			return false;
+		if (merged[P.B->getID()])
+			return false;
+		return true;
+	}
+	//void _filter(vector<DeTriangle*> &triangles);
 	priority_queue<VertexPair> Q;
 	KdTree<DeVertex> mVexCloud;
 	vector<DeTriangle* > mDeTriangles;

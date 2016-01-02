@@ -16,8 +16,14 @@ public:
 	DeVertex(const Vertex &A, int id) : Vertex(A), id(id){
 		mQuad = Matrix44();
 	}
+	Matrix44 getQuadMatrix(){
+		return mQuad;
+	}
 	void merge(Matrix44 aQuad){
 		mQuad += aQuad;
+	}
+	int getID(){
+		return id;
 	}
 	real getAxis(int dim) const{
 		return mPos[dim];
@@ -28,8 +34,8 @@ public:
 	vector<DeTriangle* >& getAdjacent(){
 		return mAdjecent;
 	}
-	void addNeighbor(DeVertex* nei){
-		mNeighbor.push_back(nei);
+	void addNeighbor(DeVertex* vex){
+		mNeighbor.push_back(vex);
 	}
 	void addAdjacent(DeTriangle* tri){
 		mAdjecent.push_back(tri);
