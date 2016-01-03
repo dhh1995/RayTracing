@@ -40,6 +40,13 @@ public:
 	void addNeighbor(DeVertex* vex){
 		mNeighbor.push_back(vex);
 	}
+	void changeNeighbor(DeVertex* B, DeVertex* A){
+		for (DeVertex* vex : mNeighbor)
+			if (vex == B){
+				vex = A;
+				return;
+			}
+	}
 	void addAdjacent(DeTriangle* tri){
 		mAdjecent.push_back(tri);
 	}

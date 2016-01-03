@@ -25,7 +25,6 @@ int DeMesh::contraction(VertexPair P){
 	// 		return 10000000;
 	// 	}
 
-
 	// for (DeTriangle* tri : Btri)
 	// 	if (tri->isDegeneration()){
 	// 		A->prt();
@@ -33,7 +32,6 @@ int DeMesh::contraction(VertexPair P){
 	// 		puts("!!");
 	// 		return 10000000;
 	// 	}
-
 
 	Vec3f Apos = A->getPos(), Bpos = B->getPos();
 	A->setPos(P.mTarget);
@@ -47,7 +45,7 @@ int DeMesh::contraction(VertexPair P){
 			forbid = true;
 	//printf("%d\n",forbid);
 	if (forbid){
-		printf("%d\n", ++ forbidCount);
+		//printf("%d\n", ++ forbidCount);
 		A->setPos(Apos);
 		B->setPos(Bpos);
 		return 0;
@@ -68,9 +66,12 @@ int DeMesh::contraction(VertexPair P){
 	timeStamp[B->getID()] = -1;
 	vector<DeVertex* >& neighbors = A->getNeighbor();
 	neighbors.erase(find(neighbors.begin(), neighbors.end(), B));
-	for (DeVertex* vex : B->getNeighbor())
-		if (A != vex && find(neighbors.begin(), neighbors.end(), vex) == neighbors.end()) // Bruteforce
+	for (DeVertex* vex : B->getNeighbor()){
+		if (A != vex && find(neighbors.begin(), neighbors.end(), vex) == neighbors.end()){// Bruteforce
 			neighbors.push_back(vex);
+			vex->changeNeighbor(B, A);
+		}
+	}
 	for (DeVertex* vex : neighbors)
 		Q.push(VertexPair(A, vex, Time));
 	vector<DeTriangle*> & Atriangles = A->getAdjacent();
@@ -96,6 +97,7 @@ int DeMesh::contraction(VertexPair P){
 	for (DeTriangle* tri : Atriangles)
 		if (!tri->isDegeneration())
 			reserve.push_back(tri);
+	Atriangles.clear();
 	Atriangles = reserve;
 
 	// if (Atriangles.size() > 13){
@@ -107,7 +109,6 @@ int DeMesh::contraction(VertexPair P){
 	// 			if (neighbors[i] == neighbors[j])
 	// 				printf("%d %d\n",i,j);
 	// }
-
 
 	return count;
 }

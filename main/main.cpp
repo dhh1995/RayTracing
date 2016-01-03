@@ -54,11 +54,11 @@ int main()
 	//filmX 222, filmY 222
 	Ray debugRay = Ray(Vec3f(0.000000, 0.000000, 1.000000), Vec3f(0.988487, 0.104990, 0.108951));
 	//filmX 220, filmY 205
-	debugRay.setDir(Vec3f(0.977862, 0.174408, 0.115619));
-	debugRay.setDir(Vec3f(1, 0, 0.2).Normalize());
+	// debugRay.setDir(Vec3f(0.977862, 0.174408, 0.115619));
+	// debugRay.setDir(Vec3f(1, 0, 0.2).Normalize());
 	//filmX 218, filmY 250
-	//debugRay.setDir(Vec3f(0.992107, -0.005965, 0.125256));
-	debugRay = Ray(Vec3f(-20.000000, 0.000000, 0.000000), Vec3f(1, -0.1, 0.1).Normalize());
+	// debugRay.setDir(Vec3f(0.992107, -0.005965, 0.125256));
+	// debugRay = Ray(Vec3f(-20.000000, 0.000000, 0.000000), Vec3f(1, -0.1, 0.1).Normalize());
 
 	camera->setPos(Vec3f(0, 0, 3));
 
@@ -99,7 +99,7 @@ int main()
 		case DRAGON:{
 			DeMesh* dragon = new DeMesh("test_data/fixed.perfect.dragon.100K.0.07.obj", mat1);
 			progressMessage("start decimation");
-			dragon->decimation(0.01, 0 * dragon->diagonalLength() / 10.0);
+			dragon->decimation(0.01, dragon->diagonalLength() / 100.0);
 			dragon->dump("dragon_res.obj");
 		}
 			break;
