@@ -106,7 +106,7 @@ int main()
 		case BUNNY:{
 			DeMesh* bunny = new DeMesh("test_data/bunny.fine.obj", mat1);
 			progressMessage("start decimation");
-			bunny->decimation(0.1);
+			bunny->decimation(-1);
 			bunny->dump("bunny_res.obj");
 		}
 			break;

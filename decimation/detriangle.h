@@ -48,6 +48,9 @@ public:
 	Vertex* getVex(int i){
 		return i == 0 ? A : i == 1 ? B : C;
 	}
+	void updateNorm(){
+		_computeNorm();
+	}
 	bool flipNorm(){
 		Vec3f norm = cross(B->getPos() - A->getPos(), C->getPos() - A->getPos()).Normalize();
 		//printf("%lf\n",dot(mNorm, norm));

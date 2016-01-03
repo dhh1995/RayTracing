@@ -5,6 +5,7 @@ namespace Decimation {
 bool debug = false;
 int useless;
 int forbidCount;
+const int RESERVE_NUMBER_TRIANGLE = 400;
 
 int DeMesh::contraction(VertexPair P){
 	int count = 0;
@@ -95,9 +96,10 @@ int DeMesh::contraction(VertexPair P){
 	Btriangles.clear();
 	vector<DeTriangle*> reserve;
 	for (DeTriangle* tri : Atriangles)
-		if (!tri->isDegeneration())
+		if (!tri->isDegeneration()){
+			tri->updateNorm();
 			reserve.push_back(tri);
-	Atriangles.clear();
+		}
 	Atriangles = reserve;
 
 	// if (Atriangles.size() > 13){
@@ -116,7 +118,8 @@ int DeMesh::contraction(VertexPair P){
 void DeMesh::decimation(real percent, real threshold){
 	initialize(threshold > 0.0f);
 	int m = mDeTriangles.size(), need = int(m * percent);
-	need = 1000;
+	if (percent < 0)
+		need = RESERVE_NUMBER_TRIANGLE;
 	vector<DeVertex*> meshVertexs = mVexCloud.getData();
 	for (DeTriangle* tri : mDeTriangles){
 		Matrix44 quadMatrix(tri->getPlaneParam());
