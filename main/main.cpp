@@ -93,7 +93,7 @@ int main()
 			DINASAUR,
 			CUBE,
 		};
-		int testModel = DRAGON;
+		int testModel = BUNNY;
 		progressMessage("start loading");
 		switch(testModel){
 		case DRAGON:{

@@ -41,11 +41,8 @@ public:
 		mNeighbor.push_back(vex);
 	}
 	void changeNeighbor(DeVertex* B, DeVertex* A){
-		for (DeVertex* vex : mNeighbor)
-			if (vex == B){
-				vex = A;
-				return;
-			}
+		auto ind = find(mNeighbor.begin(), mNeighbor.end(), B);
+		*ind = A;
 	}
 	void addAdjacent(DeTriangle* tri){
 		mAdjecent.push_back(tri);
