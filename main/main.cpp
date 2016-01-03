@@ -93,13 +93,13 @@ int main()
 			DINASAUR,
 			CUBE,
 		};
-		int testModel = BUNNY;
+		int testModel = DRAGON;
 		progressMessage("start loading");
 		switch(testModel){
 		case DRAGON:{
 			DeMesh* dragon = new DeMesh("test_data/fixed.perfect.dragon.100K.0.07.obj", mat1);
 			progressMessage("start decimation");
-			dragon->decimation(0.01, dragon->diagonalLength() / 10.0);
+			dragon->decimation(0.01, 0 * dragon->diagonalLength() / 10.0);
 			dragon->dump("dragon_res.obj");
 		}
 			break;
@@ -164,7 +164,7 @@ int main()
 		// Primitive* obj4 = new TriangleMesh("test_data/cube.obj",
 		// 	mat4, Vec3f(2, 0.5, -1));
 		Primitive* obj4 = new TriangleMesh("test_data/cube.obj",
-			mat2, testTransForCube);
+			mat2, Matrix44::translation(testTransForCube));
 		//scene->addObject(obj4);
 		
 		Primitive* obj9 = new Sphere(Vec3f(3, 0, 1), 1);
@@ -197,7 +197,7 @@ int main()
 	//--------------------------------------test_scene 2----------------------------
 	if (useScene == 2){
 		Primitive* obj0 = new TriangleMesh("test_data/dinosaur.2k.obj",
-			mat1, Vec3f(0, 0, 0), 0.05);
+			mat1, Matrix44::scale(0.05));
 		scene->addObject(obj0);
 
 		//Light* light0 = new Light(WHITE, Vec3f(-20, 0, 0));
@@ -240,10 +240,10 @@ int main()
 
 	if (useScene == 3){
 		Primitive* dragon = new TriangleMesh("test_data/fixed.perfect.dragon.100K.0.07.obj",
-			mat1, Vec3f(0, 0, 0), 20);
+			mat1, Matrix44::scale(20));
 		scene->addObject(dragon);
 		Primitive* obj0 = new TriangleMesh("test_data/block.obj",
-			mat2, Vec3f(0, 0, 0), 1);
+			mat2);
 		//scene->addObject(obj0);
 
 		camera->setPos(Vec3f(-40, 0, 0));
@@ -342,7 +342,7 @@ int main()
 		// Material* mat2 = new Material(WHITE, 0, 1, 0.5, 0.1, 1.5, WHITE / 5);
 		// Material* mat4 = new Material(WHITE, 0.5, 0., 0.5, 0.5, 1.0, WHITE / 5);
 		Primitive* obj0 = new TriangleMesh("test_data/block.obj",
-			mat2, Vec3f(0, 0, 0), 1);
+			mat2);
 		scene->addObject(obj0);
 
 		camera->setPos(Vec3f(-40, 0, 0));

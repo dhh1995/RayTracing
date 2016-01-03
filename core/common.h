@@ -55,12 +55,6 @@ using std::cout;
 using std::endl;
 using std::min;
 
-inline bool same(real x, real y){
-	if (x < y + EPS && y < x + EPS)
-		return true;
-	return false;
-}
-
 inline void colorMessage(string message, int color){
 	char* cmd = new char[message.size() + 50];
 	sprintf(cmd, "echo '\e[1;%dm%s\e[0m'", color + 30, message.c_str());
@@ -70,6 +64,48 @@ inline void colorMessage(string message, int color){
 
 inline void progressMessage(string message){
 	colorMessage(message, 2); //red
+}
+
+
+//fastIO
+inline char getChar(char*& ptr){
+	return *(ptr ++);
+}
+
+inline void readBuf(char*& ptr, int &x){
+	char ch;
+	x = 0;
+	bool neg = false;
+	for (ch = getChar(ptr); ch < '0' || ch > '9'; ch = getChar(ptr)) 
+		if (ch == '-')
+			neg = true;
+	for (; ch >= '0' && ch <= '9'; ch = getChar(ptr))
+		x = x * 10 + (ch - '0');
+	if (neg)
+		x = -x;
+}
+
+inline void readBuf(char*& ptr, real &x){
+	char ch;
+	x = 0;
+	real y = 1;
+	bool decimal = false;
+	bool neg = false;
+	for (ch = getChar(ptr); ch < '0' || ch > '9'; ch = getChar(ptr)) 
+		if (ch == '-')
+			neg = true;
+	for (; ch == '.' || (ch >= '0' && ch <= '9'); ch = getChar(ptr))
+		if (ch == '.')
+			decimal = true;
+		else{
+			if (decimal){
+				y = y * 0.1;
+				x = x + y * (ch - '0');
+			}else
+				x = x * 10 + ch - '0';
+		}
+	if (neg)
+		x = -x;
 }
 
 template<class T> class KdTree;

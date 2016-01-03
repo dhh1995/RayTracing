@@ -14,8 +14,8 @@ namespace Decimation {
 
 class DeMesh : public TriangleMesh {
 public:
-	DeMesh(string objFile, Material* aMaterial, Vec3f trans = ORIGINAL, real scale = 1.0f)
-		: TriangleMesh(objFile, aMaterial, trans, scale){
+	DeMesh(string objFile, Material* aMaterial, Matrix44 transform = Matrix44::eye())
+		: TriangleMesh(objFile, aMaterial, transform){
 	}
 	void initialize(bool construction = true){
 		//convert to Decimation data, except for pointers in Triangle are Vertex, not DeVertex.

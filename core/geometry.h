@@ -20,7 +20,9 @@ typedef double real;
 const real EPS = 1e-4;
 
 inline bool equal(real x, real y){
-	return abs(x - y) < EPS;
+	if (x < y + EPS && y < x + EPS)
+		return true;
+	return false;
 }
 
 inline real min(real x, real y, real z){
@@ -309,7 +311,10 @@ public:
 };
 
 struct Matrix44{
-	Matrix44(real eye = 0.0f){
+	Matrix44(){
+		memset(m, 0, sizeof(m));
+	}
+	Matrix44(real eye){
 		m[0][0]	=	m[1][1] =	m[2][2] =	m[3][3] = eye;
 					m[0][1] =	m[0][2] =	m[0][3] =
 		m[1][0]				=	m[1][2] =	m[1][3] = 
@@ -407,6 +412,10 @@ struct Matrix44{
 				}
 		}
 		return inv;
+	}
+
+	static Matrix44 eye(){
+		return Matrix44(1.0f);
 	}
 
 	static Matrix44 translation(const Vec3f& A){
