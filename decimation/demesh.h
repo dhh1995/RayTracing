@@ -6,6 +6,7 @@
 #include "core/kdtree.h"
 #include "decimation/devertex.h"
 #include "shapes/trianglemesh.h"
+#include "shapes/box.h"
 
 using namespace Raytracer;
 
@@ -33,19 +34,16 @@ public:
 	string getType(){
 		return "DecimationMesh";
 	}
+	real diagonalLength(){
+		return mBoundingBox->getDiagonalLength();
+	}
   	int contraction(VertexPair P);
 	void decimation(real percent, real threshold = 0);
 	~DeMesh(){
 		delete[] timeStamp;
 	}
 private:
-	bool _checkValid(VertexPair P){
-		if (timeStamp[P.A->getID()] < 0 || timeStamp[P.A->getID()] > P.mTimeStamp)
-			return false;
-		if (timeStamp[P.B->getID()] < 0 || timeStamp[P.B->getID()] > P.mTimeStamp)
-			return false;
-		return true;
-	}
+	bool _checkValid(VertexPair P);
 	//void _filter(vector<DeTriangle*> &triangles);
 	priority_queue<VertexPair> Q;
 	KdTree<DeVertex> mVexCloud;

@@ -11,6 +11,8 @@
 using std::abs;
 using std::vector;
 using std::swap;
+using std::pair;
+using std::make_pair;
 
 namespace Raytracer {
 
@@ -363,14 +365,15 @@ struct Matrix44{
 		return res;
 	}
 
-	Vec3f operator *(const Vec3f& A) const{	//assumme last row is 0,0,0,1
+	pair<Vec3f, real> operator *(const Vec3f& A) const{	//assumme last row is 0,0,0,1
 		Vec3f res;
 		for (int i = 0; i < 3; ++ i){
 			res[i] = m[i][3];
 			for (int j = 0; j < 3; ++ j)
 				res[i] += m[i][j] * A[j];
 		}
-		return res;
+		real res3 = m[3][0] * A[0] + m[3][1] * A[1] + m[3][2] * A[2] + m[3][3] /*  *1  */ ;
+		return make_pair(res, res3);
 	}
 
 	Matrix44 transpose() const{

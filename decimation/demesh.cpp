@@ -3,6 +3,8 @@
 namespace Decimation {
 
 bool debug = false;
+int useless;
+int forbidCount;
 
 int DeMesh::contraction(VertexPair P){
 	int count = 0;
@@ -14,18 +16,38 @@ int DeMesh::contraction(VertexPair P){
 	//deal with fold over <- flip normal
 	vector<DeTriangle*> Atri = A->getAdjacent();
 	vector<DeTriangle*> Btri = B->getAdjacent();
+
+	// for (DeTriangle* tri : Atri)
+	// 	if (tri->isDegeneration()){
+	// 		A->prt();
+	// 		B->prt();
+	// 		puts("!!");
+	// 		return 10000000;
+	// 	}
+
+
+	// for (DeTriangle* tri : Btri)
+	// 	if (tri->isDegeneration()){
+	// 		A->prt();
+	// 		B->prt();
+	// 		puts("!!");
+	// 		return 10000000;
+	// 	}
+
+
 	Vec3f Apos = A->getPos(), Bpos = B->getPos();
 	A->setPos(P.mTarget);
 	B->setPos(P.mTarget);
 	bool forbid = false;
 	for (DeTriangle* tri : Atri)
-		if (!tri->haveVertex(B) && tri->flipNorm())
+		if (!tri->isDegeneration() && !tri->haveVertex(B) && tri->flipNorm())
 			forbid = true;
 	for (DeTriangle* tri : Btri)
-		if (!tri->haveVertex(A) && tri->flipNorm())
+		if (!tri->isDegeneration() && !tri->haveVertex(A) && tri->flipNorm())
 			forbid = true;
 	//printf("%d\n",forbid);
 	if (forbid){
+		printf("%d\n", ++ forbidCount);
 		A->setPos(Apos);
 		B->setPos(Bpos);
 		return 0;
@@ -44,20 +66,27 @@ int DeMesh::contraction(VertexPair P){
 	}
 	timeStamp[A->getID()] = ++Time;
 	timeStamp[B->getID()] = -1;
-	vector<DeVertex* >& neighbor = A->getNeighbor();
-	neighbor.erase(find(neighbor.begin(), neighbor.end(), B));
+	vector<DeVertex* >& neighbors = A->getNeighbor();
+	neighbors.erase(find(neighbors.begin(), neighbors.end(), B));
 	for (DeVertex* vex : B->getNeighbor())
-		if (A != vex)
-			neighbor.push_back(vex);
-	for (DeVertex* vex : neighbor)
+		if (A != vex && find(neighbors.begin(), neighbors.end(), vex) == neighbors.end()) // Bruteforce
+			neighbors.push_back(vex);
+	for (DeVertex* vex : neighbors)
 		Q.push(VertexPair(A, vex, Time));
 	vector<DeTriangle*> & Atriangles = A->getAdjacent();
 	vector<DeTriangle*> & Btriangles = B->getAdjacent();
 	for (DeTriangle* tri : Btriangles)
 		if (!tri->isDegeneration())
 			if (tri->haveVertex(A)){
-				//printf("tri = %d\n", tri);
 				tri->setDegeneration(), ++ count;
+				//delete degenation triangle from vertex C.
+				for (int i = 0; i < 3; ++ i){
+					DeVertex* C = dynamic_cast<DeVertex*> (tri->getVex(i));
+					if (C != A && C != B){
+						vector<DeTriangle*> & Ctri = C->getAdjacent();
+						Ctri.erase(find(Ctri.begin(), Ctri.end(), tri));
+					}
+				}
 			}else{
 				tri->changeVertex(B, A);
 				Atriangles.push_back(tri);
@@ -68,6 +97,18 @@ int DeMesh::contraction(VertexPair P){
 		if (!tri->isDegeneration())
 			reserve.push_back(tri);
 	Atriangles = reserve;
+
+	// if (Atriangles.size() > 13){
+	// if (neighbors.size() > 40){
+	// 	printf("%d\n",Atriangles.size());
+	// 	printf("%d\n",neighbors.size());
+	// 	for (int i = 0; i < neighbors.size(); ++ i)
+	// 		for (int j = 0; j < i; ++ j)
+	// 			if (neighbors[i] == neighbors[j])
+	// 				printf("%d %d\n",i,j);
+	// }
+
+
 	return count;
 }
 
@@ -91,26 +132,34 @@ void DeMesh::decimation(real percent, real threshold){
 	}
 	for (DeVertex* vex : meshVertexs){
 		//vex->prt();
-		vector<DeVertex* >& neighbor = vex->getNeighbor();
+		vector<DeVertex* >& neighbors = vex->getNeighbor();
 		if (threshold > 0.0f)
-			mVexCloud.findInBall(neighbor, mVexCloud.root, vex->getPos(), threshold * threshold);
-		for (DeVertex* near : neighbor)
-			if (vex->getID() < near->getID())
-				Q.push(VertexPair(vex, near, Time));
+			mVexCloud.findInBall(neighbors, mVexCloud.root, vex->getPos(), threshold * threshold);
+		for (DeVertex* near : neighbors){
+			//if (vex->getID() < near->getID()){
+				VertexPair pair(vex, near, Time);
+				// vex->prt();
+				// near->prt();
+				// printf("%lf\n", pair.mError);
+				Q.push(pair);
+			//}
+		}
 	}
 
 	//printf("%d %d %d %d\n",mVertexs.size(), mTriangles.size(), meshVertexs.size(),  mDeTriangles.size());
 	printf("%d\n",Q.size());
-
+	int last = m;
 	while (!Q.empty() && m > need){
 		VertexPair pair = Q.top();
 		Q.pop();
 		if (_checkValid(pair))
 			m -= contraction(pair);
-		if (debug)
-			printf("error = %lf\n",pair.mError);
-		if (m % 100 == 0)
-			printf("%d\n", m);
+		if (last - m > 1000){
+			//debug = true;
+			last = m;
+			printf("error = %.15lf\n",pair.mError);
+			printf("Triangles rest 			%d 		heap size = %d\n", m, Q.size());
+		}
 	}
 
 	printf("%d %d\n",m, Q.size());
@@ -140,6 +189,29 @@ void DeMesh::decimation(real percent, real threshold){
 	mDeTriangles.clear();
 	printf("%d\n",mVertexs.size());
 	printf("%d\n",mTriangles.size());
+}
+
+bool DeMesh::_checkValid(VertexPair P){
+	int AID = P.A->getID(), BID = P.B->getID();
+	if (debug){
+		bool flag = false;
+		if (timeStamp[AID] < 0)
+			printf("vertex %d merged\n", AID), flag = true;
+		if (timeStamp[BID] < 0)
+			printf("vertex %d merged\n", BID), flag = true;
+		if (timeStamp[AID] > P.mTimeStamp)
+			printf("vertex %d out of date\n", AID), flag = true;
+		if (timeStamp[BID] > P.mTimeStamp)
+			printf("vertex %d out of date\n", BID), flag = true;
+		if (flag)
+			printf("%d\n", ++ useless);
+
+	}
+	if (timeStamp[AID] < 0 || timeStamp[AID] > P.mTimeStamp)
+		return false;
+	if (timeStamp[BID] < 0 || timeStamp[BID] > P.mTimeStamp)
+		return false;
+	return true;
 }
 
 }; // namespace Decimation

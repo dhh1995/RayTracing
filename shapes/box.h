@@ -43,6 +43,9 @@ public:
 	real getMid(int dim){
 		return (mMax[dim] + mMin[dim]) / 2.0f;
 	}
+	real getDiagonalLength(){
+		return (mMax - mMin).length();
+	}
 	void prt(){
 		puts("Bounding Box:");
 		mMin.prt();

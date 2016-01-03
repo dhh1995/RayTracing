@@ -51,8 +51,6 @@ const Color BACKGROUND = BLACK;
 
 using std::priority_queue;
 using std::string;
-using std::pair;
-using std::make_pair;
 using std::cout;
 using std::endl;
 using std::min;
