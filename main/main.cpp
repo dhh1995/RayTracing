@@ -21,6 +21,7 @@ struct Args{
 	real threshold;
 	string needOption;
 	bool debug;
+	bool showHelp;
 	Args(){
 		//default
 		useScene = 666;
@@ -30,6 +31,27 @@ struct Args{
 		threshold = 0;
 		needOption = "ratio";
 		debug = false;
+		showHelp = false;
+	}
+	void showHelpInfo(){
+		showHelp = true;
+		char helpInfo[105];
+		sprintf(helpInfo, "--help or -h					Show this help information");
+		colorMessage(helpInfo, 3);
+		sprintf(helpInfo, "--debug 		default = false 	Set debug model on");
+		colorMessage(helpInfo, 3);
+		sprintf(helpInfo, "-scene [int]		default = %d		Choose which scene to use", useScene);
+		colorMessage(helpInfo, 3);
+		sprintf(helpInfo, "-model [int] 		default = %d		Choose which model to use", useModel);
+		colorMessage(helpInfo, 3);
+		sprintf(helpInfo, "-deoption [string] 	default = %s 	Option model for decimation", needOption.c_str());
+		colorMessage(helpInfo, 3);
+		sprintf(helpInfo, "-need [int] 		default = %d 		Set reserve number of triangles", needTriangle);
+		colorMessage(helpInfo, 3);
+		sprintf(helpInfo, "-ratio [real] 		default = %.3lf		Set reserve ratio of triangles", needRatio);
+		colorMessage(helpInfo, 3);
+		sprintf(helpInfo, "-threshold [real]	default = %.3lf		Set threshold for decimation algorithm", threshold);
+		colorMessage(helpInfo, 3);
 	}
 	void parse(int argc, char** argv){
 		int ind = 0;
@@ -37,6 +59,8 @@ struct Args{
 			string param = argv[ind];
 			if (param[0] == '-'){
 				char *ptr = argv[++ind];
+				if (param == "-h" || param == "--help")
+					showHelpInfo(), --ind;
 				if (param == "--debug")
 					debug = true, --ind;
 				else if (param == "-scene")
@@ -70,7 +94,7 @@ DeMesh* runDecimation(string file, Material* mat, string dumpName, const Args& a
 	progressMessage("start decimation");
 	obj->decimation(need, threshold);
 
-	sprintf(name, "%s_%d.obj", dumpName.c_str(), need);
+	sprintf(name, "%s_res_%d.obj", dumpName.c_str(), need);
 	obj->dump(name);
 	progressMessage("end dumping");
 
@@ -103,6 +127,8 @@ int main(int argc, char** argv)
 {
 	Args args;
 	args.parse(argc, argv);
+	if (args.showHelp)
+		return 0;
 
 	Film* film = new Image(500, 500);
 	film->setName("test");
@@ -154,27 +180,59 @@ int main(int argc, char** argv)
 
 	if (useScene == 666){
 		enum OBJ{
-			DRAGON,
+			ARMA,
+			BLOCK,
+			BUDDHA,
 			BUNNY,
-			DINASAUR,
 			CUBE,
+			DINASAUR,
+			DRAGON,
+			FANDISK,
+			HORSE,
+			KITTEN,
+			ROCKER_ARM,
+			SPHERE,
 		};
 		int testModel = args.useModel;
 		DeMesh *resObj;
 
 		progressMessage("start loading");
 		switch(testModel){
-		case DRAGON:
-			resObj = runDecimation("test_data/fixed.perfect.dragon.100K.0.07.obj", mat1, "dragon_res", args);
+		case ARMA:
+			resObj = runDecimation("test_data/Arma.obj", mat1, "arma", args);
+			break;
+		case BLOCK:
+			resObj = runDecimation("test_data/block.obj", mat1, "block", args);
+			break;
+		case BUDDHA:
+			resObj = runDecimation("test_data/Buddha.obj", mat1, "buddha", args);
 			break;
 		case BUNNY:
-			resObj = runDecimation("test_data/bunny.fine.obj", mat1, "bunny_res", args);
-			break;
-		case DINASAUR:
-			resObj = runDecimation("test_data/dinosaur.2k.obj", mat1, "dinosaur_res", args);
+			resObj = runDecimation("test_data/bunny.fine.obj", mat1, "bunny", args);
 			break;
 		case CUBE:
-			resObj = runDecimation("test_data/cube.obj", mat1, "cube_res", args);
+			resObj = runDecimation("test_data/cube.obj", mat1, "cube", args);
+			break;
+		case DINASAUR:
+			resObj = runDecimation("test_data/dinosaur.2k.obj", mat1, "dinosaur", args);
+			break;
+		case DRAGON:
+			resObj = runDecimation("test_data/fixed.perfect.dragon.100K.0.07.obj", mat1, "dragon", args);
+			break;
+		case FANDISK:
+			resObj = runDecimation("test_data/fandisk.18k.obj", mat1, "fandisk", args);
+			break;
+		case HORSE:
+			resObj = runDecimation("test_data/horse.fine.90k.obj", mat1, "horse", args);
+			break;
+		case KITTEN:
+			resObj = runDecimation("test_data/kitten.50k.obj", mat1, "kitten", args);
+			break;
+		case ROCKER_ARM:
+			resObj = runDecimation("test_data/rocker-arm.18k.obj", mat1, "rocker-arm", args);
+			break;
+		case SPHERE:
+			resObj = runDecimation("test_data/sphere.obj", mat1, "sphere", args);
 			break;
 		}
 		return 0;
