@@ -21,7 +21,7 @@ public:
 		T* t;
 		Box* b;
 		real split;
-		short ch;
+		short ch; // child 0 : none , 1 : left , 2 : right , 3 : both
 		short dim;
 		~KdNode(){
 			delete b;
@@ -55,6 +55,7 @@ public:
 		for (int i = l; i < r; ++ i)
 			cur->b->update(mData[i]->getPos());
 		cur->dim = mDim = cur->b->argMaxDiff();
+		//printf("%d %d %d %d\n", root, l, r, mDim);
 		KdCmp cmp = KdCmp(mDim);
 		int m = (l + r) / 2;
 		nth_element(mData.begin() + l, mData.begin() + m, mData.begin() + r, cmp);
@@ -75,27 +76,32 @@ public:
 		root = 1;
 		build(1, 0, n);
 	}
-	pair<real, T* > getKthT(int k){
+	pair<real, T* > * getRes(){
+		return res;
+	}
+	pair<real, T* > getRes(int k){
 		return res[k];
 	}
 	int getKNearest(const Vec3f& pos, int K){
 		m = 0, mLimit = K;
 		aPos = pos;
 		_findKNearest(1);
+		//if (m > 0)
+		//	sort(res, res + m);
 		return m;
 	}
 	void findInBall(vector<T* > &res, int root, const Vec3f& pos, real radius2){ //push_back
 		KdNode* cur = &a[root];
-		int first = aPos[cur->dim] > cur->split, second = !first;
-		real dist = (cur->t->getPos() - aPos).L2();
+		int first = pos[cur->dim] > cur->split, second = !first;
+		real dist = (cur->t->getPos() - pos).L2();
 		if (dist < radius2)
 			res.push_back(cur->t);
 		if ((cur->ch >> first) & 1){
-			if (m < mLimit || a[root * 2 + first].b->minDist2(aPos) < radius2)
+			if (m < mLimit || a[root * 2 + first].b->minDist2(pos) < radius2)
 				findInBall(res, root * 2 + first, pos, radius2);
 		}
 		if ((cur->ch >> second) & 1){
-			if (m < mLimit || a[root * 2 + second].b->minDist2(aPos) < radius2)
+			if (m < mLimit || a[root * 2 + second].b->minDist2(pos) < radius2)
 				findInBall(res, root * 2 + second, pos, radius2);
 		}
 	}

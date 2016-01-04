@@ -11,6 +11,8 @@ int DeMesh::contraction(VertexPair P){
 	int count = 0;
 	DeVertex* A = P.A;
 	DeVertex* B = P.B;
+	if (A == B)
+		return 0;
 
 	//A->prt();
 	//B->prt();
@@ -73,7 +75,7 @@ int DeMesh::contraction(VertexPair P){
 			vex->changeNeighbor(B, A);
 		}
 	}
-	for (DeVertex* vex : neighbors)
+	for (DeVertex* vex : neighbors) if (A != vex)
 		Q.push(VertexPair(A, vex, Time));
 	vector<DeTriangle*> & Atriangles = A->getAdjacent();
 	vector<DeTriangle*> & Btriangles = B->getAdjacent();
@@ -115,11 +117,9 @@ int DeMesh::contraction(VertexPair P){
 	return count;
 }
 
-void DeMesh::decimation(real percent, real threshold){
+void DeMesh::decimation(int need, real threshold){
+	//printf("!! need = %d\n",need);
 	initialize(threshold > 0.0f);
-	int m = mDeTriangles.size(), need = int(m * percent);
-	if (percent < 0)
-		need = RESERVE_NUMBER_TRIANGLE;
 	vector<DeVertex*> meshVertexs = mVexCloud.getData();
 	for (DeTriangle* tri : mDeTriangles){
 		Matrix44 quadMatrix(tri->getPlaneParam());
@@ -137,9 +137,18 @@ void DeMesh::decimation(real percent, real threshold){
 	for (DeVertex* vex : meshVertexs){
 		//vex->prt();
 		vector<DeVertex* >& neighbors = vex->getNeighbor();
-		if (threshold > 0.0f)
+		if (threshold > 0.0f){
+			// int cnt = 0;
+			// for (DeVertex* i : meshVertexs){
+			// 	if ((i->getPos() - vex->getPos()).L2() < threshold * threshold)
+			// 		++cnt;
+			// }
+			//int last = neighbors.size();
 			mVexCloud.findInBall(neighbors, mVexCloud.root, vex->getPos(), threshold * threshold);
-		for (DeVertex* near : neighbors){
+			// if (cnt != neighbors.size() - last)
+			// 	printf("bf = %d kdtree = %d\n", cnt,  neighbors.size() - last);
+		}
+		for (DeVertex* near : neighbors) if (vex != near){
 			//if (vex->getID() < near->getID()){
 				VertexPair pair(vex, near, Time);
 				// vex->prt();
@@ -152,7 +161,7 @@ void DeMesh::decimation(real percent, real threshold){
 
 	//printf("%d %d %d %d\n",mVertexs.size(), mTriangles.size(), meshVertexs.size(),  mDeTriangles.size());
 	printf("%d\n",Q.size());
-	int last = m;
+	int m = mDeTriangles.size(), last = m;
 	while (!Q.empty() && m > need){
 		VertexPair pair = Q.top();
 		Q.pop();

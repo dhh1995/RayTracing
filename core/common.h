@@ -54,6 +54,7 @@ using std::string;
 using std::cout;
 using std::endl;
 using std::min;
+using std::sort;
 
 inline void colorMessage(string message, int color){
 	char* cmd = new char[message.size() + 50];

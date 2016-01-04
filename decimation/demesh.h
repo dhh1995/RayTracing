@@ -38,7 +38,11 @@ public:
 		return mBoundingBox->getDiagonalLength();
 	}
   	int contraction(VertexPair P);
-	void decimation(real percent, real threshold = 0);
+	void decimation(int need, real threshold = 0);
+	// void decimation(real ratio, real threshold = 0){
+	// 	int m = mTriangles.size();
+	// 	decimation(int(m * ratio), threshold);
+	// }
 	~DeMesh(){
 		delete[] timeStamp;
 	}

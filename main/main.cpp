@@ -13,6 +13,70 @@
 using namespace Raytracer;
 using namespace Decimation;
 
+struct Args{
+	int useScene;
+	int useModel;
+	int needTriangle;
+	real needRatio;
+	real threshold;
+	string needOption;
+	bool debug;
+	Args(){
+		//default
+		useScene = 666;
+		useModel = 1;
+		needTriangle = 400;
+		needRatio = 0.01;
+		threshold = 0;
+		needOption = "ratio";
+		debug = false;
+	}
+	void parse(int argc, char** argv){
+		int ind = 0;
+		while (ind < argc){
+			string param = argv[ind];
+			if (param[0] == '-'){
+				char *ptr = argv[++ind];
+				if (param == "--debug")
+					debug = true, --ind;
+				else if (param == "-scene")
+					readBuf(ptr, useScene);
+				else if (param == "-model")
+					readBuf(ptr, useModel);
+				else if (param == "-need")
+					readBuf(ptr, needTriangle);
+				else if (param == "-deoption")
+					needOption = argv[ind];
+				else if (param == "-ratio")
+					readBuf(ptr, needRatio);
+				else if (param == "-threshold")
+					readBuf(ptr, threshold);
+			}
+			++ind;
+		}
+	}
+};
+
+DeMesh* runDecimation(string file, Material* mat, string dumpName, const Args& args){
+	char name[55];
+	DeMesh* obj = new DeMesh(file, mat);
+	int m = obj->getTriangles().size();
+	int need = args.needTriangle;
+	if (args.needOption == "ratio")
+		need = int(m * args.needRatio);
+	real threshold = args.threshold;
+	if (threshold < 0)
+		threshold = obj->diagonalLength() / (-threshold);
+	progressMessage("start decimation");
+	obj->decimation(need, threshold);
+
+	sprintf(name, "%s_%d.obj", dumpName.c_str(), need);
+	obj->dump(name);
+	progressMessage("end dumping");
+
+	return obj;
+}
+
 void emitDebugRay(Renderer* renderer, Ray ray){
 
 // ray = Ray(Vec3f(-20, 0, 0), Vec3f(1,0,0));
@@ -35,8 +99,11 @@ void emitDebugRay(Renderer* renderer, Ray ray){
 
 }
 
-int main()
+int main(int argc, char** argv)
 {
+	Args args;
+	args.parse(argc, argv);
+
 	Film* film = new Image(500, 500);
 	film->setName("test");
 	Camera* camera = new ProjectiveCamera(Vec3f(0, 0.001, -0.001), Vec3f(1, 0, 0), Vec3f(0, 0, 1), 90);
@@ -46,10 +113,9 @@ int main()
 	progressMessage("Camera constructed");
 
 	Scene* scene = new Scene(WHITE / 5);
-	int useScene = 666;
-	int debug = 0;
+	int useScene = args.useScene;
+	int debug = args.debug;
 	int useBox = 1;
-
 
 	//filmX 222, filmY 222
 	Ray debugRay = Ray(Vec3f(0.000000, 0.000000, 1.000000), Vec3f(0.988487, 0.104990, 0.108951));
@@ -63,7 +129,7 @@ int main()
 	camera->setPos(Vec3f(0, 0, 3));
 
 	if (useScene == 0){
-		scene->loadObj();
+		//scene->loadObj();
 	}
 
 	Vec3f testTransForCube(2, -1.5, 0.5);
@@ -93,39 +159,24 @@ int main()
 			DINASAUR,
 			CUBE,
 		};
-		int testModel = BUNNY;
+		int testModel = args.useModel;
+		DeMesh *resObj;
+
 		progressMessage("start loading");
 		switch(testModel){
-		case DRAGON:{
-			DeMesh* dragon = new DeMesh("test_data/fixed.perfect.dragon.100K.0.07.obj", mat1);
-			progressMessage("start decimation");
-			dragon->decimation(0.01, dragon->diagonalLength() / 100.0);
-			dragon->dump("dragon_res.obj");
-		}
+		case DRAGON:
+			resObj = runDecimation("test_data/fixed.perfect.dragon.100K.0.07.obj", mat1, "dragon_res", args);
 			break;
-		case BUNNY:{
-			DeMesh* bunny = new DeMesh("test_data/bunny.fine.obj", mat1);
-			progressMessage("start decimation");
-			bunny->decimation(-1);
-			bunny->dump("bunny_res.obj");
-		}
+		case BUNNY:
+			resObj = runDecimation("test_data/bunny.fine.obj", mat1, "bunny_res", args);
 			break;
-		case DINASAUR:{
-			DeMesh* dinosaur = new DeMesh("test_data/dinosaur.2k.obj", mat1);
-			progressMessage("start decimation");
-			dinosaur->decimation(0.3, 0 * dinosaur->diagonalLength() / 100.0);
-			dinosaur->dump("dinosaur_res.obj");
-		}
+		case DINASAUR:
+			resObj = runDecimation("test_data/dinosaur.2k.obj", mat1, "dinosaur_res", args);
 			break;
-		case CUBE:{
-			DeMesh* cube = new DeMesh("test_data/cube.obj", mat1);
-			progressMessage("start decimation");
-			cube->decimation(0.9);
-			cube->dump("cube_res.obj");
-		}
+		case CUBE:
+			resObj = runDecimation("test_data/cube.obj", mat1, "cube_res", args);
 			break;
 		}
-		progressMessage("end dumping");
 		return 0;
 	}
 
