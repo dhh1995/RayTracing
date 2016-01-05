@@ -24,6 +24,9 @@ public:
 	void addLight(Light *aLight){
 		mLights.push_back(aLight);
 	}
+	vector<Light* > getLights(){
+		return mLights;
+	}
 	void addObject(Primitive *aObject){
 		if (aObject->getType() == "TriangleMesh"){
 			TriangleMesh* triMesh = dynamic_cast<TriangleMesh*>(aObject);

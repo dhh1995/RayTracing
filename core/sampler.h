@@ -9,7 +9,10 @@ namespace Raytracer {
 class Sampler{
 public:
 	//Sampler();
-	virtual void sample();
+	//virtual void sample();
+	static real getRand(){
+		return rand() / RAND_MAX;
+	}
 //private:
 };
 

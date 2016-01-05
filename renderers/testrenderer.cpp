@@ -118,7 +118,7 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real
 	return;
 }
 
-void TestRenderer::render(){
+void TestRenderer::render(const Args& args){
 	//assert(mCamera != NULL);
 	vector<Ray> rays = mCamera->generateRays();
 	int nRays = rays.size(), cnt = 0, tot = 10;

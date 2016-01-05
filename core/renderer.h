@@ -3,6 +3,9 @@
 #define CORE_RENDERER_H
 
 #include "common.h"
+#include "camera.h"
+#include "scene.h"
+#include "args.h"
 
 namespace Raytracer {
 
@@ -24,7 +27,7 @@ public:
 	}
 
 	virtual void rayTracing(Ray ray, Color& res, int depth, real aRIndex, real &aDist) = 0; // for debug
-	virtual void render() = 0;
+	virtual void render(const Args& args) = 0;
 	virtual void show() = 0;
 protected:
 	Camera* mCamera;
