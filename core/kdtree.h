@@ -97,7 +97,8 @@ public:
 		m = 0, mLimit = K;
 		aPos = pos;
 		mDist = maxDist * maxDist;
-		_findKNearest(1);
+		_findKNearest(root);
+		//_bruteForce();
 		make_heap(res, res + m);
 		//if (m > 0)
 		//	sort(res, res + m);
@@ -133,16 +134,13 @@ public:
 private:
 	void _addToHeap(T* t){
 		real dist = (t->getPos() - aPos).L2();
-		// printf("mLimit = %d  m = %d dist = %lf\n",mLimit, m, dist);
-		// aPos.prt();
-		// t->prt();
 		if (dist > mDist)
 			return;
 		if (m == mLimit){
 			if (res[0].first < dist)
 				return;
 			pop_heap(res, res + m);
-			res[m] = make_pair(dist, t);
+			res[m - 1] = make_pair(dist, t);
 			push_heap(res, res + m);
 		}else{
 			res[m ++] = make_pair(dist, t);
@@ -159,16 +157,25 @@ private:
 		if ((cur->ch >> first) & 1){
 			//colorMessage("Step into first", 4);
 			real minDist2 = a[root * 2 + first].b->minDist2(aPos);
-			if (minDist2 < mDist && (m < mLimit || mDist < res[0].first))
+			if (minDist2 < mDist && (m < mLimit || minDist2 < res[0].first))
 				_findKNearest(root * 2 + first);
 		}
 		if ((cur->ch >> second) & 1){
 			//colorMessage("Step into second", 4);
 			real minDist2 = a[root * 2 + second].b->minDist2(aPos);
-			if (minDist2 < mDist && (m < mLimit || mDist < res[0].first))
+			if (minDist2 < mDist && (m < mLimit || minDist2 < res[0].first))
 				_findKNearest(root * 2 + second);
 		}
 		//colorMessage("Step out", 4);
+	}
+	void _bruteForce(){
+		for (int i = 0; i < n; ++ i)
+			res[i] = make_pair((mData[i]->getPos() - aPos).L2(), mData[i]);
+			//res[i]  = make_pair((a[i].t->getPos() - aPos).L2(), a[i].t);
+		sort(res, res + n);
+		m = 0;
+		while (m < mLimit && res[m].first < mDist)
+			++ m;
 	}
 
 	int mDim;
