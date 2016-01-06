@@ -20,12 +20,14 @@ public:
 	void show();
 	//Options options;
 protected:
+	real _FresnelReflection(real n, real cosI, real cosT2);
 	Vec3f _getRandomDir(){
 		real x, y, z;
 		do{
-			x = Sampler::getRand() * 2 - 1;
-			y = Sampler::getRand() * 2 - 1;
-			z = Sampler::getRand() * 2 - 1;
+			x = Sampler::getRandReal() * 2 - 1;
+			y = Sampler::getRandReal() * 2 - 1;
+			z = Sampler::getRandReal() * 2 - 1;
+			//printf("%lf %lf %lf\n", x, y, z);
 		}while (x*x + y*y + z*z > 1);
 		return Vec3f(x, y, z).Normalize();
 	}

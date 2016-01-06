@@ -8,10 +8,10 @@ namespace Raytracer {
 
 class Photon{
 public:
-	Photon(Ray aRay, Vec3f aPower) : mRay(aRay), mPower(aPower){
+	Photon(Ray aRay, Color aPower) : mRay(aRay), mPower(aPower){
 		
 	}
-	Ray getRay(){
+	Ray& getRay(){
 		return mRay;
 	}
 	void setRay(Ray aRay){
@@ -23,6 +23,12 @@ public:
 	real getAxis(int dim) const{
 		return mRay.o[dim];
 	}
+	Color getPower(){
+		return mPower;
+	}
+	void prt(){
+		mRay.prt();
+	}
 	// void read(){
 	// 	mPos.read();
 	// 	mPower.read();
@@ -33,7 +39,7 @@ public:
 	// }
 private:
 	Ray mRay;
-	Vec3f mPower;
+	Color mPower;
 
 };
 

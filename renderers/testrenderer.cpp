@@ -4,6 +4,21 @@ bool debug = false;
 
 namespace Raytracer {
 
+real TestRenderer::_FresnelReflection(real n, real cosI, real cosT2){
+	if (cosT2 > 0.0f){
+		// need to adopt fresnel equation
+		// https://en.wikipedia.org/wiki/Fresnel_equations
+		// http://www.cnblogs.com/starfallen/p/4019350.html
+		// ? refl = 1 - refr;
+		real cosT = sqrt(cosT2);
+		real r_p = (n * cosI - cosT) / (n * cosI + cosT);
+		real r_v = (cosI - n * cosT) / (cosI + n * cosT);
+		return (r_p * r_p + r_v * r_v) / 2.0;
+		// refr = 1 - refl;
+	}// else totally internal reflection
+	return 1.0;
+}
+
 void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real &aDist){
 	if (debug) ray.prt();
 	Intersection isect;

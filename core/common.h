@@ -22,6 +22,7 @@ const bool MISS = false;
 //#define INPRIM	-1			// Ray started inside primitive
 
 const int TRACEDEPTH = 5;
+const int PHOTONDEPTH = 5;
 const int MAX_K_NEAREST = 112345;
 //const int MAX_KDTREE_LEAF_SIZE = 7;
 const real PI = acos(-1.);

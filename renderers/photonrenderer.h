@@ -8,16 +8,17 @@ namespace Raytracer {
 
 class PhotonRenderer : public TestRenderer {
 public:
-	PhotonRenderer() : mPhotonEmits(0){
+	PhotonRenderer(int globalWant = 1000, int causticWant = 10000)
+		: mPhotonEmits(0), mGlobalWant(globalWant), mCausticWant(causticWant){
 	}
-	void photonTracing(PhotonMap &pm, Photon* photon);
-	void genGlobalPhotonMap(string path, int require);
-	void genCausticPhotonMap(string path, int require);
-	//void rayTracing(Ray ray, Color& res, int depth, real aRIndex, real &aDist);
+	void photonTracing(Photon* photon, int depth, bool meetSpecular);
+	void genPhotonMap(string path);
+	void rayTracing(Ray ray, Color& res, int depth, real aRIndex, real &aDist);
 	void render(const Args& args);
 	//Options options;
 private:
-	int mPhotonEmits;
+	void _addPhoton(Photon* photon, bool meetSpecular);
+	int mPhotonEmits, mGlobalWant, mCausticWant;
 	PhotonMap mGlobal, mCaustic;
 };
 

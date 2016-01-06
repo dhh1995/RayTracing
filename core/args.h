@@ -14,6 +14,7 @@ struct Args{
 	real threshold;
 	string needOption;
 	bool debug;
+	bool usePhoton;
 	bool showHelp;
 	Args(){
 		//default
@@ -25,6 +26,7 @@ struct Args{
 		needOption = "ratio";
 		debug = false;
 		showHelp = false;
+		usePhoton = false;
 	}
 	void showHelpInfo(){
 		showHelp = true;
@@ -34,6 +36,8 @@ struct Args{
 		sprintf(helpInfo, "--debug 		default = false 	Set debug model on");
 		colorMessage(helpInfo, 3);
 		sprintf(helpInfo, "-scene [int]		default = %d		Choose which scene to use", useScene);
+		colorMessage(helpInfo, 3);
+		sprintf(helpInfo, "--photon		default = false		set Rendering model as Photon Mapping");
 		colorMessage(helpInfo, 3);
 		sprintf(helpInfo, "-model [int] 		default = %d		Choose which model to use", useModel);
 		colorMessage(helpInfo, 3);
@@ -56,6 +60,8 @@ struct Args{
 					showHelpInfo(), --ind;
 				if (param == "--debug")
 					debug = true, --ind;
+				else if (param == "--photon")
+					usePhoton = true, --ind;
 				else if (param == "-scene")
 					readBuf(ptr, useScene);
 				else if (param == "-model")
@@ -68,6 +74,7 @@ struct Args{
 					readBuf(ptr, needRatio);
 				else if (param == "-threshold")
 					readBuf(ptr, threshold);
+
 			}
 			++ind;
 		}

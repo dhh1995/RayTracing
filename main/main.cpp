@@ -5,6 +5,7 @@
 #include "core/scene.h"
 #include "core/light.h"
 #include "renderers/testrenderer.h"
+#include "renderers/photonrenderer.h"
 #include "film/image.h"
 #include "shapes/sphere.h"
 #include "shapes/plane.h"
@@ -65,7 +66,7 @@ int main(int argc, char** argv)
 
 	Film* film = new Image(500, 500);
 	film->setName("test");
-	Camera* camera = new ProjectiveCamera(Vec3f(0, 0.001, -0.001), Vec3f(1, 0, 0), Vec3f(0, 0, 1), 90);
+	Camera* camera = new ProjectiveCamera(Vec3f(0, 0.001, -0.001), Vec3f(1, 0, 0), Vec3f(0, 0, 1), 100);
 	//Camera *camera = new ProjectiveCamera(Vector(0, 5, 10), Vector(0, 0, -1), Vector(0, 1, 0), 90); 
 	camera->setFilm(film);
 
@@ -199,9 +200,9 @@ int main(int argc, char** argv)
 		obj7->setMaterial(wall1);
 		scene->addObject(obj7);
 
-		// Primitive* obj7_2 = new Plane(Vec3f(0, -1, 0), Vec3f(0, 0, -1), 8);
-		// obj7_2->setMaterial(mat1);
-		// scene->addObject(obj7_2);
+		Primitive* obj7_2 = new Plane(Vec3f(0, 1, 0), Vec3f(0, 0, -1), 8);
+		obj7_2->setMaterial(mat1);
+		scene->addObject(obj7_2);
 
 		// Primitive* obj4 = new TriangleMesh("test_data/cube.obj",
 		// 	mat4, Vec3f(2, 0.5, -1));
@@ -325,16 +326,17 @@ int main(int argc, char** argv)
 	if (useScene == 4){
 		camera->setPos(Vec3f(-5, 0 ,0));
 
-		Material* mat5 = new Material(RED, 0.3, 0., 0.5, 0.5, 1.0, WHITE/5);
-		Material* mat6 = new Material(GREEN, 0.3, 0., 0.5, 0.5, 1.0, WHITE/5);
-		Material* mat7 = new Material(WHITE, 0, 1, 0, 0, 1.33);
-		Material* mat8 = new Material(WHITE, 1, 0, 0.1, 0.1, 1);
+		Material* mat5 = new Material(RED, 0.3, 0., 0.5, 0, 1.0, WHITE/5);
+		Material* mat6 = new Material(GREEN, 0.3, 0., 0.5, 0, 1.0, WHITE/5);
+		Material* mat7 = new Material(WHITE, 0, 1, 0, 1, 1.33);
+		Material* mat8 = new Material(WHITE, 1, 0, 0, 1, 1);
+		Material* mat9 = new Material(WHITE, 0, 0., 0.5, 0, 1.0, WHITE/5);
 
 		Primitive* obj1 = new Plane(Vec3f(0, 0, 1), Vec3f(1, 0, 0), 10);
-		obj1->setMaterial(mat4);
+		obj1->setMaterial(mat9);
 
 		Primitive* obj2 = new Plane(Vec3f(0, 0, -1), Vec3f(1, 0, 0), 10);
-		obj2->setMaterial(mat4);
+		obj2->setMaterial(mat9);
 
 		Primitive* obj3 = new Plane(Vec3f(0, -1, 0), Vec3f(1, 0, 0), 10);
 		obj3->setMaterial(mat5);
@@ -343,7 +345,7 @@ int main(int argc, char** argv)
 		obj4->setMaterial(mat6);
 
 		Primitive* obj5 = new Plane(Vec3f(-1, 0, 0), Vec3f(0, 0, -1), 20);
-		obj5->setMaterial(mat4);
+		obj5->setMaterial(mat9);
 
 		Primitive* obj6 = new Sphere(Vec3f(6, -4, -6), 3);
 		obj6->setMaterial(mat7);
@@ -424,6 +426,8 @@ int main(int argc, char** argv)
 	progressMessage("Scene constructed");
 
 	Renderer* renderer = new TestRenderer();
+	if (args.usePhoton)
+		renderer = new PhotonRenderer();
 	renderer->setScene(scene);
 	renderer->setCamera(camera);
 

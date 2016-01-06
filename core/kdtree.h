@@ -46,10 +46,18 @@ public:
 		mData.clear();
 	}
 	void add(T* x){
+		//x->prt();
 		++ n;
 		mData.push_back(x);
 	}
+	int getN(){
+		return n;
+	}
+	int getRoot(){
+		return root;
+	}
 	void build(int root, int l, int r){
+		assert(l < r);
 		KdNode* cur = &a[root];
 		cur->b = new Box;
 		for (int i = l; i < r; ++ i)
@@ -68,6 +76,8 @@ public:
 			build(root * 2 + 1, m + 1, r), cur->ch |= 2;
 	}
 	void construct(){
+		assert(n > 0);
+		//printf("%d\n",n);
 		int N = n * 2;
 
 		if (a != NULL)
@@ -82,26 +92,30 @@ public:
 	pair<real, T* > getRes(int k){
 		return res[k];
 	}
-	int getKNearest(const Vec3f& pos, int K){
+	int getKNearest(const Vec3f& pos, int K, real maxDist = INF){
+		//colorMessage("New Request !!", 5);
 		m = 0, mLimit = K;
 		aPos = pos;
+		mDist = maxDist * maxDist;
 		_findKNearest(1);
+		make_heap(res, res + m);
 		//if (m > 0)
 		//	sort(res, res + m);
 		return m;
 	}
-	void findInBall(vector<T* > &res, int root, const Vec3f& pos, real radius2){ //push_back
+	void findInBall(vector<T* > &res, int root, const Vec3f& pos, real radius2){
+		//use res.push_back, can be merged with getKNearst
 		KdNode* cur = &a[root];
 		int first = pos[cur->dim] > cur->split, second = !first;
 		real dist = (cur->t->getPos() - pos).L2();
 		if (dist < radius2)
 			res.push_back(cur->t);
 		if ((cur->ch >> first) & 1){
-			if (m < mLimit || a[root * 2 + first].b->minDist2(pos) < radius2)
+			if (a[root * 2 + first].b->minDist2(pos) < radius2)
 				findInBall(res, root * 2 + first, pos, radius2);
 		}
 		if ((cur->ch >> second) & 1){
-			if (m < mLimit || a[root * 2 + second].b->minDist2(pos) < radius2)
+			if (a[root * 2 + second].b->minDist2(pos) < radius2)
 				findInBall(res, root * 2 + second, pos, radius2);
 		}
 	}
@@ -119,29 +133,42 @@ public:
 private:
 	void _addToHeap(T* t){
 		real dist = (t->getPos() - aPos).L2();
+		// printf("mLimit = %d  m = %d dist = %lf\n",mLimit, m, dist);
+		// aPos.prt();
+		// t->prt();
+		if (dist > mDist)
+			return;
 		if (m == mLimit){
 			if (res[0].first < dist)
 				return;
 			pop_heap(res, res + m);
 			res[m] = make_pair(dist, t);
 			push_heap(res, res + m);
+		}else{
+			res[m ++] = make_pair(dist, t);
+			if (m == mLimit)
+				make_heap(res, res + m);
 		}
-		res[m ++] = make_pair(dist, t);
-		if (m == mLimit)
-			make_heap(res, res + m);
 	}
 	void _findKNearest(int root){
 		KdNode* cur = &a[root];
 		int first = aPos[cur->dim] > cur->split, second = !first;
+		//aPos.prt();
+		//printf("%d %d %lf\n", first, cur->dim, cur->split);
 		_addToHeap(cur->t);
 		if ((cur->ch >> first) & 1){
-			if (m < mLimit || a[root * 2 + first].b->minDist2(aPos) < res[0].first)
+			//colorMessage("Step into first", 4);
+			real minDist2 = a[root * 2 + first].b->minDist2(aPos);
+			if (minDist2 < mDist && (m < mLimit || mDist < res[0].first))
 				_findKNearest(root * 2 + first);
 		}
 		if ((cur->ch >> second) & 1){
-			if (m < mLimit || a[root * 2 + second].b->minDist2(aPos) < res[0].first)
+			//colorMessage("Step into second", 4);
+			real minDist2 = a[root * 2 + second].b->minDist2(aPos);
+			if (minDist2 < mDist && (m < mLimit || mDist < res[0].first))
 				_findKNearest(root * 2 + second);
 		}
+		//colorMessage("Step out", 4);
 	}
 
 	int mDim;

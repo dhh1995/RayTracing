@@ -10,8 +10,11 @@ class Sampler{
 public:
 	//Sampler();
 	//virtual void sample();
-	static real getRand(){
-		return rand() / RAND_MAX;
+	static int getRandInt(int x){
+		return rand() % x;
+	}
+	static real getRandReal(){
+		return rand() / real(RAND_MAX);
 	}
 //private:
 };
