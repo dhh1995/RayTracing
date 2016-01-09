@@ -36,9 +36,8 @@ public:
 		}
 		short mDim;
 	};
-	KdTree(int MaxK = MAX_K_NEAREST){
+	KdTree(){
 		a = NULL;
-		res = new pair<real, T* >[MaxK];
 		clear();
 	}
 	void clear(){
@@ -88,21 +87,13 @@ public:
 		root = 1;
 		build(1, 0, n);
 	}
-	pair<real, T* > * getRes(){
-		return res;
-	}
-	pair<real, T* > getRes(int k){
-		return res[k];
-	}
-	int getKNearest(const Vec3f& pos, int K, real maxDist = INF){
+	int getKNearest(const Vec3f& pos, int K, pair<real, T* > * res, real maxDist = INF){
 		//colorMessage("New Request !!", 5);
 		if (n <= 0)
 			return 0;
-		m = 0, mLimit = K;
-		aPos = pos;
-		mDist = maxDist * maxDist;
-		_findKNearest(root);
-		//_bruteForce();
+		int m = 0;
+		_findKNearest(root, m, K, res, pos, maxDist * maxDist);
+		//m = _bruteForce(m, K, res, pos, maxDist * maxDist);
 		make_heap(res, res + m);
 		//if (m > 0)
 		//	sort(res, res + m);
@@ -131,16 +122,15 @@ public:
 	~KdTree(){
 		if (a != NULL)
 			delete[] a;
-		delete[] res;
 	}
 public:
 	int root;
 private:
-	void _addToHeap(T* t){
-		real dist = (t->getPos() - aPos).L2();
+	void _addToHeap(T* t, int& m, int K, pair<real, T* > * res, const Vec3f& pos, real mDist){
+		real dist = (t->getPos() - pos).L2();
 		if (dist > mDist)
 			return;
-		if (m == mLimit){
+		if (m == K){
 			if (res[0].first < dist)
 				return;
 			pop_heap(res, res + m);
@@ -148,48 +138,44 @@ private:
 			push_heap(res, res + m);
 		}else{
 			res[m ++] = make_pair(dist, t);
-			if (m == mLimit)
+			if (m == K)
 				make_heap(res, res + m);
 		}
 	}
-	void _findKNearest(int root){
+	void _findKNearest(int root, int& m, int K, pair<real, T* > * res, const Vec3f& pos, real mDist){
 		KdNode* cur = &a[root];
-		int first = aPos[cur->dim] > cur->split, second = !first;
-		//aPos.prt();
+		int first = pos[cur->dim] > cur->split, second = !first;
+		//pos.prt();
 		//printf("%d %d %lf\n", first, cur->dim, cur->split);
-		_addToHeap(cur->t);
+		_addToHeap(cur->t, m, K, res, pos, mDist);
 		if ((cur->ch >> first) & 1){
 			//colorMessage("Step into first", 4);
-			real minDist2 = a[root * 2 + first].b->minDist2(aPos);
-			if (minDist2 < mDist && (m < mLimit || minDist2 < res[0].first))
-				_findKNearest(root * 2 + first);
+			real minDist2 = a[root * 2 + first].b->minDist2(pos);
+			if (minDist2 < mDist && (m < K || minDist2 < res[0].first))
+				_findKNearest(root * 2 + first, m, K, res, pos, mDist);
 		}
 		if ((cur->ch >> second) & 1){
 			//colorMessage("Step into second", 4);
-			real minDist2 = a[root * 2 + second].b->minDist2(aPos);
-			if (minDist2 < mDist && (m < mLimit || minDist2 < res[0].first))
-				_findKNearest(root * 2 + second);
+			real minDist2 = a[root * 2 + second].b->minDist2(pos);
+			if (minDist2 < mDist && (m < K || minDist2 < res[0].first))
+				_findKNearest(root * 2 + second, m, K, res, pos, mDist);
 		}
 		//colorMessage("Step out", 4);
 	}
-	void _bruteForce(){
+	void _bruteForce(int &m, int K, pair<real, T* > * res, const Vec3f& pos, real mDist){
 		for (int i = 0; i < n; ++ i)
-			res[i] = make_pair((mData[i]->getPos() - aPos).L2(), mData[i]);
-			//res[i]  = make_pair((a[i].t->getPos() - aPos).L2(), a[i].t);
+			res[i] = make_pair((mData[i]->getPos() - pos).L2(), mData[i]);
+			//res[i]  = make_pair((a[i].t->getPos() - pos).L2(), a[i].t);
 		sort(res, res + n);
 		m = 0;
-		while (m < mLimit && res[m].first < mDist)
+		while (m < K && res[m].first < mDist)
 			++ m;
 	}
 
 	int mDim;
-	int mLimit;
-	real mDist;
-	int n, m;
+	int n;
 	KdNode* a;
 	vector<T* > mData;
-	pair<real, T* > * res;
-	Vec3f aPos;
 };
 
 // } TO be validate

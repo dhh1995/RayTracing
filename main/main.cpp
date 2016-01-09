@@ -243,7 +243,7 @@ int main(int argc, char** argv)
 			mat2, Matrix44::scale(5) /* Matrix44::rotateX(PI)*/ );
 		scene->addObject(obj0);
 
-		Light* light0 = new Light(WHITE, Vec3f(4, 0, 4));
+		Light* light0 = new Light(WHITE, Vec3f(0, 0, 4));
 		scene->addLight(light0);
 
 		Light* light1 = new Light(PINK / 2 , Vec3f(-4, 0, 0));
@@ -260,11 +260,11 @@ int main(int argc, char** argv)
 		Material* mat7 = new Material(WHITE, 0, 0., 0.8, 0, 1.0, WHITE/5);
 
 		// Primitive* obj5 = new Plane(Vec3f(-1, 0, 0), Vec3f(0, -1, 0), 6);
-		Primitive* obj5_1 = new Triangle(new Vertex(10, -10, -10), new Vertex(10, -10, 10), new Vertex(10, 10, -10));
+		Primitive* obj5_1 = new Triangle(new Vertex(10, -10, -10), new Vertex(10, -10, 15), new Vertex(10, 10, -10));
 		obj5_1->setMaterial(mat7);
 		scene->addObject(obj5_1);
 
-		Primitive* obj5_2 = new Triangle(new Vertex(10, 10, 10), new Vertex(10, 10, -10), new Vertex(10, -10, 10));
+		Primitive* obj5_2 = new Triangle(new Vertex(10, 10, 15), new Vertex(10, 10, -10), new Vertex(10, -10, 15));
 		obj5_2->setMaterial(mat7);
 		scene->addObject(obj5_2);
 
@@ -275,11 +275,11 @@ int main(int argc, char** argv)
 		// Primitive* obj7 = new Plane(Vec3f(0, 0, 1), Vec3f(1, 0, 0), 6);
 		// obj7->setMaterial(mat7);
 		// scene->addObject(obj7);
-		Primitive* obj7_1 = new Triangle(new Vertex(-2, -10, -10), new Vertex(10, -10, -10), new Vertex(-2, 10, -10));
+		Primitive* obj7_1 = new Triangle(new Vertex(-2, -10, -5), new Vertex(10, -10, -5), new Vertex(-2, 10, -5));
 		obj7_1->setMaterial(mat7);
 		scene->addObject(obj7_1);
 
-		Primitive* obj7_2 = new Triangle(new Vertex(10, 10, -10), new Vertex(-2, 10, -10), new Vertex(10, -10, -10));
+		Primitive* obj7_2 = new Triangle(new Vertex(10, 10, -5), new Vertex(-2, 10, -5), new Vertex(10, -10, -5));
 		obj7_2->setMaterial(mat7);
 		scene->addObject(obj7_2);
 

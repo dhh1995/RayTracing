@@ -21,7 +21,6 @@ const bool MISS = false;
 //#define MISS		false		// Ray missed primitive
 //#define INPRIM	-1			// Ray started inside primitive
 
-const int MAX_K_NEAREST = 112345;
 //const int MAX_KDTREE_LEAF_SIZE = 7;
 const real PI = acos(-1.);
 const real INF = 1e18;

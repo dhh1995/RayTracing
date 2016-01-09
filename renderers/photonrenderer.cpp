@@ -114,20 +114,23 @@ void PhotonRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, re
 	Vec3f pi = isect.getPos();
 	Vec3f norm = isect.getNorm();
 	Color color = isect.getColor();
-
 	//res = mScene->getLi(ray, isect);
 	res = BLACK;
-
 	// need to gather photon.
 	real diff = matter->getDiffuse();
+	// puts("------------------");
+	// ray.prt();
+	// pi.prt();
+	// printf("%lf\n",diff);
 	if (diff > 0){
 		Color radiance, caustic;
 		int nPhotons = 500;
-		int m = mCaustic.getKNearest(pi, nPhotons, 0.5);
+		pair<real, Photon* > * photons = new pair<real, Photon* >[nPhotons + 5];
+		int m = mCaustic.getKNearest(pi, nPhotons, photons, 0.1);
+		//printf("%d\n",m);
 		//int m = 0;
 		if (m >= 8){
 			// printf("%d\n",m);
-			pair<real, Photon* > * photons = mCaustic.getRes();
 			real radius2 = photons[0].first;
 			// pi.prt();
 			// printf("photons collected %d\n",m);
@@ -141,12 +144,12 @@ void PhotonRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, re
 			caustic /= mCausticFinish; //mCaustic.getN();
 			caustic /= PI * radius2;
 		}
-		m = mGlobal.getKNearest(pi, nPhotons, 4);
+		m = mGlobal.getKNearest(pi, nPhotons, photons, 4);
 		if (m >= 1){
-			pair<real, Photon* > * photons = mGlobal.getRes();
 			real radius2 = photons[0].first;
 			for (int i = 0; i < m; ++ i){
 				Photon* photon = photons[i].second;
+				// printf("m=%d i=%d %d\n",m,i,photon);
 				// norm.prt();
 				// photon->getRay().prt();
 				if (dot(norm, photon->getRay().d) < 0)
@@ -157,6 +160,7 @@ void PhotonRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, re
 			radiance /= mGlobalFinish;
 			radiance /= PI * radius2;
 		}
+		delete[] photons;
 		// printf("radiance ");
 		// radiance.prt();
 		res += caustic * diff * 1000;
@@ -216,8 +220,6 @@ void PhotonRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, re
 	return;
 }
 
-
-
 void PhotonRenderer::render(const Args& args){
 	genPhotonMap("photonMap");
 	//genCausticPhotonMap("caustic", 100);
@@ -228,7 +230,10 @@ void PhotonRenderer::render(const Args& args){
 	int nRays = rays.size(), cnt = 0, tot = 10;
 	int lastShow = -1;
 	cout << "number of pixels " << nRays << endl;
-	for (Ray ray : rays){
+	#pragma omp parallel for
+	//for (Ray ray : rays){
+	for (int _ = 0; _ < rays.size(); ++ _){
+		Ray ray = rays[_];
 		++cnt;
 		int percent = cnt * tot / nRays;
 		if (percent != lastShow){
