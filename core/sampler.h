@@ -5,7 +5,9 @@
 #include "common.h"
 
 namespace Raytracer {
-	
+
+//P720
+
 class Sampler{
 public:
 	//Sampler();

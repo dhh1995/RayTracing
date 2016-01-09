@@ -8,6 +8,9 @@ namespace Raytracer {
 
 class Vertex{
 public:
+	Vertex(real x, real y, real z){
+		mPos = Vec3f(x, y, z);
+	}
 	Vertex(Vec3f aPos):mPos(aPos){
 	}
 	Vec3f getPos(){

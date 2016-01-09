@@ -11,6 +11,8 @@
 
 namespace Raytracer {
 
+const int TRACEDEPTH = 8;
+
 class TestRenderer : public Renderer {
 public:
 	TestRenderer():mRaysCast(0){

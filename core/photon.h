@@ -26,6 +26,9 @@ public:
 	Color getPower(){
 		return mPower;
 	}
+	void updatePower(Color upd){
+		mPower *= upd;
+	}
 	void prt(){
 		mRay.prt();
 	}

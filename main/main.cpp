@@ -66,7 +66,7 @@ int main(int argc, char** argv)
 
 	Film* film = new Image(500, 500);
 	film->setName("test");
-	Camera* camera = new ProjectiveCamera(Vec3f(0, 0.001, -0.001), Vec3f(1, 0, 0), Vec3f(0, 0, 1), 100);
+	Camera* camera = new ProjectiveCamera(Vec3f(0, 0.001, -0.001), Vec3f(1, 0, 0), Vec3f(0, 0, 1), 90);
 	//Camera *camera = new ProjectiveCamera(Vector(0, 5, 10), Vector(0, 0, -1), Vector(0, 1, 0), 90); 
 	camera->setFilm(film);
 
@@ -75,7 +75,7 @@ int main(int argc, char** argv)
 	Scene* scene = new Scene(WHITE / 5);
 	int useScene = args.useScene;
 	int debug = args.debug;
-	int useBox = 1;
+	int useBox = 2;
 
 	//filmX 222, filmY 222
 	Ray debugRay = Ray(Vec3f(0.000000, 0.000000, 1.000000), Vec3f(0.988487, 0.104990, 0.108951));
@@ -92,25 +92,25 @@ int main(int argc, char** argv)
 		//scene->loadObj();
 	}
 
-	Vec3f testTransForCube(2, -1.5, 0.5);
+	Vec3f testTransForCube(3, -0.5, 0.5);
 
 	//Material(Color aColor, real aRefl, real aRefr, real aDiff, real aSpec, real aRIndex = 1, Color Ka = BLACK)
 	Material* matPINK = new Material(PINK, 1, 0, 0.3, 0.6, 2, WHITE / 5);
 	Material* matCYAN = new Material(CYAN, 1, 0, 0.5, 0.4, 1.5, WHITE / 5);
 	Material* mat1 = new Material(CYAN, 0, 0, 0.6, 0.4, 1, WHITE / 5);
-	Material* mat2 = new Material(WHITE, 0, 1, 0.5, 0.1, 1.5, WHITE / 5);
+	Material* mat2 = new Material(WHITE, 0, 1, 0, 1, 1.5, WHITE / 5);
 	
-	Material* wall1 = new Material(WHITE, 0., 0. , 0.8, 0.2, 1.0, WHITE / 10);
+	Material* wall1 = new Material(WHITE, 0., 0. , 0.8, 0, 1.0, WHITE / 10);
 	Image* image0 = new Image("texture/lena.jpg");
 	Image* image1 = new Image("texture/world1.jpg");
 	Texture* texture1 = new Texture(image0, 20, 20);
 	wall1->setTexture(texture1);
-	Material* floor3 = new Material(WHITE, 0., 0. , 0.8, 0.2, 1.0, WHITE / 10);
+	Material* floor3 = new Material(WHITE, 0., 0. , 0.8, 0, 1.0, WHITE / 10);
 	Image* image3 = new Image("texture/parquet.jpg");
 	Texture* texture3 = new Texture(image3, 50, 50);
 	floor3->setTexture(texture3);
 
-	Material* mat4 = new Material(WHITE, 0, 0., 0.5, 0.5, 1.0, WHITE/5);
+	Material* mat4 = new Material(WHITE, 1, 0., 0.5, 0.5, 1.0, WHITE/5);
 
 	if (useScene == 666){
 		enum OBJ{
@@ -239,45 +239,60 @@ int main(int argc, char** argv)
 
 	//--------------------------------------test_scene 2----------------------------
 	if (useScene == 2){
-		Primitive* obj0 = new TriangleMesh("test_data/dinosaur.2k.obj",
-			mat1, Matrix44::scale(0.05));
+		Primitive* obj0 = new TriangleMesh("test_data/fixed.perfect.dragon.100K.0.07.obj",
+			mat2, Matrix44::scale(5) /* Matrix44::rotateX(PI)*/ );
 		scene->addObject(obj0);
 
-		//Light* light0 = new Light(WHITE, Vec3f(-20, 0, 0));
-		//scene->addLight(light0);
+		Light* light0 = new Light(WHITE, Vec3f(4, 0, 4));
+		scene->addLight(light0);
 
 		Light* light1 = new Light(PINK / 2 , Vec3f(-4, 0, 0));
-		scene->addLight(light1);
-		Light* light2 = new Light(WHITE / 3, Vec3f(0, 0, 4) );
-		scene->addLight(light2);
-		Light* light3 = new Light(WHITE / 3, Vec3f(-3, 0, 0) );
-		scene->addLight(light3);
+		//scene->addLight(light1);
+		Light* light2 = new Light(WHITE / 2, Vec3f(0, 0, 4) );
+		//scene->addLight(light2);
+		Light* light3 = new Light(WHITE / 2, Vec3f(-3, 0, 0) );
+		//scene->addLight(light3);
 		Light* light4 = new Light(BLUE / 2, Vec3f(0, 0, 3));
 		//scene->addLight(light4);
 
-		Material* newmat4 = new Material(WHITE, 0.5, 0., 0.5, 0.5, 1.0, WHITE/5);
+		Material* mat5 = new Material(RED, 0, 0., 0.8, 0, 1.0, WHITE/5);
+		Material* mat6 = new Material(GREEN, 0, 0., 0.8, 0, 1.0, WHITE/5);
+		Material* mat7 = new Material(WHITE, 0, 0., 0.8, 0, 1.0, WHITE/5);
 
-		Primitive* obj5 = new Plane(Vec3f(-1, 0, 0), Vec3f(0, -1, 0), 6);
-		obj5->setMaterial(mat4);
-		scene->addObject(obj5);
+		// Primitive* obj5 = new Plane(Vec3f(-1, 0, 0), Vec3f(0, -1, 0), 6);
+		Primitive* obj5_1 = new Triangle(new Vertex(10, -10, -10), new Vertex(10, -10, 10), new Vertex(10, 10, -10));
+		obj5_1->setMaterial(mat7);
+		scene->addObject(obj5_1);
+
+		Primitive* obj5_2 = new Triangle(new Vertex(10, 10, 10), new Vertex(10, 10, -10), new Vertex(10, -10, 10));
+		obj5_2->setMaterial(mat7);
+		scene->addObject(obj5_2);
 
 		Primitive* obj6 = new Plane(Vec3f(0, 1, 0), Vec3f(-1, 0, 0), 6);
-		obj6->setMaterial(mat4);
-		scene->addObject(obj6);
+		obj6->setMaterial(mat5);
+		//scene->addObject(obj6);
 
-		Primitive* obj7 = new Plane(Vec3f(0, 0, 1), Vec3f(1, 0, 0), 6);
-		obj7->setMaterial(newmat4);
-		scene->addObject(obj7);
-	
+		// Primitive* obj7 = new Plane(Vec3f(0, 0, 1), Vec3f(1, 0, 0), 6);
+		// obj7->setMaterial(mat7);
+		// scene->addObject(obj7);
+		Primitive* obj7_1 = new Triangle(new Vertex(-2, -10, -10), new Vertex(10, -10, -10), new Vertex(-2, 10, -10));
+		obj7_1->setMaterial(mat7);
+		scene->addObject(obj7_1);
+
+		Primitive* obj7_2 = new Triangle(new Vertex(10, 10, -10), new Vertex(-2, 10, -10), new Vertex(10, -10, -10));
+		obj7_2->setMaterial(mat7);
+		scene->addObject(obj7_2);
+
+
 		Primitive* obj8 = new Plane(Vec3f(0, -1, 0), Vec3f(1, 0, 0), 6);
-		obj8->setMaterial(mat4);
-		scene->addObject(obj8);
+		obj8->setMaterial(mat6);
+		//scene->addObject(obj8);
 
 		Primitive* obj9 = new Plane(Vec3f(0, 0, -1), Vec3f(-1, 0, 0), 6);
-		obj9->setMaterial(newmat4);
-		scene->addObject(obj9);
+		obj9->setMaterial(mat7);
+		//scene->addObject(obj9);
 
-		camera->setPos(Vec3f(-4, 0, 0));
+		camera->setPos(Vec3f(-10, 0, 0));
 
 	}
 
@@ -347,10 +362,10 @@ int main(int argc, char** argv)
 		Primitive* obj5 = new Plane(Vec3f(-1, 0, 0), Vec3f(0, 0, -1), 20);
 		obj5->setMaterial(mat9);
 
-		Primitive* obj6 = new Sphere(Vec3f(6, -4, -6), 3);
+		Primitive* obj6 = new Sphere(Vec3f(8, -4, -6), 3);
 		obj6->setMaterial(mat7);
 
-		Primitive* obj7 = new Sphere(Vec3f(8, 3, -7), 3);
+		Primitive* obj7 = new Sphere(Vec3f(12, 3, -7), 3);
 		obj7->setMaterial(mat8);
 
 		scene->addObject(obj1);
@@ -372,7 +387,7 @@ int main(int argc, char** argv)
 		//Light* light2 = new Light(YELLOW, Vec3f(5,9,-9));
 		//scene->addLight(light2);
 
-		Light* light3 = new Light(WHITE, Vec3f(10,0,9));
+		Light* light3 = new Light(WHITE, Vec3f(10,0,8));
 		scene->addLight(light3);
 
 		Light* light4 = new AreaLight(WHITE, Vec3f(10, 0, 9.9), Vec3f(0, 0, -1), Vec3f(1, 0, 0));

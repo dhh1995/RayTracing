@@ -76,7 +76,9 @@ public:
 			build(root * 2 + 1, m + 1, r), cur->ch |= 2;
 	}
 	void construct(){
-		assert(n > 0);
+		//assert(n > 0);
+		if (n <= 0)
+			return;
 		//printf("%d\n",n);
 		int N = n * 2;
 
@@ -94,6 +96,8 @@ public:
 	}
 	int getKNearest(const Vec3f& pos, int K, real maxDist = INF){
 		//colorMessage("New Request !!", 5);
+		if (n <= 0)
+			return 0;
 		m = 0, mLimit = K;
 		aPos = pos;
 		mDist = maxDist * maxDist;

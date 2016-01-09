@@ -139,7 +139,10 @@ void TestRenderer::render(const Args& args){
 	int nRays = rays.size(), cnt = 0, tot = 10;
 	int lastShow = -1;
 	cout << "number of pixels " << nRays << endl;
-	for (Ray ray : rays){
+	#pragma omp parallel for
+	//for (Ray ray : rays){
+	for (int _ = 0; _ < rays.size(); ++ _){
+		Ray ray = rays[_];
 		++cnt;
 		int percent = cnt * tot / nRays;
 		if (percent != lastShow){

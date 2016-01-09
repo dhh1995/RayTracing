@@ -17,9 +17,10 @@ public:
 	}
 	Triangle(Vertex* A, Vertex* B, Vertex* C):A(A), B(B), C(C){
 		a = b = c = -1;
+		// A->prt(),B->prt(),C->prt();
 		_computeNorm();
 	}
-	Triangle(const vector<Vertex*> vex, int a, int b, int c):a(a), b(b), c(c), A(vex[a]), B(vex[b]), C(vex[c]){
+	Triangle(const vector<Vertex*>& vex, int a, int b, int c):a(a), b(b), c(c), A(vex[a]), B(vex[b]), C(vex[c]){
 		_computeNorm();
 	}
 	void prt(){
