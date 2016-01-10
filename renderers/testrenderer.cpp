@@ -172,8 +172,5 @@ void TestRenderer::render(const Args& args){
 		}
 }
 
-void TestRenderer::show(){
-	mCamera->getFilm()->show();
-}
 
 }; // namespace Raytracer

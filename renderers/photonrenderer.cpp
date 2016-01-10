@@ -65,8 +65,8 @@ void PhotonRenderer::photonTracing(Photon* photon, int depth, bool meetSpecular)
 			R = ray.d - 2.0f * dot(ray.d, N) * N;
 		else{
 			R = (n * ray.d) + (n * cosI - sqrt( cosT2 )) * N;
-			meetSpecular = true;
 		}
+		meetSpecular = true;
 		photon->setRay(Ray(pi + EPS * R, R));
 		photon->updatePower(color);
 		photonTracing(photon, depth + 1, meetSpecular);
@@ -96,8 +96,12 @@ void PhotonRenderer::genPhotonMap(const Args& args, string path){
 			fscanf(globalPmFile, "%d", &mGlobalFinish);
 			mGlobal.load(globalPmFile);
 		}
+	}else{
+		mGlobal.clear();
+		mCaustic.clear();
 	}
 
+	mPhotonEmits = 0;
 	int m = mScene->getLights().size();
 	int total = mGlobalWant + mCausticWant, cnt = 0, last = 1, showStages = 10;
 	vector<Light* > lights = mScene->getLights();
@@ -151,41 +155,34 @@ void PhotonRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, re
 	// printf("%lf\n",diff);
 	if (diff > 0){
 		Color radiance, caustic;
-		int nPhotons = 500;
+		int nPhotons = SEARCH_PHOTONS;
+		real alpha = CAUSTIC_SEARCH_RADIUS, beta = GLOBAL_SEARCH_RADIUS;
 		pair<real, Photon* > * photons = new pair<real, Photon* >[nPhotons + 5];
-		int m = mCaustic.getKNearest(pi, nPhotons, photons, 1);
-		//printf("%d\n",m);
-		//int m = 0;
-		if (m >= 8){
-			// printf("%d\n",m);
-			real radius2 = photons[0].first;
-			// pi.prt();
-			// printf("photons collected %d\n",m);
-			// printf("%lf\n", radius2);
-			// printf("%lf\n", photons[0].first);
-			for (int i = 0; i < m; ++ i){
-				Photon* photon = photons[i].second;
-				if (dot(norm, photon->getRay().d) < 0)
-					caustic += photon->getPower();
+		{
+			int m = mCaustic.getKNearest(pi, nPhotons, photons, (alpha + mProgress) / (1. + mProgress));
+			if (m >= 8){
+				real radius2 = photons[0].first;
+				for (int i = 0; i < m; ++ i){
+					Photon* photon = photons[i].second;
+					if (dot(norm, photon->getRay().d) < 0)
+						caustic += photon->getPower();
+				}
+				caustic /= 0 * mCaustic.getN() + 1 * mCausticFinish;
+				caustic /= PI * radius2;
 			}
-			caustic /= mCausticFinish; //mCaustic.getN();
-			caustic /= PI * radius2;
 		}
-		m = mGlobal.getKNearest(pi, nPhotons, photons, 10);
-		if (m >= 1){
-			real radius2 = photons[0].first;
-			for (int i = 0; i < m; ++ i){
-				Photon* photon = photons[i].second;
-				// printf("m=%d i=%d %d\n",m,i,photon);
-				// norm.prt();
-				// photon->getRay().prt();
-				if (dot(norm, photon->getRay().d) < 0)
-					radiance += photon->getPower();
+		{
+			int m = mGlobal.getKNearest(pi, nPhotons, photons, (beta + mProgress) / (1. + mProgress));
+			if (m >= 1){
+				real radius2 = photons[0].first;
+				for (int i = 0; i < m; ++ i){
+					Photon* photon = photons[i].second;
+					if (dot(norm, photon->getRay().d) < 0)
+						radiance += photon->getPower();
+				}
+				radiance /= 0 * mGlobal.getN() + 1 * mGlobalFinish;
+				radiance /= PI * radius2;
 			}
-			// if (radiance > BLACK)
-			// 	printf("%d %d %d\n",m,ray.mFilmX, ray.mFilmY);
-			radiance /= mGlobalFinish;
-			radiance /= PI * radius2;
 		}
 		delete[] photons;
 		// printf("radiance ");
@@ -257,7 +254,7 @@ void PhotonRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, re
 void PhotonRenderer::render(const Args& args){
 	char names[105];
 	sprintf(names, "PhotonMaps/scene%d", args.useScene);
-	genPhotonMap(args, names);
+	//genPhotonMap(args, names);
 	//genCausticPhotonMap("caustic", 100);
 	progressMessage("Generate photon maps done.");
 
@@ -273,24 +270,37 @@ void PhotonRenderer::render(const Args& args){
 			resultColor[i] = BLACK, counter[i] = 0;
 	cout << "number of pixels " << nRays << endl;
 
-	#pragma omp parallel for
-	//for (Ray ray : rays){
-	for (int _ = 0; _ < rays.size(); ++ _){
-		Ray ray = rays[_];
-		++cnt;
-		int percent = cnt * tot / nRays;
-		if (percent != lastShow){
-			lastShow = percent;
-			printf("%d/%d\n", percent,tot);
-		}
+	int progressive = PROGRESSIVE;
+	for (mProgress = 0; mProgress < progressive; ++ mProgress){
+		genPhotonMap(args, "");
+		#pragma omp parallel for
+		//for (Ray ray : rays){
+		for (int _ = 0; _ < rays.size(); ++ _){
+			Ray ray = rays[_];
+			++cnt;
+			int percent = cnt * tot / nRays;
+			if (percent != lastShow){
+				lastShow = percent;
+				printf("%d/%d\n", percent,tot);
+			}
 
-		int x = ray.mFilmX, y = ray.mFilmY;
-		Color res;
-		real dist;
-		rayTracing(ray, res, 0, 1, dist);
-		//mCamera->getFilm()->setColor(x, y, res);
-		resultColor[x * h + y] += res;
-		counter[x * h + y] ++;
+			int x = ray.mFilmX, y = ray.mFilmY;
+			Color res;
+			real dist;
+			rayTracing(ray, res, 0, 1, dist);
+			//mCamera->getFilm()->setColor(x, y, res);
+			resultColor[x * h + y] += res / progressive;
+			counter[x * h + y] ++;
+		}
+		bool showImg = true;
+		if (showImg){
+			for (int i = 0; i < w; ++ i)
+				for (int j = 0; j < h; ++ j){
+					assert(counter[i * h + j] > 0);
+					mCamera->getFilm()->setColor(i, j, resultColor[i * h + j] / counter[i * h + j]);
+				}
+			show();
+		}
 	}
 	for (int i = 0; i < w; ++ i)
 		for (int j = 0; j < h; ++ j){

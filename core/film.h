@@ -26,7 +26,7 @@ public:
 	virtual void setColor(int x, int y, const Color &color) = 0;
 	virtual Color getColor(int x, int y) = 0;
 	virtual void read(string path) = 0;
-	virtual void show() = 0;
+	virtual void show(bool wait = false) = 0;
 protected:
 	int w, h;
 	char *mName;

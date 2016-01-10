@@ -72,9 +72,9 @@ int main(int argc, char** argv)
 	if (args.showHelp)
 		return 0;
 
-	Film* film = new Image(500, 500);
+	Film* film = new Image(1000, 1000);
 	film->setName("test");
-	Camera* camera = new PerspectiveCamera(Vec3f(0, 0.001, -0.001), Vec3f(1, 0.3, 0), Vec3f(0, 0, 1), 90, 1, 8);
+	Camera* camera = new PerspectiveCamera(Vec3f(0, 0, -0), Vec3f(1, 0, 0), Vec3f(0, 0, 1), 90, 0, 10);
 	//Camera *camera = new ProjectiveCamera(Vector(0, 5, 10), Vector(0, 0, -1), Vector(0, 1, 0), 90); 
 	camera->setFilm(film);
 
@@ -251,11 +251,12 @@ int main(int argc, char** argv)
 
 	//--------------------------------------test_scene 2----------------------------
 	if (useScene == 2){
+		(Matrix44::scale(5) * Matrix44::rotateX(PI / 2) * Matrix44::rotateY(-PI / 2)) .prt();
 		Primitive* obj0 = new TriangleMesh("test_data/fixed.perfect.dragon.100K.0.07.obj",
-			mat2, Matrix44::scale(5) /* Matrix44::rotateX(PI)*/ );
+			mat2, Matrix44::scale(5) * Matrix44::rotateX(PI / 2) * Matrix44::rotateY(-PI / 2));
 		scene->addObject(obj0);
 
-		Light* light0 = new Light(WHITE * 1000, Vec3f(0, 0, 4));
+		Light* light0 = new Light(WHITE * 10000 , Vec3f(0, 0, 4));
 		scene->addLight(light0);
 
 		Light* light1 = new Light(PINK / 2 , Vec3f(-4, 0, 0));
@@ -304,8 +305,7 @@ int main(int argc, char** argv)
 		obj9->setMaterial(mat7);
 		//scene->addObject(obj9);
 
-		camera->setPos(Vec3f(-5, 0, 0));
-
+		camera->setPos(Vec3f(-10, 0, 0));
 	}
 
 	if (useScene == 3){
@@ -358,7 +358,7 @@ int main(int argc, char** argv)
 
 	//--------------------------------------test_scene 3----------------------------
 	if (useScene == 4){
-		camera->setPos(Vec3f(-5, 0 ,0));
+		camera->setPos(Vec3f(0, 0 ,-1));
 
 		Material* mat5 = new Material(RED, 0.3, 0., 0.5, 0, 1.0, WHITE/5);
 		Material* mat6 = new Material(GREEN, 0.3, 0., 0.5, 0, 1.0, WHITE/5);
@@ -366,25 +366,25 @@ int main(int argc, char** argv)
 		Material* mat8 = new Material(WHITE, 1, 0, 0, 1, 1);
 		Material* mat9 = new Material(WHITE, 0, 0., 0.5, 0, 1.0, WHITE/5);
 
-		Primitive* obj1 = new Plane(Vec3f(0, 0, 1), Vec3f(1, 0, 0), 10);
+		Primitive* obj1 = new Plane(Vec3f(0, 0, 1), Vec3f(1, 0, 0), 5);
 		obj1->setMaterial(mat9);
 
-		Primitive* obj2 = new Plane(Vec3f(0, 0, -1), Vec3f(1, 0, 0), 10);
+		Primitive* obj2 = new Plane(Vec3f(0, 0, -1), Vec3f(1, 0, 0), 5);
 		obj2->setMaterial(mat9);
 
-		Primitive* obj3 = new Plane(Vec3f(0, -1, 0), Vec3f(1, 0, 0), 10);
+		Primitive* obj3 = new Plane(Vec3f(0, -1, 0), Vec3f(1, 0, 0), 5);
 		obj3->setMaterial(mat5);
 
-		Primitive* obj4 = new Plane(Vec3f(0, 1, 0), Vec3f(-1, 0, 0), 10);
+		Primitive* obj4 = new Plane(Vec3f(0, 1, 0), Vec3f(-1, 0, 0), 5);
 		obj4->setMaterial(mat6);
 
-		Primitive* obj5 = new Plane(Vec3f(-1, 0, 0), Vec3f(0, 0, -1), 20);
+		Primitive* obj5 = new Plane(Vec3f(-1, 0, 0), Vec3f(0, 0, -1), 10);
 		obj5->setMaterial(mat9);
 
-		Primitive* obj6 = new Sphere(Vec3f(8, -4, -6), 3);
+		Primitive* obj6 = new Sphere(Vec3f(6, -1, -4), 1);
 		obj6->setMaterial(mat7);
 
-		Primitive* obj7 = new Sphere(Vec3f(12, 3, -7), 3);
+		Primitive* obj7 = new Sphere(Vec3f(6, 1.5, -4), 1);
 		obj7->setMaterial(mat8);
 
 		scene->addObject(obj1);
@@ -406,7 +406,7 @@ int main(int argc, char** argv)
 		//Light* light2 = new Light(YELLOW, Vec3f(5,9,-9));
 		//scene->addLight(light2);
 
-		Light* light3 = new Light(WHITE, Vec3f(10,0,8));
+		Light* light3 = new Light(WHITE * 5000, Vec3f(5,0,4));
 		scene->addLight(light3);
 
 		Light* light4 = new AreaLight(WHITE, Vec3f(10, 0, 9.9), Vec3f(0, 0, -1), Vec3f(1, 0, 0));
@@ -476,7 +476,7 @@ int main(int argc, char** argv)
 	progressMessage("Done");
 
 	if (!debug)
-		renderer->show();
+		renderer->show(true);
 //}
 	return 0;
 }

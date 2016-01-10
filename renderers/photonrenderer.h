@@ -6,11 +6,17 @@
 
 namespace Raytracer {
 
-const int PHOTONDEPTH = 8;
+const int PROGRESSIVE = 20;
+const int PHOTONDEPTH = 10;
+const int GLOBALWANT = 100000;
+const int CAUSTICWANT = 10000;
+const real CAUSTIC_SEARCH_RADIUS = 1;
+const real GLOBAL_SEARCH_RADIUS = 6;
+const int SEARCH_PHOTONS = 200;
 
 class PhotonRenderer : public TestRenderer {
 public:
-	PhotonRenderer(int globalWant = 100000, int causticWant = 100000)
+	PhotonRenderer(int globalWant = GLOBALWANT, int causticWant = CAUSTICWANT)
 		: mPhotonEmits(0), mGlobalWant(globalWant), mCausticWant(causticWant){
 	}
 	void photonTracing(Photon* photon, int depth, bool meetSpecular);
@@ -23,6 +29,7 @@ private:
 	int mPhotonEmits, mGlobalWant, mCausticWant;
 	int mGlobalFinish, mCausticFinish;
 	PhotonMap mGlobal, mCaustic;
+	int mProgress;
 };
 
 }; // namespace Raytracer

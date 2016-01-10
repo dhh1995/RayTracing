@@ -78,12 +78,11 @@ public:
 		//assert(n > 0);
 		if (n <= 0)
 			return;
-		//printf("%d\n",n);
+		// printf("%d\n",n);
 		int N = n * 2;
-
-		if (a != NULL)
-			delete[] a;
-		a = new KdNode[N];
+		if (a == NULL)
+			a = new KdNode[N];
+		// printf("%d\n",a);
 		root = 1;
 		build(1, 0, n);
 	}

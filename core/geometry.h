@@ -437,7 +437,7 @@ struct Matrix44{
 	}
 
 	static Matrix44 rotateX(real theta){
-		return Matrix44( 0 ,	0		, 		1	  , 0, 
+		return Matrix44( 1 ,	0		, 		0	  , 0, 
 						 0 , cos(theta)	, -sin(theta) , 0, 
 						 0 , sin(theta)	,  cos(theta) , 0, 
 						 0 ,	0		, 		0	  , 1);
@@ -445,7 +445,7 @@ struct Matrix44{
 
 	static Matrix44 rotateY(real theta){
 		return Matrix44(  cos(theta) , 0 , sin(theta) , 0, 
-								0	 , 0 , 		0	  , 0, 
+								0	 , 1 , 		0	  , 0, 
 						 -sin(theta) , 0 , cos(theta) , 0, 
 								0	 , 0 ,		0	  , 1);
 	}

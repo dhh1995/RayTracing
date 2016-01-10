@@ -25,14 +25,15 @@ void Image::read(string path){
 	h = mImg.cols;
 }
 
-void Image::show(){
+void Image::show(bool wait){
 	string imgName = mName;
 	imgName += ".jpg";
 	imwrite(imgName, mImg);
 #ifdef LOCAL
 	imshow(mName, mImg);
+	if (wait)
+		waitKey(0);
 #endif
-	waitKey(0);
 }
 
 }; // namespace Raytracer

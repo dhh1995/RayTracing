@@ -35,7 +35,7 @@ public:
 	void setColor(int x, int y, const Color &color);
 	Color getColor(int x, int y);
 	void read(string path);
-	void show();
+	void show(bool wait = true);
 	Mat mImg;
 };
 

@@ -28,7 +28,7 @@ public:
 
 	virtual void rayTracing(Ray ray, Color& res, int depth, real aRIndex, real &aDist) = 0; // for debug
 	virtual void render(const Args& args) = 0;
-	virtual void show() = 0;
+	virtual void show(bool wait = false) = 0;
 protected:
 	Camera* mCamera;
 	Scene* mScene;
