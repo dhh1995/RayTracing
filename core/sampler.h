@@ -18,6 +18,7 @@ public:
 	static real getRandReal(){
 		return rand() / real(RAND_MAX);
 	}
+	static void unitDisk(real* x, real* y);
 //private:
 };
 

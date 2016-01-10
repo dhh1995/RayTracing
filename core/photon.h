@@ -8,7 +8,7 @@ namespace Raytracer {
 
 class Photon{
 public:
-	Photon():mRay(ORIGINAL, ZERO){}
+	Photon():mPower(BLACK), mRay(ORIGINAL, ZERO){}
 	Photon(Ray aRay, Color aPower) : mRay(aRay), mPower(aPower){
 	}
 	Ray& getRay(){

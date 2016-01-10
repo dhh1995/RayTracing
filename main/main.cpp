@@ -74,7 +74,7 @@ int main(int argc, char** argv)
 
 	Film* film = new Image(500, 500);
 	film->setName("test");
-	Camera* camera = new ProjectiveCamera(Vec3f(0, 0.001, -0.001), Vec3f(1, 0, 0), Vec3f(0, 0, 1), 100);
+	Camera* camera = new PerspectiveCamera(Vec3f(0, 0.001, -0.001), Vec3f(1, 0.3, 0), Vec3f(0, 0, 1), 90, 1, 8);
 	//Camera *camera = new ProjectiveCamera(Vector(0, 5, 10), Vector(0, 0, -1), Vector(0, 1, 0), 90); 
 	camera->setFilm(film);
 
@@ -187,7 +187,6 @@ int main(int argc, char** argv)
 
 	//--------------------------------------test_scene 1----------------------------
 	if (useScene == 1){
-
 		// for (int i=0;i<5;++i){
 		// 	for (int j=0;j<5;++j){
 		// 		Primitive* obj = new Sphere(Vec3f(4,i-2,j-1),0.2);

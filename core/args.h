@@ -17,13 +17,15 @@ struct Args{
 	bool usePhoton;
 	bool loadPM;
 	bool showHelp;
+	int cameraSample;
 	Args(){
 		//default
-		useScene = 666;
+		useScene = 1;
 		useModel = 1;
 		needTriangle = 400;
 		needRatio = 0.01;
 		threshold = 0;
+		cameraSample = 20;
 		needOption = "ratio";
 		debug = false;
 		showHelp = false;
@@ -42,6 +44,8 @@ struct Args{
 		sprintf(helpInfo, "--photon		default = false		set Rendering model as Photon Mapping");
 		colorMessage(helpInfo, 3);
 		sprintf(helpInfo, "--loadpm		default = false		use pre-computed Photon Mapping(according to scene id)");
+		colorMessage(helpInfo, 3);
+		sprintf(helpInfo, "-csample [int] 		default = %d		Sample times for camera", cameraSample);
 		colorMessage(helpInfo, 3);
 		sprintf(helpInfo, "-model [int] 		default = %d		Choose which model to use", useModel);
 		colorMessage(helpInfo, 3);
@@ -68,6 +72,8 @@ struct Args{
 					usePhoton = true, --ind;
 				else if (param == "--loadpm")
 					loadPM = true, --ind;
+				else if (param == "-csample")
+					readBuf(ptr, cameraSample);
 				else if (param == "-scene")
 					readBuf(ptr, useScene);
 				else if (param == "-model")

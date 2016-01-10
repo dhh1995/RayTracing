@@ -135,10 +135,17 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real
 
 void TestRenderer::render(const Args& args){
 	//assert(mCamera != NULL);
-	vector<Ray> rays = mCamera->generateRays();
+	vector<Ray> rays = mCamera->generateRays(args);
 	int nRays = rays.size(), cnt = 0, tot = 10;
 	int lastShow = -1;
+	int w = mCamera->getFilm()->getW();
+	int h = mCamera->getFilm()->getH();
+	int* counter = new int[w * h];
+	Color* resultColor = new Color[w * h];
+	for (int i = 0; i < w * h; ++ i)
+			resultColor[i] = BLACK, counter[i] = 0;
 	cout << "number of pixels " << nRays << endl;
+
 	#pragma omp parallel for
 	//for (Ray ray : rays){
 	for (int _ = 0; _ < rays.size(); ++ _){
@@ -151,20 +158,18 @@ void TestRenderer::render(const Args& args){
 		}
 
 		int x = ray.mFilmX, y = ray.mFilmY;
-		//debug = (x==255 && y== 255);
-		//if (x>=45 && x<=88)
-		//	printf("%d %d\n", x, y);
-		//if (x % 30 == 0 && y % 40 == 0)
-		//ray.prt();
-
 		Color res;
 		real dist;
 		rayTracing(ray, res, 0, 1, dist);
-		//printf("%d %d\n",x,y);
-		mCamera->getFilm()->setColor(x, y, res);
-		// if (res < WHITE / 14)
-		// 	ray.prt();
+		//mCamera->getFilm()->setColor(x, y, res);
+		resultColor[x * h + y] += res;
+		counter[x * h + y] ++;
 	}
+	for (int i = 0; i < w; ++ i)
+		for (int j = 0; j < h; ++ j){
+			assert(counter[i * h + j] > 0);
+			mCamera->getFilm()->setColor(i, j, resultColor[i * h + j] / counter[i * h + j]);
+		}
 }
 
 void TestRenderer::show(){

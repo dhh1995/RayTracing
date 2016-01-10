@@ -288,7 +288,7 @@ public:
 		: o(o), d(d), mFilmX(aFilmX), mFilmY(aFilmY){
 		this->d.Normalize();
 	}
-	void setDir(Vec3f dir){
+	void setDir(Vec3f dir){ //must be normalized
 		d = dir;
 	}
 	inline Vec3f operator()(real t) const {
