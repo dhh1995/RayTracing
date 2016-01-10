@@ -14,7 +14,7 @@ public:
 		: mPhotonEmits(0), mGlobalWant(globalWant), mCausticWant(causticWant){
 	}
 	void photonTracing(Photon* photon, int depth, bool meetSpecular);
-	void genPhotonMap(string path);
+	void genPhotonMap(const Args& args, string path);
 	void rayTracing(Ray ray, Color& res, int depth, real aRIndex, real &aDist);
 	void render(const Args& args);
 	//Options options;

@@ -29,7 +29,7 @@ public:
 	}
 	void addObject(Primitive *aObject){
 		if (aObject->getType() == "TriangleMesh"){
-			TriangleMesh* triMesh = dynamic_cast<TriangleMesh*>(aObject);
+			TriangleMesh* triMesh = static_cast<TriangleMesh*>(aObject);
 			for (Triangle* tri : triMesh->getTriangles())
 				mAggregate.add(tri);
 		}else

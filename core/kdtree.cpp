@@ -16,7 +16,8 @@ void KdTreeTri::KdNode::naiveSplit(){
 	split = b->getMid(dim);
 }
 
-void KdTreeTri::build(KdNode*& root, const vector<Triangle* > a, Box* Bbox, short lastDim){
+void KdTreeTri::build(KdNode*& root, const vector<Triangle* >& a, Box* Bbox, short lastDim){
+	//printf("%d %d %d\n",recurse, a.size());
 	if (++ recurse > rec_limit)
 		return;
 	if (a.empty())

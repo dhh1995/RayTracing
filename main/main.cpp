@@ -1,3 +1,5 @@
+#include <sys/resource.h>
+
 #include "core/common.h"
 //#include "obj_parser/SimpleObject.h"
 #include "core/args.h"
@@ -59,6 +61,12 @@ void emitDebugRay(Renderer* renderer, Ray ray){
 
 int main(int argc, char** argv)
 {
+	//set stack limit
+	rlimit R;
+	getrlimit(RLIMIT_STACK, &R);
+	R.rlim_cur = R.rlim_max;
+	setrlimit(RLIMIT_STACK, &R);
+
 	Args args;
 	args.parse(argc, argv);
 	if (args.showHelp)
@@ -66,7 +74,7 @@ int main(int argc, char** argv)
 
 	Film* film = new Image(500, 500);
 	film->setName("test");
-	Camera* camera = new ProjectiveCamera(Vec3f(0, 0.001, -0.001), Vec3f(1, 0, 0), Vec3f(0, 0, 1), 90);
+	Camera* camera = new ProjectiveCamera(Vec3f(0, 0.001, -0.001), Vec3f(1, 0, 0), Vec3f(0, 0, 1), 100);
 	//Camera *camera = new ProjectiveCamera(Vector(0, 5, 10), Vector(0, 0, -1), Vector(0, 1, 0), 90); 
 	camera->setFilm(film);
 
@@ -95,10 +103,15 @@ int main(int argc, char** argv)
 	Vec3f testTransForCube(3, -0.5, 0.5);
 
 	//Material(Color aColor, real aRefl, real aRefr, real aDiff, real aSpec, real aRIndex = 1, Color Ka = BLACK)
-	Material* matPINK = new Material(PINK, 1, 0, 0.3, 0.6, 2, WHITE / 5);
-	Material* matCYAN = new Material(CYAN, 1, 0, 0.5, 0.4, 1.5, WHITE / 5);
+	Material* mPink = new Material(PINK, 0, 0, 0.8, 0, 1, WHITE / 5);
+	Material* mGreen = new Material(GREEN, 0, 0, 0.8, 0, 1, WHITE / 5);
+	Material* mBlue = new Material(BLUE, 0, 0, 0.8, 0, 1, WHITE / 5);
+	Material* mRed = new Material(RED, 0, 0, 0.8, 0, 1, WHITE / 5);
+	Material* mYellow = new Material(YELLOW, 0, 0, 0.8, 0, 1, WHITE / 5);
+	Material* mWhite = new Material(WHITE, 0, 0, 0.8, 0, 1, WHITE / 5);
+
 	Material* mat1 = new Material(CYAN, 0, 0, 0.6, 0.4, 1, WHITE / 5);
-	Material* mat2 = new Material(WHITE, 0, 1, 0, 1, 1.5, WHITE / 5);
+	Material* mat2 = new Material(PINK, 0, 1, 0, 1, 1.5, WHITE / 5);
 	
 	Material* wall1 = new Material(WHITE, 0., 0. , 0.8, 0, 1.0, WHITE / 10);
 	Image* image0 = new Image("texture/lena.jpg");
@@ -110,7 +123,7 @@ int main(int argc, char** argv)
 	Texture* texture3 = new Texture(image3, 50, 50);
 	floor3->setTexture(texture3);
 
-	Material* mat4 = new Material(WHITE, 1, 0., 0.5, 0.5, 1.0, WHITE/5);
+	Material* mat4 = new Material(WHITE, 0., 0., 0.8, 0, 1.0, WHITE/5);
 
 	if (useScene == 666){
 		enum OBJ{
@@ -243,7 +256,7 @@ int main(int argc, char** argv)
 			mat2, Matrix44::scale(5) /* Matrix44::rotateX(PI)*/ );
 		scene->addObject(obj0);
 
-		Light* light0 = new Light(WHITE, Vec3f(0, 0, 4));
+		Light* light0 = new Light(WHITE * 1000, Vec3f(0, 0, 4));
 		scene->addLight(light0);
 
 		Light* light1 = new Light(PINK / 2 , Vec3f(-4, 0, 0));
@@ -292,49 +305,56 @@ int main(int argc, char** argv)
 		obj9->setMaterial(mat7);
 		//scene->addObject(obj9);
 
-		camera->setPos(Vec3f(-10, 0, 0));
+		camera->setPos(Vec3f(-5, 0, 0));
 
 	}
 
 	if (useScene == 3){
-		Primitive* dragon = new TriangleMesh("test_data/fixed.perfect.dragon.100K.0.07.obj",
-			mat1, Matrix44::scale(20));
-		scene->addObject(dragon);
-		Primitive* obj0 = new TriangleMesh("test_data/block.obj",
-			mat2);
+		// Primitive* dragon = new TriangleMesh("test_data/fixed.perfect.dragon.100K.0.07.obj",
+		// 	mat2, Matrix44::scale(20));
+		// scene->addObject(dragon);
+		Primitive* horse = new TriangleMesh("test_data/horse.fine.90k.obj",
+			mat2, Matrix44::scale(20));
+		scene->addObject(horse);
+		
+		// Primitive* obj0 = new TriangleMesh("test_data/block.obj", mat2);		
 		//scene->addObject(obj0);
 
 		camera->setPos(Vec3f(-40, 0, 0));
+
+		Light* light0 = new Light(WHITE , Vec3f(0, 0, 25));
+		scene->addLight(light0);
+
 		Light* light1 = new Light(WHITE / 3 , Vec3f(-20, 0, 0));
-		scene->addLight(light1);
+		//scene->addLight(light1);
 		Light* light2 = new Light(WHITE / 3, Vec3f(0, 0, 20) );
-		scene->addLight(light2);
+		//scene->addLight(light2);
 		Light* light3 = new Light(PINK / 2, Vec3f(-15, 0, 0) );
-		scene->addLight(light3);
+		//scene->addLight(light3);
 		Light* light4 = new Light(YELLOW / 2, Vec3f(0, 0, 15));
-		scene->addLight(light4);
+		//scene->addLight(light4);
 
 		Primitive* obj5 = new Plane(Vec3f(-1, 0, 0), Vec3f(0, -1, 0), 30);
-		obj5->setMaterial(mat4);
+		obj5->setMaterial(mWhite);
 		scene->addObject(obj5);
 
 		Primitive* obj6 = new Plane(Vec3f(0, 1, 0), Vec3f(-1, 0, 0), 30);
-		obj6->setMaterial(mat4);
+		obj6->setMaterial(mWhite);
 		scene->addObject(obj6);
 
-		Primitive* obj7 = new Plane(Vec3f(0, 0, 1), Vec3f(1, 0, 0), 30);
-		obj7->setMaterial(mat4);
+		Primitive* obj7 = new Plane(Vec3f(0, 0, 1), Vec3f(1, 0, 0), 20);
+		obj7->setMaterial(mWhite);
 		scene->addObject(obj7);
 	
 		Primitive* obj8 = new Plane(Vec3f(0, -1, 0), Vec3f(1, 0, 0), 30);
-		obj8->setMaterial(mat4);
+		obj8->setMaterial(mWhite);
 		scene->addObject(obj8);
 
 		Primitive* obj9 = new Plane(Vec3f(0, 0, -1), Vec3f(-1, 0, 0), 30);
-		obj9->setMaterial(mat4);
+		obj9->setMaterial(mWhite);
 		scene->addObject(obj9);
 
-		camera->setPos(Vec3f(-40,0,0) );
+		camera->setPos(Vec3f(-25,0,0) );
 	}
 
 	//--------------------------------------test_scene 3----------------------------

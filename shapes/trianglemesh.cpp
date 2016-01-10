@@ -12,7 +12,7 @@ TriangleMesh::TriangleMesh(string objFile, Material* aMaterial, Matrix44 transfo
 		return;
 	}
 	progressMessage("start loading obj");
-	bool fastIO = true;
+	bool fastIO = false; // fastIO with bug!!
 	int lines = 0;
 	if (fastIO){
 		char* buffer = new char[11234567];

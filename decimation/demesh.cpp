@@ -85,7 +85,7 @@ int DeMesh::contraction(VertexPair P){
 				tri->setDegeneration(), ++ count;
 				//delete degenation triangle from vertex C.
 				for (int i = 0; i < 3; ++ i){
-					DeVertex* C = dynamic_cast<DeVertex*> (tri->getVex(i));
+					DeVertex* C = static_cast<DeVertex*> (tri->getVex(i));
 					if (C != A && C != B){
 						vector<DeTriangle*> & Ctri = C->getAdjacent();
 						Ctri.erase(find(Ctri.begin(), Ctri.end(), tri));
@@ -127,7 +127,7 @@ void DeMesh::decimation(int need, real threshold){
 		//quadMatrix.prt();
 		DeVertex* vex[3];
 		for (int i = 0; i < 3; ++ i){
-			vex[i] = dynamic_cast<DeVertex*>(tri->getVex(i));
+			vex[i] = static_cast<DeVertex*>(tri->getVex(i));
 			vex[i]->addAdjacent(tri);
 			vex[i]->merge(quadMatrix);
 		}
@@ -191,7 +191,7 @@ void DeMesh::decimation(int need, real threshold){
 		if (!tri->isDegeneration()){
 			int id[3];	//recover IDs for Triangle
 			for (int i = 0; i <  3; ++ i){
-				DeVertex* vex = dynamic_cast<DeVertex*>(tri->getVex(i));
+				DeVertex* vex = static_cast<DeVertex*>(tri->getVex(i));
 				id[i] = vex->getID();
 			}
 			tri->setVexIDs(id);

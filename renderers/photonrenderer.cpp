@@ -5,7 +5,9 @@ namespace Raytracer {
 void PhotonRenderer::_addPhoton(Vec3f pos, Vec3f dir, Color power, bool meetSpecular){
 	if (meetSpecular){
 		if (mCaustic.getN() < mCausticWant){
-			//photon->prt();
+			// puts("photon");
+			// pos.prt();
+			// dir.prt();
 			mCaustic.add(new Photon(Ray(pos, dir), power));
 			if (mCaustic.getN() == mCausticWant)
 				mCausticFinish = mPhotonEmits;
@@ -74,13 +76,28 @@ void PhotonRenderer::photonTracing(Photon* photon, int depth, bool meetSpecular)
 		Vec3f dir = _getDiffuseDir(norm);
 		photon->setRay(Ray(pi + EPS * dir, dir));
 		photon->updatePower(color);
-		photonTracing(photon, depth + 1, meetSpecular);
+		photonTracing(photon, depth + 1, false);
 	}else{
 		_addPhoton(pi, ray.d, photon->getPower(), meetSpecular);
 	}
 }
 
-void PhotonRenderer::genPhotonMap(string path){
+void PhotonRenderer::genPhotonMap(const Args& args, string path){
+	string causticPmFileName = path + "caustic.pm";
+	string globalPmFileName = path + "global.pm";
+	FILE* causticPmFile = fopen(causticPmFileName.c_str(), "r");
+	FILE* globalPmFile  = fopen( globalPmFileName.c_str(), "r");
+	if (args.loadPM){
+		if (causticPmFile != NULL){
+			fscanf(causticPmFile, "%d", &mCausticFinish);
+			mCaustic.load(causticPmFile);
+		}
+		if (globalPmFile  != NULL){
+			fscanf(globalPmFile, "%d", &mGlobalFinish);
+			mGlobal.load(globalPmFile);
+		}
+	}
+
 	int m = mScene->getLights().size();
 	int total = mGlobalWant + mCausticWant, cnt = 0, last = 1, showStages = 10;
 	vector<Light* > lights = mScene->getLights();
@@ -98,6 +115,16 @@ void PhotonRenderer::genPhotonMap(string path){
 		}
 		if (mGlobal.getN() + mCaustic.getN() >= last * total / showStages)
 			printf("photon emits %d/%d global : %d caustic : %d\n", last++, showStages, mGlobal.getN(), mCaustic.getN());
+	}
+	if (!args.loadPM){
+		causticPmFile = fopen(causticPmFileName.c_str(), "w");
+		fprintf(causticPmFile, "%d\n", mCausticFinish);
+		mCaustic.dump(causticPmFile);
+	}
+	if (!args.loadPM){
+		globalPmFile = fopen(globalPmFileName.c_str(), "w");
+		fprintf(globalPmFile, "%d\n", mGlobalFinish);
+		mGlobal.dump(globalPmFile);
 	}
 	mGlobal.construct();
 	mCaustic.construct();
@@ -126,7 +153,7 @@ void PhotonRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, re
 		Color radiance, caustic;
 		int nPhotons = 500;
 		pair<real, Photon* > * photons = new pair<real, Photon* >[nPhotons + 5];
-		int m = mCaustic.getKNearest(pi, nPhotons, photons, 0.1);
+		int m = mCaustic.getKNearest(pi, nPhotons, photons, 1);
 		//printf("%d\n",m);
 		//int m = 0;
 		if (m >= 8){
@@ -144,7 +171,7 @@ void PhotonRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, re
 			caustic /= mCausticFinish; //mCaustic.getN();
 			caustic /= PI * radius2;
 		}
-		m = mGlobal.getKNearest(pi, nPhotons, photons, 4);
+		m = mGlobal.getKNearest(pi, nPhotons, photons, 10);
 		if (m >= 1){
 			real radius2 = photons[0].first;
 			for (int i = 0; i < m; ++ i){
@@ -163,10 +190,17 @@ void PhotonRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, re
 		delete[] photons;
 		// printf("radiance ");
 		// radiance.prt();
-		res += caustic * diff * 1000;
-		res += radiance * diff * 1000;
+		res += caustic * diff;
+		res += radiance * diff;
 		res *= color;
 	}
+	// if (showPhoton){
+	// 	real dist;
+	// 	Color rcol;
+	// 	rayTracing(Ray(pi + ray.d * EPS, ray.d), rcol, depth + 1, 1, dist);
+	// 	res += rcol;
+	// 	return;
+	// }
 
 	// calculate specular
 	//real refr = matter->getRefraction();
@@ -221,7 +255,9 @@ void PhotonRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, re
 }
 
 void PhotonRenderer::render(const Args& args){
-	genPhotonMap("photonMap");
+	char names[105];
+	sprintf(names, "PhotonMaps/scene%d", args.useScene);
+	genPhotonMap(args, names);
 	//genCausticPhotonMap("caustic", 100);
 	progressMessage("Generate photon maps done.");
 

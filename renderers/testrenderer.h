@@ -11,7 +11,7 @@
 
 namespace Raytracer {
 
-const int TRACEDEPTH = 8;
+const int TRACEDEPTH = 12;
 
 class TestRenderer : public Renderer {
 public:

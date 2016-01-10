@@ -25,6 +25,12 @@ public:
 	void prt(FILE* out){
 		fprintf(out, "v %lf %lf %lf\n", mPos.x, mPos.y, mPos.z);
 	}
+	// void dump(FILE* fp){
+	// 	//unImplemented
+	// }
+	// void load(FILE* fp){
+	// 	//unImplemented
+	// }
 	virtual void prt(){
 		printf("pos = ");
 		mPos.prt();

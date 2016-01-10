@@ -119,6 +119,21 @@ public:
 		return mData;
 	}
 
+	void load(FILE* fp){
+		clear();
+		fscanf(fp, "%d", &n);
+		for (int i = 0; i < n; ++ i){
+			T* t = new T();
+			t->load(fp);
+			mData.push_back(t);
+		}
+	}
+	void dump(FILE* fp){
+		fprintf(fp, "%d\n", n);
+		for (int i = 0; i < n; ++ i)
+			mData[i]->dump(fp);
+	}
+
 	~KdTree(){
 		if (a != NULL)
 			delete[] a;
@@ -213,8 +228,8 @@ public:
 	void add(Triangle* x){
 		mData.push_back(x);
 	}
-	void buildLeaf(KdNode*& root, const vector<Triangle* > a, int l, int r);
-	void build(KdNode*& root, const vector<Triangle* > a, Box* Bbox, short lastDim = -1);
+	// void buildLeaf(KdNode*& root, const vector<Triangle* > a, int l, int r);
+	void build(KdNode*& root, const vector<Triangle* >& a, Box* Bbox, short lastDim = -1);
 	void construct();
 
 	bool intersect(const Ray& ray, Intersection& isect);
@@ -235,7 +250,7 @@ private:
 	//for debug
 	int recurse;
 	const int rec_limit = 1123456;
-	const int MAX_KDTREE_LEAF_SIZE = 30;
+	const int MAX_KDTREE_LEAF_SIZE = 50;
 };
 
 }; // namespace Raytracer

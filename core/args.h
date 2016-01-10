@@ -15,6 +15,7 @@ struct Args{
 	string needOption;
 	bool debug;
 	bool usePhoton;
+	bool loadPM;
 	bool showHelp;
 	Args(){
 		//default
@@ -27,6 +28,7 @@ struct Args{
 		debug = false;
 		showHelp = false;
 		usePhoton = false;
+		loadPM = false;
 	}
 	void showHelpInfo(){
 		showHelp = true;
@@ -38,6 +40,8 @@ struct Args{
 		sprintf(helpInfo, "-scene [int]		default = %d		Choose which scene to use", useScene);
 		colorMessage(helpInfo, 3);
 		sprintf(helpInfo, "--photon		default = false		set Rendering model as Photon Mapping");
+		colorMessage(helpInfo, 3);
+		sprintf(helpInfo, "--loadpm		default = false		use pre-computed Photon Mapping(according to scene id)");
 		colorMessage(helpInfo, 3);
 		sprintf(helpInfo, "-model [int] 		default = %d		Choose which model to use", useModel);
 		colorMessage(helpInfo, 3);
@@ -62,6 +66,8 @@ struct Args{
 					debug = true, --ind;
 				else if (param == "--photon")
 					usePhoton = true, --ind;
+				else if (param == "--loadpm")
+					loadPM = true, --ind;
 				else if (param == "-scene")
 					readBuf(ptr, useScene);
 				else if (param == "-model")
