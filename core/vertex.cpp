@@ -1,4 +1,4 @@
-#include "primitive.h"
+#include "vertex.h"
 
 namespace Raytracer {
 

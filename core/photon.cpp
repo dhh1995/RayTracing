@@ -1,4 +1,4 @@
-#include "primitive.h"
+#include "photon.h"
 
 namespace Raytracer {
 

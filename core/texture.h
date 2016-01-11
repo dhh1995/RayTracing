@@ -13,12 +13,13 @@ public:
 		IMAGE,
 		BUMP,
 	};
-	Color getColor(real u, real v){
-		return mImg->getColor(mod(int(u * mImg->w), mImg->w), mod(int(v * mImg->h), mImg->h) );
-	}
-	Texture(Film* aImg){
+	Texture(Film* aImg, int aUScale = 1, int aVScale = 1){
 		mImg = aImg;
+		mUScale = aUScale;
+		mVScale = aVScale;
 	}
+	Color getColor(real u, real v);
+		//return mImg->getColor(mod(int(u * mUScale), mImg->w), mod(int(v * mVScale), mImg->h) );
 private:
 	int mod(int x, int y){
 		x %= y;
@@ -28,8 +29,19 @@ private:
 	}
 	Film* mImg;
 	int mType;
+	int mUScale, mVScale;
 };
 
-}; // namespace Raytrace
+class ImgTexture : public Texture{
+
+
+};
+
+class BumpTexture : public ImgTexture{
+	
+	
+};
+
+}; // namespace Raytracer
 
 #endif // CORE_TEXTURE_H

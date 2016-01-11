@@ -4,9 +4,15 @@
 
 #include "core/common.h"
 #include "core/film.h"
-#include <opencv2/highgui.hpp>
-#include <opencv2/core.hpp>
-#include <opencv2/opencv.hpp>
+#ifndef LOCAL
+	#include <opencv2/highgui/highgui.hpp>
+	#include <opencv2/core/core.hpp>
+	#include <opencv2/opencv.hpp>
+#else
+	#include <opencv2/highgui.hpp>
+	#include <opencv2/core.hpp>
+	#include <opencv2/opencv.hpp>
+#endif
 using cv::Mat;
 using cv::Vec3b;
 using cv::imwrite;
@@ -29,10 +35,10 @@ public:
 	void setColor(int x, int y, const Color &color);
 	Color getColor(int x, int y);
 	void read(string path);
-	void show();
+	void show(bool wait = true);
 	Mat mImg;
 };
 
-}; // namespace Raytrace
+}; // namespace Raytracer
 
 #endif // FILM_IMAGE_H

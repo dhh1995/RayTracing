@@ -4,6 +4,8 @@
 
 #include "common.h"
 #include "film.h"
+#include "sampler.h"
+#include "args.h"
 
 namespace Raytracer {
 
@@ -25,11 +27,11 @@ public:
 		mPos = aPos;
 	}
 	virtual Ray generateRay(real dx, real dy, int i, int j) = 0;
-	virtual vector<Ray> generateRays() = 0;
+	virtual vector<Ray> generateRays(const Args& args) = 0;
 	virtual ~Camera(){
 		delete(mFilm);
 	}
-public:
+protected:
 	Vec3f mPos;
 private:
 	Film* mFilm;
@@ -39,16 +41,27 @@ class ProjectiveCamera : public Camera{
 public:
 	ProjectiveCamera(Vec3f aPos, Vec3f aLookAt, Vec3f aI, real aFov)
 		: Camera(aPos), mLookAt(aLookAt), mI(aI), mFov(aFov){
-			mJ = cross(mLookAt, mI);
+			mJ = cross(mI, mLookAt);
 			mArc  = mFov / 180 * PI;
 	}
 	Ray generateRay(real dx, real dy, int i, int j);
-	vector<Ray> generateRays();
-private:
+	vector<Ray> generateRays(const Args& args);
+protected:
+	//J x I = LookAt
 	Vec3f mLookAt;
 	Vec3f mI, mJ;
 	real mFov, mArc;
-	//real mLensRadius, mFocalDistance;
+};
+
+class PerspectiveCamera : public ProjectiveCamera{
+public:
+	PerspectiveCamera(Vec3f aPos, Vec3f aLookAt, Vec3f aI, real aFov, real aLensRadius, real aFocalDist)
+		: ProjectiveCamera(aPos, aLookAt, aI, aFov), mLensRadius(aLensRadius), mFocalDist(aFocalDist){
+	}
+	Ray generateRay(real dx, real dy, int i, int j);
+	vector<Ray> generateRays(const Args& args);
+private:
+	real mLensRadius, mFocalDist;
 };
 
 }; // namespace Raytracer

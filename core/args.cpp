@@ -1,4 +1,4 @@
-#include "primitive.h"
+#include "args.h"
 
 namespace Raytracer {
 

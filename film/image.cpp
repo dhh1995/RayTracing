@@ -25,13 +25,15 @@ void Image::read(string path){
 	h = mImg.cols;
 }
 
-void Image::show(){
-	// Mat a = imread("/home/dhh1995/RayTracing/lena.jpg");
+void Image::show(bool wait){
 	string imgName = mName;
 	imgName += ".jpg";
 	imwrite(imgName, mImg);
+#ifdef LOCAL
 	imshow(mName, mImg);
-	waitKey(0);
+	if (wait)
+		waitKey(0);
+#endif
 }
 
-}; // namespace Raytrace
+}; // namespace Raytracer

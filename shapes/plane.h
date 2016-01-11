@@ -3,33 +3,37 @@
 #define SHAPES_PLANE_H
 
 #include "core/common.h"
-#include "core/shape.h"
+#include "core/primitive.h"
 #include "core/intersection.h"
 
 namespace Raytracer {
 
-class Plane : public Shape{
+class Plane : public Primitive{
 public:
-	Plane(Vec3f aPos, Vec3f aNorm) : mNorm(aNorm){
+	Plane(Vec3f aNorm, Vec3f aU, Vec3f aPos) : mNorm(aNorm), mU(aU){
 		mNorm.Normalize();
-		mD = - dot(aPos, mNorm); 
+		mU.Normalize();
+		mV = cross(mNorm, mU);
+		mD = - dot(aPos, mNorm);
 	}
-	Plane(Vec3f aNorm, real aD) : mNorm(aNorm), mD(aD){
+	Plane(Vec3f aNorm, Vec3f aU, real aD) : mNorm(aNorm), mU(aU), mD(aD){
 		mNorm.Normalize();
+		mU.Normalize();
+		mV = cross(mNorm, mU);
 	}
 	string getType(){
 		return "Plane";
 	}
-	int intersect(const Ray& aRay, Intersection& isect);
-	int intersectP(const Ray& aRay);
-	Vec3f getNorm(Vec3f pos){
-		return mNorm;
-	}
+	void setIsect(Intersection& isect, real dist, Vec3f pos, bool backSide);
+	bool intersect(const Ray& aRay, Intersection& isect);
+	bool intersectP(const Ray& aRay);
 private:
+	//Norm = U x V;
 	Vec3f mNorm;
+	Vec3f mU, mV;
 	real mD;
 };
 
-}; // namespace Raytrace
+}; // namespace Raytracer
 
 #endif // SHAPES_PLANE_H

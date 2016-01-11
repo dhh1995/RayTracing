@@ -3,53 +3,42 @@
 #define SHAPES_TRIANGLEMESH_H
 
 #include "core/common.h"
-#include "core/shape.h"
+#include "core/primitive.h"
 #include "core/intersection.h"
+#include "core/kdtree.h"
+#include "shapes/triangle.h"
+#include "shapes/box.h"
 
 namespace Raytracer {
 
-class Triangle : public Shape{
+class TriangleMesh : public Primitive{
 public:
-	string getType(){
-		return "Triangle";
-	}
-	Triangle(Vec3f A, Vec3f B, Vec3f C):A(A), B(B), C(C){
-		mNorm = cross(B - A, C - A).Normalize();
-		mD = - dot(A, mNorm);
-	}
-	bool inside(const Vec3f pos);
-	int intersect(const Ray& ray, Intersection& isect);
-	int intersectP(const Ray& ray);
-	Vec3f getNorm(Vec3f pos){
-		return mNorm;
-	}
-	Vec3f A, B, C, mNorm;
-	real mD;
-//private:
-};
-
-class TriangleMesh : public Shape{
-public:
-	TriangleMesh(string objFile, Vec3f trans);
+	TriangleMesh(string objFile, Material* aMaterial, Matrix44 transform = Matrix44::eye());
+	void dump(string file);
 	string getType(){
 		return "TriangleMesh";
 	}
-	int intersect(const Ray& ray, Intersection& isect);
-	int intersectP(const Ray& ray){}
+	vector<Triangle*> getTriangles(){
+		return mTriangles;
+	}
+	bool intersect(const Ray& ray, Intersection& isect); //brute force, use kd-tree for whole scene instead.
+	bool intersectP(const Ray& ray){}
 	Vec3f getNorm(Vec3f pos){}
-private:
+	~TriangleMesh();
+protected:
 	int chg(int x){
 		if (x < 0)
 			return mVertexs.size() + x - 1;
 		return x - 1;
 	}
 	//friend class Triangle;
-	vector<Vec3f> mVertexs;
+	vector<Vertex* > mVertexs;
 	vector<Triangle*> mTriangles;
+	Box* mBoundingBox;
 };
 
 
-}; // namespace Raytrace
+}; // namespace Raytracer
 
 
 #endif // SHAPES_TRIANGLEMESH_H
