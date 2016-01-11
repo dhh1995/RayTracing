@@ -1,4 +1,4 @@
-// core/devertex.h
+// decimation/devertex.h
 #ifndef DECIMATION_DEVERTEX_H
 #define DECIMATION_DEVERTEX_H
 

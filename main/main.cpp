@@ -12,51 +12,19 @@
 #include "shapes/sphere.h"
 #include "shapes/plane.h"
 #include "shapes/trianglemesh.h"
-#include "decimation/demesh.h"
+#include "decimation/decimation.h"
 
 using namespace Raytracer;
-using namespace Decimation;
-
-DeMesh* runDecimation(string file, Material* mat, string dumpName, const Args& args){
-	char name[55];
-	DeMesh* obj = new DeMesh(file, mat);
-	int m = obj->getTriangles().size();
-	int need = args.needTriangle;
-	if (args.needOption == "ratio")
-		need = int(m * args.needRatio);
-	real threshold = args.threshold;
-	if (threshold < 0)
-		threshold = obj->diagonalLength() / (-threshold);
-	progressMessage("start decimation");
-	obj->decimation(need, threshold);
-
-	sprintf(name, "%s_res_%d.obj", dumpName.c_str(), need);
-	obj->dump(name);
-	progressMessage("end dumping");
-
-	return obj;
-}
 
 void emitDebugRay(Renderer* renderer, Ray ray){
-
-// ray = Ray(Vec3f(-20, 0, 0), Vec3f(1,0,0));
-// for (int i = -10; i <= 0; ++ i)
-// for (int j = 0; j <= 10 ; ++ j){
-// 	ray.setDir(Vec3f(1, i * 0.01, j * 0.01).Normalize());
-
 	Color res;
 	real dist = 0;
 	renderer->rayTracing(ray, res, 0, 1, dist);
-	// if (!(res != BLACK)){
-	//	printf("%d %d\n",i,j);
-		ray.prt();
-		printf("dist = %lf\n", dist);
-		ray(dist).prt();
-		printf("res = ");
-		res.prt();
-	// }
-// }
-
+	ray.prt();
+	printf("dist = %lf\n", dist);
+	ray(dist).prt();
+	printf("res = ");
+	res.prt();
 }
 
 int main(int argc, char** argv)
@@ -72,7 +40,7 @@ int main(int argc, char** argv)
 	if (args.showHelp)
 		return 0;
 
-	Film* film = new Image(1000, 1000);
+	Film* film = new Image(500, 500);
 	film->setName("test");
 	Camera* camera = new PerspectiveCamera(Vec3f(0, 0, -0), Vec3f(1, 0, 0), Vec3f(0, 0, 1), 90, 0, 10);
 	//Camera *camera = new ProjectiveCamera(Vector(0, 5, 10), Vector(0, 0, -1), Vector(0, 1, 0), 90); 
@@ -87,12 +55,6 @@ int main(int argc, char** argv)
 
 	//filmX 222, filmY 222
 	Ray debugRay = Ray(Vec3f(0.000000, 0.000000, 1.000000), Vec3f(0.988487, 0.104990, 0.108951));
-	//filmX 220, filmY 205
-	// debugRay.setDir(Vec3f(0.977862, 0.174408, 0.115619));
-	// debugRay.setDir(Vec3f(1, 0, 0.2).Normalize());
-	//filmX 218, filmY 250
-	// debugRay.setDir(Vec3f(0.992107, -0.005965, 0.125256));
-	// debugRay = Ray(Vec3f(-20.000000, 0.000000, 0.000000), Vec3f(1, -0.1, 0.1).Normalize());
 
 	camera->setPos(Vec3f(0, 0, 3));
 
@@ -125,63 +87,8 @@ int main(int argc, char** argv)
 
 	Material* mat4 = new Material(WHITE, 0., 0., 0.8, 0, 1.0, WHITE/5);
 
-	if (useScene == 666){
-		enum OBJ{
-			ARMA,
-			BLOCK,
-			BUDDHA,
-			BUNNY,
-			CUBE,
-			DINASAUR,
-			DRAGON,
-			FANDISK,
-			HORSE,
-			KITTEN,
-			ROCKER_ARM,
-			SPHERE,
-		};
-		int testModel = args.useModel;
-		DeMesh *resObj;
-
-		progressMessage("start loading");
-		switch(testModel){
-		case ARMA:
-			resObj = runDecimation("test_data/Arma.obj", mat1, "arma", args);
-			break;
-		case BLOCK:
-			resObj = runDecimation("test_data/block.obj", mat1, "block", args);
-			break;
-		case BUDDHA:
-			resObj = runDecimation("test_data/Buddha.obj", mat1, "buddha", args);
-			break;
-		case BUNNY:
-			resObj = runDecimation("test_data/bunny.fine.obj", mat1, "bunny", args);
-			break;
-		case CUBE:
-			resObj = runDecimation("test_data/cube.obj", mat1, "cube", args);
-			break;
-		case DINASAUR:
-			resObj = runDecimation("test_data/dinosaur.2k.obj", mat1, "dinosaur", args);
-			break;
-		case DRAGON:
-			resObj = runDecimation("test_data/fixed.perfect.dragon.100K.0.07.obj", mat1, "dragon", args);
-			break;
-		case FANDISK:
-			resObj = runDecimation("test_data/fandisk.18k.obj", mat1, "fandisk", args);
-			break;
-		case HORSE:
-			resObj = runDecimation("test_data/horse.fine.90k.obj", mat1, "horse", args);
-			break;
-		case KITTEN:
-			resObj = runDecimation("test_data/kitten.50k.obj", mat1, "kitten", args);
-			break;
-		case ROCKER_ARM:
-			resObj = runDecimation("test_data/rocker-arm.18k.obj", mat1, "rocker-arm", args);
-			break;
-		case SPHERE:
-			resObj = runDecimation("test_data/sphere.obj", mat1, "sphere", args);
-			break;
-		}
+	if (useScene == 666){ //Decimation Task
+		Decimation::Run(args);
 		return 0;
 	}
 

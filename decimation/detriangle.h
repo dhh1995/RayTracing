@@ -53,7 +53,6 @@ public:
 	}
 	bool flipNorm(){
 		Vec3f norm = cross(B->getPos() - A->getPos(), C->getPos() - A->getPos()).Normalize();
-		//printf("%lf\n",dot(mNorm, norm));
 		return dot(mNorm, norm) < 0;
 	}
 	void setDegeneration(bool value = true){

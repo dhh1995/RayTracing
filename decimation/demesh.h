@@ -1,4 +1,4 @@
-// shapes/trianglemesh.h
+// decimation/demesh.h
 #ifndef DECIMATION_DEMESH_H
 #define DECIMATION_DEMESH_H
 
@@ -39,10 +39,6 @@ public:
 	}
   	int contraction(VertexPair P);
 	void decimation(int need, real threshold = 0);
-	// void decimation(real ratio, real threshold = 0){
-	// 	int m = mTriangles.size();
-	// 	decimation(int(m * ratio), threshold);
-	// }
 	~DeMesh(){
 		delete[] timeStamp;
 	}

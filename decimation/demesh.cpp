@@ -14,27 +14,9 @@ int DeMesh::contraction(VertexPair P){
 	if (A == B)
 		return 0;
 
-	//A->prt();
-	//B->prt();
 	//deal with fold over <- flip normal
 	vector<DeTriangle*> Atri = A->getAdjacent();
 	vector<DeTriangle*> Btri = B->getAdjacent();
-
-	// for (DeTriangle* tri : Atri)
-	// 	if (tri->isDegeneration()){
-	// 		A->prt();
-	// 		B->prt();
-	// 		puts("!!");
-	// 		return 10000000;
-	// 	}
-
-	// for (DeTriangle* tri : Btri)
-	// 	if (tri->isDegeneration()){
-	// 		A->prt();
-	// 		B->prt();
-	// 		puts("!!");
-	// 		return 10000000;
-	// 	}
 
 	Vec3f Apos = A->getPos(), Bpos = B->getPos();
 	A->setPos(P.mTarget);
@@ -46,9 +28,7 @@ int DeMesh::contraction(VertexPair P){
 	for (DeTriangle* tri : Btri)
 		if (!tri->isDegeneration() && !tri->haveVertex(A) && tri->flipNorm())
 			forbid = true;
-	//printf("%d\n",forbid);
 	if (forbid){
-		//printf("%d\n", ++ forbidCount);
 		A->setPos(Apos);
 		B->setPos(Bpos);
 		return 0;
@@ -58,8 +38,6 @@ int DeMesh::contraction(VertexPair P){
 		A->prt();
 		B->prt();
 	}
-	//printf("A = %d B = %d\n",A->getID(), B->getID());
-	//A->setPos(P.mTarget);
 	A->merge(B->getQuadMatrix());
 	if (debug){
 		A->getPos().prt();
@@ -103,28 +81,14 @@ int DeMesh::contraction(VertexPair P){
 			reserve.push_back(tri);
 		}
 	Atriangles = reserve;
-
-	// if (Atriangles.size() > 13){
-	// if (neighbors.size() > 40){
-	// 	printf("%d\n",Atriangles.size());
-	// 	printf("%d\n",neighbors.size());
-	// 	for (int i = 0; i < neighbors.size(); ++ i)
-	// 		for (int j = 0; j < i; ++ j)
-	// 			if (neighbors[i] == neighbors[j])
-	// 				printf("%d %d\n",i,j);
-	// }
-
 	return count;
 }
 
 void DeMesh::decimation(int need, real threshold){
-	//printf("!! need = %d\n",need);
 	initialize(threshold > 0.0f);
 	vector<DeVertex*> meshVertexs = mVexCloud.getData();
 	for (DeTriangle* tri : mDeTriangles){
 		Matrix44 quadMatrix(tri->getPlaneParam());
-		//tri->prt();
-		//quadMatrix.prt();
 		DeVertex* vex[3];
 		for (int i = 0; i < 3; ++ i){
 			vex[i] = static_cast<DeVertex*>(tri->getVex(i));
@@ -135,31 +99,16 @@ void DeMesh::decimation(int need, real threshold){
 			vex[i]->addNeighbor(vex[(i+1)%3]);
 	}
 	for (DeVertex* vex : meshVertexs){
-		//vex->prt();
 		vector<DeVertex* >& neighbors = vex->getNeighbor();
 		if (threshold > 0.0f){
-			// int cnt = 0;
-			// for (DeVertex* i : meshVertexs){
-			// 	if ((i->getPos() - vex->getPos()).L2() < threshold * threshold)
-			// 		++cnt;
-			// }
-			//int last = neighbors.size();
 			mVexCloud.findInBall(neighbors, mVexCloud.root, vex->getPos(), threshold * threshold);
-			// if (cnt != neighbors.size() - last)
-			// 	printf("bf = %d kdtree = %d\n", cnt,  neighbors.size() - last);
 		}
 		for (DeVertex* near : neighbors) if (vex != near){
-			//if (vex->getID() < near->getID()){
-				VertexPair pair(vex, near, Time);
-				// vex->prt();
-				// near->prt();
-				// printf("%lf\n", pair.mError);
-				Q.push(pair);
-			//}
+			VertexPair pair(vex, near, Time);
+			Q.push(pair);
 		}
 	}
 
-	//printf("%d %d %d %d\n",mVertexs.size(), mTriangles.size(), meshVertexs.size(),  mDeTriangles.size());
 	printf("%d\n",Q.size());
 	int m = mDeTriangles.size(), last = m;
 	while (!Q.empty() && m > need){
@@ -168,7 +117,6 @@ void DeMesh::decimation(int need, real threshold){
 		if (_checkValid(pair))
 			m -= contraction(pair);
 		if (last - m > 1000){
-			//debug = true;
 			last = m;
 			printf("error = %.15lf\n",pair.mError);
 			printf("Triangles rest 			%d 		heap size = %d\n", m, Q.size());
