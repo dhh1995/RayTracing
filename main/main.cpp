@@ -158,11 +158,16 @@ int main(int argc, char** argv)
 	// Material* mirror = new Material;
 	// mirror->addBxDF(new SpecularReflection(WHITE));
 
+	Fresnel* noF = new NoFresnel();
+	Fresnel* f15 = new Fresnel(1.5);
+
 	Material* glass = new Material;
-	glass->getBSDF()->addBxDF(new SpecularTransmission(WHITE));
+	glass->getBSDF()->addBxDF(new SpecularReflection(WHITE, f15));
+	glass->getBSDF()->addBxDF(new SpecularTransmission(WHITE, f15));
 
 	Material* mirror = new Material;
-	mirror->getBSDF()->addBxDF(new SpecularReflection(WHITE));
+	mirror->getBSDF()->addBxDF(new SpecularReflection(WHITE, noF));
+	// mirror->getBSDF()->addBxDF(new DiffuseReflection(BLUE / 2));
 
 	Material* matte = new Material;
 	matte->getBSDF()->addBxDF(new DiffuseReflection(PINK));

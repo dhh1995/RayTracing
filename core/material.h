@@ -11,8 +11,7 @@ namespace Raytracer {
 
 class Material{
 public:
-	Material(real aRIndex = 1)
-		: mRIndex(aRIndex){
+	Material(){
 		bsdf = new BSDF;
 	}
 	void setColor(Color &aColor){
@@ -32,12 +31,6 @@ public:
 		localBSDF->setNorm(norm);
 		return localBSDF;
 	}
-	void setRefrIndex(real aRIndex){
-		mRIndex = aRIndex;
-	}
-	real getRefrIndex(){
-		return mRIndex;
-	}
 	void setTexture(Texture* aTexture){
 		mTexture = aTexture;
 	}
@@ -52,7 +45,6 @@ public:
 	}
 private:
 	Color mColor;
-	real mRIndex;
 	Texture* mTexture;
 	BSDF* bsdf;
 };

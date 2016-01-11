@@ -25,7 +25,6 @@ public:
 	}
 	Color directLight(const Ray& ray, Vec3f hitPoint, BSDF* bsdf);
 protected:
-	real _FresnelReflection(real n, real cosI, real cosT2);
 	Vec3f _getDiffuseDir(Vec3f N){
 		Vec3f dir;
 		do

@@ -4,21 +4,6 @@ bool debug = false;
 
 namespace Raytracer {
 
-real TestRenderer::_FresnelReflection(real n, real cosI, real cosT2){
-	if (cosT2 > 0.0f){
-		// need to adopt fresnel equation
-		// https://en.wikipedia.org/wiki/Fresnel_equations
-		// http://www.cnblogs.com/starfallen/p/4019350.html
-		// ? refl = 1 - refr;
-		real cosT = sqrt(cosT2);
-		real r_p = (n * cosI - cosT) / (n * cosI + cosT);
-		real r_v = (cosI - n * cosT) / (cosI + n * cosT);
-		return (r_p * r_p + r_v * r_v) / 2.0;
-		// refr = 1 - refl;
-	}// else totally internal reflection
-	return 1.0;
-}
-
 Color TestRenderer::directLight(const Ray& ray, Vec3f hitPoint, BSDF* bsdf){
 	Color res;
 	vector<Light* > lights = mScene->getLights();
@@ -60,43 +45,62 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real
 	Vec3f pos = isect.getPos();
 	BSDF* bsdf = mat->buildBSDF(isect.getNorm()); //build BSDF
 	res = directLight(ray, isect.getPos(), bsdf);
-
 	int nextDepthSample = int(needSamples * 0.75);
 	bool traceSpecularReflection = true;
 	bool traceSpecularTransmission = true;
+	bool traceDiffuseReflection = false;
 	if (traceSpecularReflection){
 		Color Lr;
 		BxDFType type = BxDFType(BSDF_SPECULAR | BSDF_REFLECTION);
 		int nSamples = min(needSamples, bsdf->numComponents(type));
-		for (int i = 0; i < nSamples; ++ i){
-			Vec3f traceDir;
-			real pdf;
-			Color f = bsdf->sampleF(-ray.d, traceDir, pdf, type);
-			// traceDir.prt();
-			Color ret;
-			real dist;
-			rayTracing(Ray(pos + traceDir * EPS, traceDir), ret, depth + 1, 1.0, dist, nextDepthSample);
-			Lr += f * ret;
-		}
-		if (nSamples > 0)
+		if (nSamples > 0){
+			ray.prt();
+			for (int i = 0; i < nSamples; ++ i){
+				Vec3f traceDir;
+				real pdf;
+				Color f = bsdf->sampleF(-ray.d, traceDir, pdf, type);
+				Color ret;
+				real dist;
+				rayTracing(Ray(pos + traceDir * EPS, traceDir), ret, depth + 1, 1.0, dist, nextDepthSample);
+				Lr += f * ret;
+			}
 			res += Lr / nSamples;
+		}
 	}
 
 	if (traceSpecularTransmission){
 		Color Lt;
 		BxDFType type = BxDFType(BSDF_SPECULAR | BSDF_TRANSMISSION);
 		int nSamples = min(needSamples, bsdf->numComponents(type));
-		for (int i = 0; i < nSamples; ++ i){
-			Vec3f traceDir;
-			real pdf;
-			Color f = bsdf->sampleF(-ray.d, traceDir, pdf, type);
-			Color ret;
-			real dist;
-			rayTracing(Ray(pos + traceDir * EPS, traceDir), ret, depth + 1, 1.0, dist, nextDepthSample);
-			Lt += f * ret;
-		}
-		if (nSamples > 0)
+		if (nSamples > 0){
+			for (int i = 0; i < nSamples; ++ i){
+				Vec3f traceDir;
+				real pdf;
+				Color f = bsdf->sampleF(-ray.d, traceDir, pdf, type);
+				Color ret;
+				real dist;
+				rayTracing(Ray(pos + traceDir * EPS, traceDir), ret, depth + 1, 1.0, dist, nextDepthSample);
+				Lt += f * ret;
+			}
 			res += Lt / nSamples;
+		}
+	}
+	if (traceDiffuseReflection){
+		Color Lt;
+		BxDFType type = BxDFType(BSDF_DIFFUSE | BSDF_REFLECTION);
+		int nSamples = min(needSamples, bsdf->numComponents(type));
+		if (nSamples > 0){
+			for (int i = 0; i < nSamples; ++ i){
+				Vec3f traceDir;
+				real pdf;
+				Color f = bsdf->sampleF(-ray.d, traceDir, pdf, type);
+				Color ret;
+				real dist;
+				rayTracing(Ray(pos + traceDir * EPS, traceDir), ret, depth + 1, 1.0, dist, nextDepthSample);
+				Lt += f * ret;
+			}
+			res += Lt / nSamples;
+		}
 	}
 	delete bsdf;
 	return;
@@ -115,7 +119,7 @@ void TestRenderer::render(const Args& args){
 			resultColor[i] = BLACK, counter[i] = 0;
 	cout << "number of pixels " << nRays << endl;
 
-	#pragma omp parallel for
+	// #pragma omp parallel for
 	//for (Ray ray : rays){
 	for (int _ = 0; _ < rays.size(); ++ _){
 		Ray ray = rays[_];
@@ -132,6 +136,15 @@ void TestRenderer::render(const Args& args){
 		rayTracing(ray, res, 0, 1, dist, 10);
 		resultColor[x * h + y] += res;
 		counter[x * h + y] ++;
+		// bool showImg = true;
+		// if (showImg){
+		// 	for (int i = 0; i < w; ++ i)
+		// 		for (int j = 0; j < h; ++ j){
+		// 			assert(counter[i * h + j] > 0);
+		// 			mCamera->getFilm()->setColor(i, j, resultColor[i * h + j] / counter[i * h + j]);
+		// 		}
+		// 	show();
+		// }
 	}
 	for (int i = 0; i < w; ++ i)
 		for (int j = 0; j < h; ++ j){

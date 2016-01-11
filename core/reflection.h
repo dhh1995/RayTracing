@@ -13,13 +13,45 @@ inline Vec3f reflect(const Vec3f& wo, const Vec3f& norm){
 	return 2 * dot(wo, norm) * norm - wo;
 }
 
-inline bool refract(const Vec3f& wi, Vec3f& wt, const Vec3f& norm, real eta){
+inline bool refract(const Vec3f& wi, Vec3f& wt, const Vec3f& norm, real n){
 	real cosI = dot(norm, wi);
-	real cosT2 = 1.0f - eta * eta * (1.0f - cosI * cosI);
+	real cosT2 = 1.0f - n * n * (1.0f - cosI * cosI);
 	if (cosT2 < 0.0f) return false;
-	wt = (eta * -wi) + (eta * cosI - sqrt( cosT2 )) * norm;
+	wt = (n * -wi) + (n * cosI - sqrt( cosT2 )) * norm;
 	return true;
 }
+
+class Fresnel{
+public:
+	Fresnel(real eta = 1.0f) : eta(eta){}
+	virtual real getRIndex(bool forward){
+		return forward ? eta : 1.0 / eta;
+	}
+	virtual real getReflection(real cosI){
+		real n = cosI > 0 ? eta : 1.0 / eta;
+		real cosT2 = 1.0f - n * n * (1.0f - cosI * cosI);
+		if (cosT2 > 0.0f){
+			real cosT = sqrt(cosT2);
+			real r_p = (n * cosI - cosT) / (n * cosI + cosT);
+			real r_v = (cosI - n * cosT) / (cosI + n * cosT);
+			return (r_p * r_p + r_v * r_v) / 2.0;
+		}else
+			return 1.0;
+	}
+private:
+	real eta;
+};
+
+class NoFresnel : public Fresnel{
+public:
+	NoFresnel() : Fresnel(1.0f){}
+	virtual real getRIndex(){
+		return 1.0f;
+	}
+	real getReflection(real cosI){
+		return 1.0f;
+	}
+};
 
 enum BxDFType {
 	BSDF_REFLECTION = 1 << 0,
@@ -39,7 +71,7 @@ public:
 	}
 	virtual Color f(const Vec3f &wo, const Vec3f &wi) const = 0;
 	virtual Color sampleF(const Vec3f &wo, Vec3f& wi, real& pdf, BxDFType& sampledType) const;
-	virtual real Pdf(const Vec3f &wi, const Vec3f &wo) const;
+	// virtual real Pdf(const Vec3f &wi, const Vec3f &wo) const;
 	const BxDFType type;
 };
 
@@ -55,47 +87,40 @@ private:
 	const Color R;
 };
 
-class DiffuseTransmission : public BxDF{
-public:
-	DiffuseTransmission(const Color &T)
-		: BxDF(BxDFType(BSDF_TRANSMISSION | BSDF_DIFFUSE)), T(T){
-	}
-	Color f(const Vec3f &wo, const Vec3f &wi) const {
-		return T / PI;
-	}
-private:
-	const Color T;
-};
+// class DiffuseTransmission : public BxDF{
+// public:
+// 	DiffuseTransmission(const Color &T)
+// 		: BxDF(BxDFType(BSDF_TRANSMISSION | BSDF_DIFFUSE)), T(T){
+// 	}
+// 	Color f(const Vec3f &wo, const Vec3f &wi) const {
+// 		return T / PI;
+// 	}
+// private:
+// 	const Color T;
+// };
 
 class SpecularReflection : public BxDF{
 public:
-	SpecularReflection(const Color &R)
-		: BxDF(BxDFType(BSDF_REFLECTION | BSDF_SPECULAR)), R(R) {}
+	SpecularReflection(const Color &R, Fresnel* fresnel)
+		: BxDF(BxDFType(BSDF_REFLECTION | BSDF_SPECULAR)), R(R), fresnel(fresnel) {}
 	Color f(const Vec3f &wo, const Vec3f &wi) const { return BLACK; } 
-	Color sampleF(const Vec3f &wo, Vec3f& wi, real& pdf, BxDFType& sampledType) const{
-		wi = Vec3f(-wo.x, -wo.y, wo.z);
-		pdf = 1.0;
-		return R / absCosTheta(wi);
-	}
-	real Pdf(const Vec3f &wi, const Vec3f &wo) const { return 0; }
+	Color sampleF(const Vec3f &wo, Vec3f& wi, real& pdf, BxDFType& sampledType) const;
+	// real Pdf(const Vec3f &wi, const Vec3f &wo) const { return 0; }
 private:
 	const Color R;
+	Fresnel* fresnel;
 };
 
 class SpecularTransmission : public BxDF{
 public:
-	SpecularTransmission(const Color &T)
+	SpecularTransmission(const Color &T, Fresnel* fresnel)
 		: BxDF(BxDFType(BSDF_TRANSMISSION | BSDF_SPECULAR)), T(T) {}
 	Color f(const Vec3f &wo, const Vec3f &wi) const { return BLACK; } 
-	Color sampleF(const Vec3f &wo, Vec3f& wi, real& pdf, BxDFType& sampledType) const{
-		if (!refract(wo, wi))
-			return BLACK;
-		pdf = 1.0;
-		return R / absCosTheta(wi);
-	}
-	real Pdf(const Vec3f &wi, const Vec3f &wo){ return 0; }
+	Color sampleF(const Vec3f &wo, Vec3f& wi, real& pdf, BxDFType& sampledType) const;
+	// real Pdf(const Vec3f &wi, const Vec3f &wo){ return 0; }
 private:
 	const Color T;
+	Fresnel* fresnel;
 };
 
 class BSDF{
