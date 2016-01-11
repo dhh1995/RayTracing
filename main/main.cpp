@@ -107,7 +107,7 @@ void emitDebugRay(Renderer* renderer, Ray ray){
 
 	Color res;
 	real dist = 0;
-	renderer->rayTracing(ray, res, 0, 1, dist);
+	renderer->rayTracing(ray, res, 0, 1, dist, 1);
 	// if (!(res != BLACK)){
 	//	printf("%d %d\n",i,j);
 		ray.prt();
@@ -161,21 +161,24 @@ int main(int argc, char** argv)
 	Material* glass = new Material;
 	glass->getBSDF()->addBxDF(new SpecularTransmission(WHITE));
 
+	Material* mirror = new Material;
+	mirror->getBSDF()->addBxDF(new SpecularReflection(WHITE));
+
 	Material* matte = new Material;
-	matte->getBSDF()->addBxDF(new LambertianReflection(PINK));
+	matte->getBSDF()->addBxDF(new DiffuseReflection(PINK));
 
 	// Image* lena = new Image("texture/lena.jpg");
 	Material* wall = new Material;
-	wall->getBSDF()->addBxDF(new LambertianReflection(CYAN));
+	wall->getBSDF()->addBxDF(new DiffuseReflection(CYAN));
 	// wall->setTexture(lena);
 
 	// Image* parquet = new Image("texture/parquet.jpg");
 	Material* floor = new Material;
-	floor->getBSDF()->addBxDF(new LambertianReflection(YELLOW));
+	floor->getBSDF()->addBxDF(new DiffuseReflection(YELLOW));
 	// floor->setTexture(parquet);
 
 	Material* ceil = new Material;
-	ceil->getBSDF()->addBxDF(new LambertianReflection(SKYBLUE));
+	ceil->getBSDF()->addBxDF(new DiffuseReflection(SKYBLUE));
 
 	if (useScene == 666){
 		DecimationTask(args);
@@ -192,8 +195,8 @@ int main(int argc, char** argv)
 		// 	}
 		// }
 
-		Primitive* sphere1 = new Sphere(Vec3f(10, 0, 1), 1);
-		sphere1->setMaterial(matte);
+		Primitive* sphere1 = new Sphere(Vec3f(8, 0, 1), 1);
+		sphere1->setMaterial(mirror);
 		scene->addObject(sphere1);
 
 		// Primitive* obj2 = new Sphere(Vec3f(3, 0, 1), 1);

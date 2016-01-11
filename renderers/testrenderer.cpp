@@ -44,7 +44,7 @@ Color TestRenderer::directLight(const Ray& ray, Vec3f hitPoint, BSDF* bsdf){
 	return res;
 }
 
-void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real &aDist, real needSamples){
+void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real &aDist, int needSamples){
 	if (debug) ray.prt();
 	Intersection isect;
 	if (mScene->intersect(ray, isect) == MISS){
@@ -57,8 +57,8 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real
 	}
 	aDist = isect.getDist();
 	Material* mat = isect.getPrim()->getMaterial();
-	pos = isect.getPos();
-	BSDF* bsdf = mat->buildBSDF(isect); //build BSDF
+	Vec3f pos = isect.getPos();
+	BSDF* bsdf = mat->buildBSDF(isect.getNorm()); //build BSDF
 	res = directLight(ray, isect.getPos(), bsdf);
 
 	int nextDepthSample = int(needSamples * 0.75);
@@ -70,11 +70,16 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real
 		int nSamples = min(needSamples, bsdf->numComponents(type));
 		for (int i = 0; i < nSamples; ++ i){
 			Vec3f traceDir;
-			Color f = bsdf->sampleF(-ray.d, traceDir, type);
+			real pdf;
+			Color f = bsdf->sampleF(-ray.d, traceDir, pdf, type);
+			// traceDir.prt();
+			Color ret;
 			real dist;
-			Lr += f * rayTracing(Ray(pos + traceDir * EPS, traceDir), depth + 1, 1.0, dist, nextDepthSample);
+			rayTracing(Ray(pos + traceDir * EPS, traceDir), ret, depth + 1, 1.0, dist, nextDepthSample);
+			Lr += f * ret;
 		}
-		res += Lr / nSamples;
+		if (nSamples > 0)
+			res += Lr / nSamples;
 	}
 
 	if (traceSpecularTransmission){
@@ -83,13 +88,17 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real
 		int nSamples = min(needSamples, bsdf->numComponents(type));
 		for (int i = 0; i < nSamples; ++ i){
 			Vec3f traceDir;
-			Color f = bsdf->sampleF(-ray.d, traceDir, type);
+			real pdf;
+			Color f = bsdf->sampleF(-ray.d, traceDir, pdf, type);
+			Color ret;
 			real dist;
-			Lt += f * rayTracing(Ray(pos + traceDir * EPS, traceDir), depth + 1, 1.0, dist, nextDepthSample);
+			rayTracing(Ray(pos + traceDir * EPS, traceDir), ret, depth + 1, 1.0, dist, nextDepthSample);
+			Lt += f * ret;
 		}
-		res += Lt / nSamples;
+		if (nSamples > 0)
+			res += Lt / nSamples;
 	}
-
+	delete bsdf;
 	return;
 }
 

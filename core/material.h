@@ -27,8 +27,10 @@ public:
 	BSDF* getBSDF(){
 		return bsdf;
 	}
-	BSDF* buildBSDF(const Intersection& isect){
-		return bsdf;
+	BSDF* buildBSDF(const Vec3f& norm){
+		BSDF* localBSDF = new BSDF(*bsdf);
+		localBSDF->setNorm(norm);
+		return localBSDF;
 	}
 	void setRefrIndex(real aRIndex){
 		mRIndex = aRIndex;

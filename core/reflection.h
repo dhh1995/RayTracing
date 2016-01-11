@@ -43,20 +43,26 @@ public:
 	const BxDFType type;
 };
 
-class LambertianReflection : public BxDF{
+class DiffuseReflection : public BxDF{
 public:
-	LambertianReflection(const Color &R)
-		: BxDF(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)), R(R) {}
-	Color f(const Vec3f &wo, const Vec3f &wi) const { return R / PI; }
+	DiffuseReflection(const Color &R)
+		: BxDF(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)), R(R){
+	}
+	Color f(const Vec3f &wo, const Vec3f &wi) const {
+		return R / PI;
+	}
 private:
 	const Color R;
 };
 
-class LambertianTransmission : public BxDF{
+class DiffuseTransmission : public BxDF{
 public:
-	LambertianTransmission(const Color &T)
-		: BxDF(BxDFType(BSDF_TRANSMISSION | BSDF_DIFFUSE)), T(T) {}
-	Color f(const Vec3f &wo, const Vec3f &wi) const { return T / PI; }
+	DiffuseTransmission(const Color &T)
+		: BxDF(BxDFType(BSDF_TRANSMISSION | BSDF_DIFFUSE)), T(T){
+	}
+	Color f(const Vec3f &wo, const Vec3f &wi) const {
+		return T / PI;
+	}
 private:
 	const Color T;
 };
@@ -82,10 +88,10 @@ public:
 		: BxDF(BxDFType(BSDF_TRANSMISSION | BSDF_SPECULAR)), T(T) {}
 	Color f(const Vec3f &wo, const Vec3f &wi) const { return BLACK; } 
 	Color sampleF(const Vec3f &wo, Vec3f& wi, real& pdf, BxDFType& sampledType) const{
-		// if (!refract(wo, wi))
-		// 	return BLACK;
-		// pdf = 1.0;
-		// return R / absCosTheta(wi);
+		if (!refract(wo, wi))
+			return BLACK;
+		pdf = 1.0;
+		return R / absCosTheta(wi);
 	}
 	real Pdf(const Vec3f &wi, const Vec3f &wo){ return 0; }
 private:
@@ -100,13 +106,27 @@ public:
 			if (bxdf->matchesFlags(flags)) ++num;
 		return num;
 	}
+	void setNorm(Vec3f norm){
+		mNorm = norm;
+		while (mI.L2() < EPS)
+			mI = cross(norm, Sampler::randVector());
+		mI.Normalize();
+		mJ = cross(mI, mNorm).Normalize();
+	}
 	void addBxDF(BxDF* bxdf){
 		bxdfs.push_back(bxdf);
 	}
-	Color f(const Vec3f &wo, const Vec3f &wi, BxDFType flags = BSDF_ALL);
-	Color sampleF(const Vec3f &wo, Vec3f& wi, real& pdf, BxDFType& sampledType) const;
+	Vec3f toLocal(const Vec3f &wi) const{
+		return Vec3f(dot(wi, mI), dot(wi, mJ), dot(wi, mNorm));
+	}
+	Vec3f toWorld(const Vec3f &wo) const{
+		return mI * wo.x + mJ * wo.y, mNorm * wo.z;
+	}
+	Color f(const Vec3f& woWorld, const Vec3f& wiWorld, BxDFType flags = BSDF_ALL);
+	Color sampleF(const Vec3f &woWorld, Vec3f& wiWorld, real& pdf, BxDFType& type) const;
 private:
 	vector<BxDF* > bxdfs;
+	Vec3f mNorm, mI, mJ; 
 };
 
 }; // namespace Raytracer

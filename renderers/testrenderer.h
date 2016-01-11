@@ -18,7 +18,7 @@ class TestRenderer : public Renderer {
 public:
 	TestRenderer():mRaysCast(0){
 	}
-	void rayTracing(Ray ray, Color& res, int depth, real aRIndex, real &aDist);
+	void rayTracing(Ray ray, Color& res, int depth, real aRIndex, real &aDist, int needSamples);
 	void render(const Args& args);
 	void show(bool wait = false){
 		mCamera->getFilm()->show(wait);
