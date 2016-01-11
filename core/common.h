@@ -52,6 +52,7 @@ using std::string;
 using std::cout;
 using std::endl;
 using std::min;
+using std::max;
 using std::sort;
 
 inline void colorMessage(string message, int color){

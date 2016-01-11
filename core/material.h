@@ -5,14 +5,15 @@
 #include "common.h"
 #include "reflection.h"
 #include "texture.h"
+#include "intersection.h"
 
 namespace Raytracer {
 
 class Material{
 public:
-	Material(Color aColor, real aRefl, real aRefr, real aDiff, real aSpec, real aRIndex = 1, Color Ka = BLACK)
-		: mColor(aColor), mRefl(aRefl), mRefr(aRefr), mDiff(aDiff), mSpec(aSpec), mRIndex(aRIndex), mKa(Ka){
-		mTexture = NULL;
+	Material(real aRIndex = 1)
+		: mRIndex(aRIndex){
+		bsdf = new BSDF;
 	}
 	void setColor(Color &aColor){
 		mColor = aColor;
@@ -23,41 +24,17 @@ public:
 	Color getColor(){
 		return mColor;
 	}
-	void setDiffuse(real aDiff){
-		mDiff = aDiff;
+	BSDF* getBSDF(){
+		return bsdf;
 	}
-	real getDiffuse(){
-		return mDiff;
-	}
-	void setSpecular(real aDiff){
-		mDiff = aDiff;
-	}
-	real getSpecular(){
-		return mSpec;
-	}
-	void setReflection(real aRefl){
-		mRefl = aRefl;
-	}
-	real getReflection(){
-		return mRefl;
-	}
-	void setRefraction(real aRefr){
-		mRefl = aRefr;
-	}
-	real getRefraction(){
-		return mRefr;
+	BSDF* buildBSDF(const Intersection& isect){
+		return bsdf;
 	}
 	void setRefrIndex(real aRIndex){
 		mRIndex = aRIndex;
 	}
 	real getRefrIndex(){
 		return mRIndex;
-	}
-	void setKa(Color Ka){
-		mKa = Ka;
-	}
-	Color getKa(){
-		return mKa;
 	}
 	void setTexture(Texture* aTexture){
 		mTexture = aTexture;
@@ -72,12 +49,10 @@ public:
 		return ZERO;
 	}
 private:
-	Color mKa;
 	Color mColor;
-	real mDiff, mSpec;
-	real mRefl, mRefr;
 	real mRIndex;
 	Texture* mTexture;
+	BSDF* bsdf;
 };
 
 }; // namespace Raytracer

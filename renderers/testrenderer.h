@@ -7,6 +7,7 @@
 #include "core/intersection.h"
 #include "core/primitive.h"
 #include "core/sampler.h"
+#include "core/reflection.h"
 
 
 namespace Raytracer {
@@ -22,24 +23,15 @@ public:
 	void show(bool wait = false){
 		mCamera->getFilm()->show(wait);
 	}
+	Color directLight(const Ray& ray, Vec3f hitPoint, BSDF* bsdf);
 protected:
 	real _FresnelReflection(real n, real cosI, real cosT2);
-	Vec3f _getRandomDir(){
-		real x, y, z;
-		do{
-			x = Sampler::getRandReal() * 2 - 1;
-			y = Sampler::getRandReal() * 2 - 1;
-			z = Sampler::getRandReal() * 2 - 1;
-			//printf("%lf %lf %lf\n", x, y, z);
-		}while (x*x + y*y + z*z > 1);
-		return Vec3f(x, y, z).Normalize();
-	}
 	Vec3f _getDiffuseDir(Vec3f N){
 		Vec3f dir;
 		do
-			dir = _getRandomDir();
+			dir = Sampler::getRandomDir();
 		while (dot(N, dir) < 0);
-	  return dir;
+		return dir;
 	}
 
 	int mRaysCast;

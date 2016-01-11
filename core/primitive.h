@@ -28,11 +28,7 @@ public:
 
 	virtual string getType() = 0;
 	virtual bool intersect(const Ray& ray, Intersection& isect) = 0;
-	virtual bool intersectP(const Ray& ray) = 0;
-	//virtual Vec3f getNorm(Vec3f pos) = 0;
-	virtual Color getColor(Vec3f pos){
-		mMaterial->getColor();
-	}
+	//virtual bool intersectP(const Ray& ray) = 0;
 protected:
 	Material* mMaterial;
 	char* mName;

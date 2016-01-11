@@ -19,13 +19,14 @@ public:
 	PhotonRenderer(int globalWant = GLOBALWANT, int causticWant = CAUSTICWANT)
 		: mPhotonEmits(0), mGlobalWant(globalWant), mCausticWant(causticWant){
 	}
-	void photonTracing(Photon* photon, int depth, bool meetSpecular);
-	void genPhotonMap(const Args& args, string path);
-	void rayTracing(Ray ray, Color& res, int depth, real aRIndex, real &aDist);
-	void render(const Args& args);
+	//!!!
+	void photonTracing(Photon* photon, int depth, bool meetSpecular){};
+	void genPhotonMap(const Args& args, string path){};
+	void rayTracing(Ray ray, Color& res, int depth, real aRIndex, real &aDist){};
+	void render(const Args& args){};
 	//Options options;
 private:
-	void _addPhoton(Vec3f pos, Vec3f dir, Color power, bool meetSpecular);
+	void _addPhoton(Vec3f pos, Vec3f dir, Color power, bool meetSpecular){};
 	int mPhotonEmits, mGlobalWant, mCausticWant;
 	int mGlobalFinish, mCausticFinish;
 	PhotonMap mGlobal, mCaustic;

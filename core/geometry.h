@@ -232,10 +232,10 @@ public:
 		scanf("%f %f %f", &x, &y, &z);
 	}
 	void prt() const{
-	    printf("%f %f %f\n",x,y,z);    
+		printf("%f %f %f\n",x,y,z);	
 	}
 	void print() const{
-	    printf("%f %f %f\n",x,y,z);    
+		printf("%f %f %f\n",x,y,z);	
 	}
 
 public:
