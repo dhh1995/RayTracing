@@ -30,7 +30,7 @@ Ray PerspectiveCamera::generateRay(real dx, real dy, int i, int j){
 	Ray ray = Ray(mPos, dir, i, j);
 	if (mLensRadius > 1e-8){
 		real x, y;
-		Sampler::unitDisk(&x, &y);
+		Sampler::concentricSampleDisk(x, y);
 		x *= mLensRadius, y *= mLensRadius;
 		Vec3f Pfocus = mPos + dir * mFocalDist;
 		ray.o = mPos + mI * x + mJ * y;

@@ -95,4 +95,56 @@ Color Scene::getLi(const Ray& ray, const Intersection& isect){
 	return res;
 }
 
+bool Scene::loadObj(string path){
+	FILE* fp = fopen(path.c_str(), "r");
+	if (fp == NULL)
+		return false;
+
+	vector<Vertex* > vertexs;
+	Box* boundingBox;
+	map<string, Material*> materials;
+	Material* currentMaterial = NULL;
+
+	int lines = 0;
+	char tmp[105];
+	char buf[1005];
+	while (fscanf(fp, "%s", tmp)!=EOF){
+		string type = tmp;
+		if ((++ lines) % 10000 == 0)
+			printf("line %d %s\n",lines, tmp);
+		if (type == "#")
+			fgets(buf, sizeof(buf), fp);
+		else if (type == "matlib"){
+			fscanf(fp, "%s", tmp);
+			string matlibPath = tmp;
+			//convert material;
+		}else if (type == "v"){
+			real x, y, z;
+			fscanf(fp, "%lf %lf %lf", &x, &y, &z);
+			Vec3f pos(x, y, z);
+			Vertex* vex = new Vertex(pos);
+			boundingBox->update(pos);
+			vertexs.push_back(vex);
+		}else if (type == "f"){
+			int n = vertexs.size();
+			int a, b, c;
+			fscanf(fp, "%d %d %d", &a, &b, &c);
+			a = chg(n, a), b = chg(n, b), c = chg(n, c);
+			// printf("%d %d %d\n",a,b,c);
+			// mVertexs[a].prt();
+			// mVertexs[b].prt();
+			// mVertexs[c].prt();
+ 			Triangle* tri = new Triangle(vertexs, a, b, c);
+ 			assert(currentMaterial != NULL);
+ 			tri->setMaterial(currentMaterial);
+ 			mAggregate.add(tri);
+		}else if (type == "usemtl"){
+			fscanf(fp, "%s", tmp);
+			string materialName = tmp;
+			currentMaterial = materials[materialName];
+		}
+	}
+	return true;
+}
+
 }; // namespace Raytracer

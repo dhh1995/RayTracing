@@ -110,7 +110,7 @@ void PhotonRenderer::genPhotonMap(const Args& args, string path){
 		Light* light = lights[ind];
 		if (light->getType() == "Point"){
 			Vec3f centre = light->getPos();
-			Vec3f dir = _getRandomDir();
+			Vec3f dir = Sampler::getRandomDir();
 			Photon* photon = new Photon(Ray(centre, dir), light->getColor());
 			//puts("new Photon emits");
 			mPhotonEmits++;

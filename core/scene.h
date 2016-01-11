@@ -41,8 +41,13 @@ public:
 	}
 	real calcShade(Light* light, Vec3f pos, Vec3f& dir);
 	Color getLi(const Ray& ray, const Intersection& isect);
-	void loadObj();//TODO
+	bool loadObj(string path);
 private:
+	int chg(int n, int x){
+		if (x < 0)
+			return n + x - 1;
+		return x - 1;
+	}
 	//Primitive* mAggregate;
 	vector<Primitive* > mPrimitives;
 	KdTreeTri mAggregate;

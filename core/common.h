@@ -10,6 +10,7 @@
 #include <cmath>
 #include <algorithm>
 #include <queue>
+#include <map>
 #include <assert.h>
 #include "geometry.h"
 
@@ -48,10 +49,12 @@ const Color YELLOW 		= Color(255, 255,  0 ) / 255.;
 const Color BACKGROUND = BLACK;
 
 using std::priority_queue;
+using std::map;
 using std::string;
 using std::cout;
 using std::endl;
 using std::min;
+using std::max;
 using std::sort;
 
 inline void colorMessage(string message, int color){

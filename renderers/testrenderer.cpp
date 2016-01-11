@@ -126,7 +126,20 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real
 			res += refl * rcol * color;
 		}
 	}
-
+	real diff = matter->getDiffuse();
+	if (diff > 0){
+		int nSample = 1;
+		Color Ld;
+		for (int i = 0; i < nSample; ++ i){
+			Vec3f R = _getDiffuseDir(norm);
+			Color rcol;
+			real dist;
+			rayTracing( Ray( pi + R * EPS, R ), rcol, depth + 1, aRIndex, dist); //, a_Samples * 0.5f, a_SScale * 2 );
+			mRaysCast++;
+			Ld += rcol * color * diff * dot(R, norm);
+		}
+		res += Ld / nSample;
+	}
 	//printf("res =");
 	//res.prt();
 
@@ -158,12 +171,14 @@ void TestRenderer::render(const Args& args){
 		}
 
 		int x = ray.mFilmX, y = ray.mFilmY;
-		Color res;
-		real dist;
-		rayTracing(ray, res, 0, 1, dist);
-		//mCamera->getFilm()->setColor(x, y, res);
-		resultColor[x * h + y] += res;
-		counter[x * h + y] ++;
+		for (int i = 0; i < 5; ++ i){
+			Color res;
+			real dist;
+			rayTracing(ray, res, 0, 1, dist);
+			//mCamera->getFilm()->setColor(x, y, res);
+			resultColor[x * h + y] += res;
+			counter[x * h + y] ++;
+		}
 	}
 	for (int i = 0; i < w; ++ i)
 		for (int j = 0; j < h; ++ j){

@@ -59,7 +59,8 @@ int main(int argc, char** argv)
 	camera->setPos(Vec3f(0, 0, 3));
 
 	if (useScene == 0){
-		//scene->loadObj();
+		if (!scene->loadObj("model/cornell_box.obj"))
+			puts("load scene unsuccessfully");
 	}
 
 	Vec3f testTransForCube(3, -0.5, 0.5);
