@@ -104,6 +104,7 @@ public:
 		bxdfs.push_back(bxdf);
 	}
 	Color f(const Vec3f &wo, const Vec3f &wi, BxDFType flags = BSDF_ALL);
+	Color sampleF(const Vec3f &wo, Vec3f& wi, real& pdf, BxDFType& sampledType) const;
 private:
 	vector<BxDF* > bxdfs;
 };

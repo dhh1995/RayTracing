@@ -38,6 +38,66 @@ DeMesh* runDecimation(string file, Material* mat, string dumpName, const Args& a
 	return obj;
 }
 
+void DecimationTask(const Args& args)
+{
+	enum OBJ{
+		ARMA,
+		BLOCK,
+		BUDDHA,
+		BUNNY,
+		CUBE,
+		DINASAUR,
+		DRAGON,
+		FANDISK,
+		HORSE,
+		KITTEN,
+		ROCKER_ARM,
+		SPHERE,
+	};
+	int testModel = args.useModel;
+	DeMesh *resObj;
+
+	progressMessage("start loading");
+	switch(testModel){
+	case ARMA:
+		resObj = runDecimation("test_data/Arma.obj", NULL, "arma", args);
+		break;
+	case BLOCK:
+		resObj = runDecimation("test_data/block.obj", NULL, "block", args);
+		break;
+	case BUDDHA:
+		resObj = runDecimation("test_data/Buddha.obj", NULL, "buddha", args);
+		break;
+	case BUNNY:
+		resObj = runDecimation("test_data/bunny.fine.obj", NULL, "bunny", args);
+		break;
+	case CUBE:
+		resObj = runDecimation("test_data/cube.obj", NULL, "cube", args);
+		break;
+	case DINASAUR:
+		resObj = runDecimation("test_data/dinosaur.2k.obj", NULL, "dinosaur", args);
+		break;
+	case DRAGON:
+		resObj = runDecimation("test_data/fixed.perfect.dragon.100K.0.07.obj", NULL, "dragon", args);
+		break;
+	case FANDISK:
+		resObj = runDecimation("test_data/fandisk.18k.obj", NULL, "fandisk", args);
+		break;
+	case HORSE:
+		resObj = runDecimation("test_data/horse.fine.90k.obj", NULL, "horse", args);
+		break;
+	case KITTEN:
+		resObj = runDecimation("test_data/kitten.50k.obj", NULL, "kitten", args);
+		break;
+	case ROCKER_ARM:
+		resObj = runDecimation("test_data/rocker-arm.18k.obj", NULL, "rocker-arm", args);
+		break;
+	case SPHERE:
+		resObj = runDecimation("test_data/sphere.obj", NULL, "sphere", args);
+		break;
+	}
+}
+
 void emitDebugRay(Renderer* renderer, Ray ray){
 
 // ray = Ray(Vec3f(-20, 0, 0), Vec3f(1,0,0));
@@ -73,9 +133,9 @@ int main(int argc, char** argv)
 	if (args.showHelp)
 		return 0;
 
-	Film* film = new Image(1000, 1000);
+	Film* film = new Image(512, 512);
 	film->setName("test");
-	Camera* camera = new PerspectiveCamera(Vec3f(0, 0, -0), Vec3f(1, 0, 0), Vec3f(0, 0, 1), 90, 0, 10);
+	Camera* camera = new PerspectiveCamera(Vec3f(0, 0, -0), Vec3f(1, 0, 0), Vec3f(0, 0, 1), 60, 0, 10);
 	//Camera *camera = new ProjectiveCamera(Vector(0, 5, 10), Vector(0, 0, -1), Vector(0, 1, 0), 90); 
 	camera->setFilm(film);
 
@@ -101,6 +161,9 @@ int main(int argc, char** argv)
 	Material* glass = new Material;
 	glass->getBSDF()->addBxDF(new SpecularTransmission(WHITE));
 
+	Material* matte = new Material;
+	matte->getBSDF()->addBxDF(new LambertianReflection(PINK));
+
 	// Image* lena = new Image("texture/lena.jpg");
 	Material* wall = new Material;
 	wall->getBSDF()->addBxDF(new LambertianReflection(CYAN));
@@ -111,63 +174,11 @@ int main(int argc, char** argv)
 	floor->getBSDF()->addBxDF(new LambertianReflection(YELLOW));
 	// floor->setTexture(parquet);
 
-	if (useScene == 666){
-		enum OBJ{
-			ARMA,
-			BLOCK,
-			BUDDHA,
-			BUNNY,
-			CUBE,
-			DINASAUR,
-			DRAGON,
-			FANDISK,
-			HORSE,
-			KITTEN,
-			ROCKER_ARM,
-			SPHERE,
-		};
-		int testModel = args.useModel;
-		DeMesh *resObj;
+	Material* ceil = new Material;
+	ceil->getBSDF()->addBxDF(new LambertianReflection(SKYBLUE));
 
-		progressMessage("start loading");
-		switch(testModel){
-		case ARMA:
-			resObj = runDecimation("test_data/Arma.obj", NULL, "arma", args);
-			break;
-		case BLOCK:
-			resObj = runDecimation("test_data/block.obj", NULL, "block", args);
-			break;
-		case BUDDHA:
-			resObj = runDecimation("test_data/Buddha.obj", NULL, "buddha", args);
-			break;
-		case BUNNY:
-			resObj = runDecimation("test_data/bunny.fine.obj", NULL, "bunny", args);
-			break;
-		case CUBE:
-			resObj = runDecimation("test_data/cube.obj", NULL, "cube", args);
-			break;
-		case DINASAUR:
-			resObj = runDecimation("test_data/dinosaur.2k.obj", NULL, "dinosaur", args);
-			break;
-		case DRAGON:
-			resObj = runDecimation("test_data/fixed.perfect.dragon.100K.0.07.obj", NULL, "dragon", args);
-			break;
-		case FANDISK:
-			resObj = runDecimation("test_data/fandisk.18k.obj", NULL, "fandisk", args);
-			break;
-		case HORSE:
-			resObj = runDecimation("test_data/horse.fine.90k.obj", NULL, "horse", args);
-			break;
-		case KITTEN:
-			resObj = runDecimation("test_data/kitten.50k.obj", NULL, "kitten", args);
-			break;
-		case ROCKER_ARM:
-			resObj = runDecimation("test_data/rocker-arm.18k.obj", NULL, "rocker-arm", args);
-			break;
-		case SPHERE:
-			resObj = runDecimation("test_data/sphere.obj", NULL, "sphere", args);
-			break;
-		}
+	if (useScene == 666){
+		DecimationTask(args);
 		return 0;
 	}
 
@@ -181,19 +192,23 @@ int main(int argc, char** argv)
 		// 	}
 		// }
 
-		// Primitive* obj1 = new Sphere(Vec3f(7, 0, 1), 0.2);
-		// obj1->setMaterial(mirror);
-		// //scene->addObject(obj1);
+		Primitive* sphere1 = new Sphere(Vec3f(10, 0, 1), 1);
+		sphere1->setMaterial(matte);
+		scene->addObject(sphere1);
 
 		// Primitive* obj2 = new Sphere(Vec3f(3, 0, 1), 1);
 		// obj2->setMaterial(mirror);
 		// //scene->addObject(obj2);
 
-		Primitive* floor1 = new Plane(Vec3f(0, 0, 1), Vec3f(1, 0, 0), 1);
+		Primitive* floor1 = new Plane(Vec3f(0, 0, 1), Vec3f(1, 0, 0), 3);
 		floor1->setMaterial(floor);
 		scene->addObject(floor1);
 
-		Primitive* wall1 = new Plane(Vec3f(-1, 0, 0), Vec3f(0, 0, -1), 8);
+		Primitive* ceil1 = new Plane(Vec3f(0, 0, -1), Vec3f(1, 0, 0), 5);
+		ceil1->setMaterial(ceil);
+		scene->addObject(ceil1);
+
+		Primitive* wall1 = new Plane(Vec3f(-1, 0, 0), Vec3f(0, 0, -1), 12);
 		wall1->setMaterial(wall);
 		scene->addObject(wall1);
 
@@ -203,11 +218,14 @@ int main(int argc, char** argv)
 		// Primitive* obj8 = new Box(testTransForCube, testTransForCube + Vec3f(1, 1, 1));
 		// obj8->setMaterial(mirror);
 
-		Light* light1 = new Light(WHITE/2, Vec3f(3, 0, 5));
-		scene->addLight(light1);
-		Light* light2 = new Light(WHITE, Vec3f(0, 0, 3));
-		scene->addLight(light2);
-		//Light* light3 = new Light(WHITE, Vec3f(2.5, 0, 1.5));
+		Light* plight1 = new Light(WHITE, 80, Vec3f(3, 0, 5));
+		// scene->addLight(plight1);
+
+		Light* alight1 = new AreaLight(WHITE, 80, Vec3f(5, 0, 4.99), Vec3f(0, 0, -1), Vec3f(1, 0, 0), 10);
+		scene->addLight(alight1);
+		// Light* light2 = new Light(WHITE, 80, Vec3f(0, 0, 3));
+		// scene->addLight(light2);
+		//Light* light3 = new Light(WHITE, 80, Vec3f(2.5, 0, 1.5));
 		//scene->addLight(light3);
 		
 		//scene->addObject(obj4);

@@ -19,7 +19,7 @@ public:
 		mPrimitives.clear();
 		mLights.clear();
 	}
-	bool intersect(const Ray& ray, Intersection& isect, bool ignoreLight = false);
+	bool intersect(const Ray& ray, Intersection& isect, bool ignoreLight = true);
 	bool intersectP(const Ray& ray);
 	void addLight(Light *aLight){
 		mLights.push_back(aLight);

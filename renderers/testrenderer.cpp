@@ -23,29 +23,73 @@ Color TestRenderer::directLight(const Ray& ray, Vec3f hitPoint, BSDF* bsdf){
 	Color res;
 	vector<Light* > lights = mScene->getLights();
 	for (Light* light : lights){
-		Vec3f lPos = light->samplePos();
-		Vec3f L = hitPoint - lPos;
-		real dist2 = L.L2();
-		real dist = sqrt(dist2);
-		L /= dist;
-		real shade = mScene->visible(Ray(lPos, L), dist);
-		if (shade > 0)
-			res += light->getColor() / dist2 * bsdf->f(ray.d, L) * shade;
+		if (!light->visible(hitPoint))
+			continue;
+		int nSamples = light->getNSamples();
+		Color Ld;
+		#pragma omp parallel for
+		for (int i = 0; i < nSamples; ++ i){
+			Vec3f lPos = light->samplePos();
+			Vec3f L = hitPoint - lPos;
+			real dist2 = L.L2();
+			real dist = sqrt(dist2);
+			L /= dist;
+			real shade = mScene->visible(Ray(lPos, L), dist);
+			// (light->getPower() / dist2).prt();
+			if (shade > 0)
+				Ld += light->getColor() / dist2 * bsdf->f(ray.d, L) * shade;
+		}
+		res += Ld * (light->getPower() / nSamples);
 	}
 	return res;
 }
 
-void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real &aDist){
+void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real &aDist, real needSamples){
 	if (debug) ray.prt();
 	Intersection isect;
 	if (mScene->intersect(ray, isect) == MISS){
 		res = BACKGROUND;
 		return;
 	}
+	if (isect.isLight()){
+		res = isect.getColor();
+		return;
+	}
 	aDist = isect.getDist();
 	Material* mat = isect.getPrim()->getMaterial();
+	pos = isect.getPos();
 	BSDF* bsdf = mat->buildBSDF(isect); //build BSDF
 	res = directLight(ray, isect.getPos(), bsdf);
+
+	int nextDepthSample = int(needSamples * 0.75);
+	bool traceSpecularReflection = true;
+	bool traceSpecularTransmission = true;
+	if (traceSpecularReflection){
+		Color Lr;
+		BxDFType type = BxDFType(BSDF_SPECULAR | BSDF_REFLECTION);
+		int nSamples = min(needSamples, bsdf->numComponents(type));
+		for (int i = 0; i < nSamples; ++ i){
+			Vec3f traceDir;
+			Color f = bsdf->sampleF(-ray.d, traceDir, type);
+			real dist;
+			Lr += f * rayTracing(Ray(pos + traceDir * EPS, traceDir), depth + 1, 1.0, dist, nextDepthSample);
+		}
+		res += Lr / nSamples;
+	}
+
+	if (traceSpecularTransmission){
+		Color Lt;
+		BxDFType type = BxDFType(BSDF_SPECULAR | BSDF_TRANSMISSION);
+		int nSamples = min(needSamples, bsdf->numComponents(type));
+		for (int i = 0; i < nSamples; ++ i){
+			Vec3f traceDir;
+			Color f = bsdf->sampleF(-ray.d, traceDir, type);
+			real dist;
+			Lt += f * rayTracing(Ray(pos + traceDir * EPS, traceDir), depth + 1, 1.0, dist, nextDepthSample);
+		}
+		res += Lt / nSamples;
+	}
+
 	return;
 }
 
@@ -76,7 +120,7 @@ void TestRenderer::render(const Args& args){
 		int x = ray.mFilmX, y = ray.mFilmY;
 		Color res;
 		real dist;
-		rayTracing(ray, res, 0, 1, dist);
+		rayTracing(ray, res, 0, 1, dist, 10);
 		resultColor[x * h + y] += res;
 		counter[x * h + y] ++;
 	}

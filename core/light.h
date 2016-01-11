@@ -11,10 +11,14 @@ namespace Raytracer {
 
 class Light : public Primitive{
 public:
-	Light(Color aColor, Vec3f aPos, int aSamples = 1) : mColor(aColor), mPos(aPos), mSamples(aSamples){
+	Light(Color aColor, real aPower, Vec3f aPos, int aSamples = 1)
+		: mColor(aColor), mPower(aPower), mPos(aPos), mSamples(aSamples){
 	}
 	virtual string getType(){
 		return "PointLight";
+	}
+	virtual bool visible(Vec3f pos){
+		return true;
 	}
 	bool intersect(const Ray& ray, Intersection& isect){
 		return false;
@@ -22,32 +26,43 @@ public:
 	Vec3f getPos(){
 		return mPos;
 	}
-	Vec3f getColor(){
+	real getPower(){
+		return mPower;
+	}
+	Color getColor(){
 		return mColor;
 	}
-	Vec3f samplePos(){
+	int getNSamples(){
+		return mSamples;
+	}
+	virtual Vec3f samplePos(){
 		return mPos;
 	}
-	Vec3f sampleDir(){
+	virtual Vec3f sampleDir(){
 		return Sampler::getRandomDir();
 	}
 protected:
 	int mSamples;
 	Vec3f mPos;
 	Color mColor;
+	real mPower;
 };
 
 class AreaLight : public Light{
 public:
-	AreaLight(Vec3f aColor, Color aPos, Vec3f aNorm, Vec3f aU, int aSamples, real aUScale = 1.0, real aVScale = 1.0)
-		: Light(aColor, aPos, aSamples), mNorm(aNorm), mU(aU), mUScale(aUScale), mVScale(aVScale){
-			mNorm.Normalize();
-			mU.Normalize();
-			mV = cross(mNorm, mU).Normalize();
-			mD = -dot(mPos, mNorm);
-		}
+	AreaLight(Vec3f aColor, real aPower, Color aPos, Vec3f aNorm, Vec3f aU,
+				int aSamples, real aUScale = 1.0, real aVScale = 1.0)
+			: Light(aColor, aPower, aPos, aSamples), mNorm(aNorm), mU(aU), mUScale(aUScale), mVScale(aVScale){
+		mNorm.Normalize();
+		mU.Normalize();
+		mV = cross(mNorm, mU).Normalize();
+		mD = -dot(mPos, mNorm);
+	}
 	string getType(){
 		return "AreaLight";
+	}
+	bool visible(Vec3f pos){
+		return dot(mNorm, pos - mPos) > 0;
 	}
 	bool intersect(const Ray& ray, Intersection& isect);
 	Vec3f samplePos(){

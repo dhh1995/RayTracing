@@ -26,7 +26,7 @@ bool Scene::intersectP(const Ray& ray){
 
 real Scene::visible(const Ray& ray, real dist){
 	Intersection isect;
-	if (intersect(ray, isect, true) == HIT)
+	if (intersect(ray, isect, false) == HIT)
 		if (isect.getDist() + EPS < dist)
 			return 0.0f;
 	return 1.0f;

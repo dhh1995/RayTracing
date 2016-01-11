@@ -12,7 +12,7 @@ public:
 	Intersection(Primitive* aPrim = NULL, Vec3f aPos = ORIGINAL, real aDist = INF, bool aBack = false)
 		: mPrim(aPrim), mPos(aPos), mDist(aDist), mBack(aBack){
 		mColor = BLACK;
-		isLight = false;
+		mLight = false;
 	}
 	void setBack(bool aBack = true){
 		mBack = aBack;
@@ -53,10 +53,13 @@ public:
 		return mColor;
 	}
 	void setLight(bool flag = true){
-		isLight = flag;
+		mLight = flag;
+	}
+	bool isLight(){
+		return mLight;
 	}
 private:
-	bool isLight;
+	bool mLight;
 	bool mBack;
 	real mDist;
 	Vec3f mPos;
