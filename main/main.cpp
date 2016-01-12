@@ -314,11 +314,11 @@ int main(int argc, char** argv)
 		//Light* light2 = new Light(YELLOW, Vec3f(5,9,-9));
 		//scene->addLight(light2);
 
-		Light* light3 = new Light(WHITE * 5000, Vec3f(5,0,4));
+		Light* light3 = new Light(WHITE, Vec3f(6,0,4), 300);
 		scene->addLight(light3);
 
-		Light* light4 = new AreaLight(WHITE, Vec3f(10, 0, 9.9), Vec3f(0, 0, -1), Vec3f(1, 0, 0));
-		//scene->addLight(light4);
+		Light* light4 = new AreaLight(WHITE, Vec3f(7, 0, 4.9), 300, Vec3f(0, 0, -1), Vec3f(1, 0, 0), 2, 2, 2);
+		// scene->addLight(light4);
 	}
 
 

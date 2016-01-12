@@ -12,6 +12,7 @@ public:
 	Intersection(Primitive* aPrim = NULL, Vec3f aPos = ORIGINAL, real aDist = INF, bool aBack = false)
 		: mPrim(aPrim), mPos(aPos), mDist(aDist), mBack(aBack){
 		mColor = BLACK;
+		mLight = false;
 	}
 	void setBack(bool aBack = true){
 		mBack = aBack;
@@ -36,7 +37,7 @@ public:
 		// printf("dist seted to %lf\n", aDist);
 		mDist = aDist;
 	}
-	real getDist()  const{
+	real getDist() const{
 		return mDist;
 	}
 	void setPrim(Primitive* aPrim){
@@ -51,7 +52,14 @@ public:
 	Color getColor() const{
 		return mColor;
 	}
+	void setLight(bool flag = true){
+		mLight = flag;
+	}
+	bool isLight(){
+		return mLight;
+	}
 private:
+	bool mLight;
 	bool mBack;
 	real mDist;
 	Vec3f mPos;

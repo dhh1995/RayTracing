@@ -11,12 +11,13 @@
 
 namespace Raytracer {
 
-const int TRACEDEPTH = 12;
+const int TRACEDEPTH = 5;
 
 class TestRenderer : public Renderer {
 public:
 	TestRenderer():mRaysCast(0){
 	}
+	Color directLight(const Ray& ray, const Intersection& isect);
 	void rayTracing(Ray ray, Color& res, int depth, real aRIndex, real &aDist);
 	void render(const Args& args);
 	void show(bool wait = false){

@@ -19,7 +19,7 @@ public:
 		mPrimitives.clear();
 		mLights.clear();
 	}
-	bool intersect(const Ray& ray, Intersection& isect);
+	bool intersect(const Ray& ray, Intersection& isect, bool useLight = false);
 	bool intersectP(const Ray& ray);
 	void addLight(Light *aLight){
 		mLights.push_back(aLight);
@@ -39,8 +39,9 @@ public:
 		KdTreeTri::debug = debug;
 		mAggregate.construct();
 	}
-	real calcShade(Light* light, Vec3f pos, Vec3f& dir);
-	Color getLi(const Ray& ray, const Intersection& isect);
+	real visible(const Ray& ray, real dist);
+	// real calcShade(Light* light, Vec3f pos, Vec3f& dir);
+	// Color getLi(const Ray& ray, const Intersection& isect);
 	bool loadObj(string path);
 private:
 	int chg(int n, int x){
