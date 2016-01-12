@@ -76,9 +76,9 @@ int main(int argc, char** argv)
 
 	//Material(Color aColor, real aRefl, real aRefr, real aDiff, real aSpec, real aRIndex = 1, Color Ka = BLACK)
 	Material* mPink = new Material(PINK, 0, 0, PINK, BLACK, 1, WHITE / 5);
-	Material* mGreen = new Material(GREEN, 0, 0, GREEN, BLACK, 1, WHITE / 5);
-	Material* mBlue = new Material(BLUE, 0, 0, BLUE, BLACK, 1, WHITE / 5);
-	Material* mRed = new Material(RED, 0, 0, RED, BLACK, 1, WHITE / 5);
+	Material* mGreen = new Material(AGREEN, 0, 0, GREEN, BLACK, 1, WHITE / 5);
+	Material* mBlue = new Material(ABLUE, 0, 0, BLUE, BLACK, 1, WHITE / 5);
+	Material* mRed = new Material(ARED, 0, 0, RED, BLACK, 1, WHITE / 5);
 	Material* mYellow = new Material(YELLOW, 0, 0, YELLOW, BLACK, 1, WHITE / 5);
 	Material* mWhite = new Material(WHITE, 0, 0, WHITE, BLACK, 1, WHITE / 5);
 
@@ -225,24 +225,18 @@ int main(int argc, char** argv)
 
 		camera->setPos(Vec3f(-40, 0, 0));
 
-		Light* light0 = new Light(WHITE , Vec3f(0, 0, 25));
+		int power = 10000;
+		if (args.usePhoton)
+			power = 100000;
+		Light* light0 = new Light(WHITE , Vec3f(0, 0, 25), power);
 		scene->addLight(light0);
 
-		Light* light1 = new Light(WHITE / 3 , Vec3f(-20, 0, 0));
-		//scene->addLight(light1);
-		Light* light2 = new Light(WHITE / 3, Vec3f(0, 0, 20) );
-		//scene->addLight(light2);
-		Light* light3 = new Light(PINK / 2, Vec3f(-15, 0, 0) );
-		//scene->addLight(light3);
-		Light* light4 = new Light(YELLOW / 2, Vec3f(0, 0, 15));
-		//scene->addLight(light4);
-
 		Primitive* obj5 = new Plane(Vec3f(-1, 0, 0), Vec3f(0, -1, 0), 30);
-		obj5->setMaterial(mWhite);
+		obj5->setMaterial(mBlue);
 		scene->addObject(obj5);
 
 		Primitive* obj6 = new Plane(Vec3f(0, 1, 0), Vec3f(-1, 0, 0), 30);
-		obj6->setMaterial(mWhite);
+		obj6->setMaterial(mGreen);
 		scene->addObject(obj6);
 
 		Primitive* obj7 = new Plane(Vec3f(0, 0, 1), Vec3f(1, 0, 0), 20);
@@ -250,22 +244,21 @@ int main(int argc, char** argv)
 		scene->addObject(obj7);
 	
 		Primitive* obj8 = new Plane(Vec3f(0, -1, 0), Vec3f(1, 0, 0), 30);
-		obj8->setMaterial(mWhite);
+		obj8->setMaterial(mRed);
 		scene->addObject(obj8);
 
 		Primitive* obj9 = new Plane(Vec3f(0, 0, -1), Vec3f(-1, 0, 0), 30);
 		obj9->setMaterial(mWhite);
 		scene->addObject(obj9);
 
-		camera->setPos(Vec3f(-25,0,0) );
+		camera->setPos(Vec3f(-50,0,0) );
 	}
 
 	//--------------------------------------test_scene 3----------------------------
 	if (useScene == 4){
 		camera->setPos(Vec3f(-5, 0 ,-1));
-
-		Material* mat5 = new Material(RED, 0, 0., RED, WHITE * 0, 1.0, WHITE/5);
-		Material* mat6 = new Material(GREEN, 0, 0., GREEN, WHITE * 0, 1.0, WHITE/5);
+		Material* mat5 = new Material(ARED, 0, 0., ARED, WHITE * 0, 1.0, WHITE/5);
+		Material* mat6 = new Material(AGREEN, 0, 0., AGREEN, WHITE * 0, 1.0, WHITE/5);
 		Material* mat7 = new Material(WHITE, 0, 1, WHITE * 0, WHITE * 1, 1.33);
 		Material* mat8 = new Material(WHITE, 1, 0, WHITE * 0, WHITE * 1, 1);
 		Material* mat9 = new Material(WHITE, 0, 0., WHITE, WHITE *0, 1.0, WHITE/5);

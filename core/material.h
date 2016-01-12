@@ -8,6 +8,8 @@
 
 namespace Raytracer {
 
+// Fresnel* noFresnel = new NoFresnel;
+
 class Material{
 public:
 	Material(){
@@ -81,6 +83,7 @@ private:
 	real mRefl, mRefr;
 	real mRIndex;
 	Texture* mTexture;
+	// Fresnel* fresnel;
 };
 
 }; // namespace Raytracer

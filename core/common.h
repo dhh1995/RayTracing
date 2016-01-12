@@ -46,6 +46,10 @@ const Color LIGHTGREEN	= Color(144, 238, 144) / 255.;
 const Color DARKGREEN	= Color( 0 , 100,  0 ) / 255.;
 const Color YELLOW 		= Color(255, 255,  0 ) / 255.;
 
+const Color ARED		= Color(0.8, 0.2, 0.2);
+const Color AGREEN		= Color(0.2, 0.8, 0.2);
+const Color ABLUE		= Color(0.2, 0.2, 0.8);
+
 const Color BACKGROUND = BLACK;
 
 using std::priority_queue;

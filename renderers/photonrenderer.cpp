@@ -157,7 +157,7 @@ void PhotonRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, re
 	}
 	aDist = isect.getDist();
 	Material* matter = isect.getPrim()->getMaterial();
-	Vec3f pi = isect.getPos();
+	Vec3f pos = isect.getPos();
 	Vec3f norm = isect.getNorm();
 	Color color = isect.getColor();
 	if (isect.isLight()){
@@ -178,7 +178,7 @@ void PhotonRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, re
 		real alpha = CAUSTIC_SEARCH_RADIUS, beta = GLOBAL_SEARCH_RADIUS;
 		pair<real, Photon* > * photons = new pair<real, Photon* >[nPhotons + 5];
 		{
-			int m = mCaustic.getKNearest(pi, nPhotons, photons, (alpha + mProgress) / (1. + mProgress));
+			int m = mCaustic.getKNearest(pos, nPhotons, photons, (alpha + mProgress) / (1. + mProgress));
 			if (m >= 8){
 				real radius2 = photons[0].first;
 				for (int i = 0; i < m; ++ i){
@@ -191,7 +191,7 @@ void PhotonRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, re
 			}
 		}
 		{
-			int m = mGlobal.getKNearest(pi, nPhotons, photons, (beta + mProgress) / (1. + mProgress));
+			int m = mGlobal.getKNearest(pos, nPhotons, photons, (beta + mProgress) / (1. + mProgress));
 			if (m >= 2){
 				real radius2 = photons[0].first;
 				for (int i = 0; i < m; ++ i){
@@ -244,7 +244,7 @@ void PhotonRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, re
 			Vec3f T = (n * ray.d) + (n * cosI - sqrt( cosT2 )) * N;
 			Color rcol( 0, 0, 0 );
 			real dist;
-			rayTracing(Ray(pi + T * EPS, T), rcol, depth + 1, rindex, dist); //, a_Samples * 0.5f, a_SScale * 2 );
+			rayTracing(Ray(pos + T * EPS, T), rcol, depth + 1, rindex, dist); //, a_Samples * 0.5f, a_SScale * 2 );
 			mRaysCast++;
 			// apply Beer's law
 			Color absorbance = matter->getColor() * 0.1f * -dist;
@@ -261,9 +261,27 @@ void PhotonRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, re
 			Vec3f R = ray.d - 2.0f * dot(ray.d, N) * N;
 			Color rcol(0, 0, 0);
 			real dist;
-			rayTracing( Ray( pi + R * EPS, R ), rcol, depth + 1, aRIndex, dist); //, a_Samples * 0.5f, a_SScale * 2 );
+			rayTracing( Ray( pos + R * EPS, R ), rcol, depth + 1, aRIndex, dist); //, a_Samples * 0.5f, a_SScale * 2 );
 			mRaysCast++;
 			res += refl * rcol * color;
+		}
+	}
+
+	bool traceDiffuse = true;
+	if (traceDiffuse){
+		Color diff = matter->getDiffuse();
+		if ((diff.L2() > 0) && (depth < TRACEDEPTH)){
+			int nSample = 1;
+			Color Ld;
+			for (int i = 0; i < nSample; ++ i){
+				Vec3f R = Sampler::getDiffuseDir(norm);
+				Color rcol;
+				real dist;
+				rayTracing( Ray( pos + R * EPS, R ), rcol, depth + 1, aRIndex, dist); //, a_Samples * 0.5f, a_SScale * 2 );
+				mRaysCast++;
+				Ld += rcol * color * diff * dot(R, norm);
+			}
+			res += Ld / nSample;
 		}
 	}
 

@@ -197,7 +197,7 @@ void TestRenderer::render(const Args& args){
 			resultColor[i] = BLACK, counter[i] = 0;
 	cout << "number of pixels " << nPixels << endl;
 
-	for (int iter = 0; iter < 100; ++ iter){
+	for (int iter = 0; iter < 1; ++ iter){
 		#pragma omp parallel for
 		for (int pixel = 0; pixel < nPixels; ++ pixel){
 			int x = pixel / h, y = pixel - x * h;

@@ -2,9 +2,4 @@
 
 namespace Raytracer {
 
-BSDF::BSDF(){
-
-
-}
-
 }; // namespace Raytracer

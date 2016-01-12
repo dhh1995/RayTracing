@@ -47,7 +47,7 @@ bool Scene::loadObj(string folder, string fileName){
 	char tmp[105];
 	char buf[1005];
 	while (fscanf(fp, "%s", tmp)!=EOF){
-		puts(tmp);
+		// puts(tmp);
 		string type = tmp;
 		if ((++ lines) % 10000 == 0)
 			printf("line %d %s\n",lines, tmp);
