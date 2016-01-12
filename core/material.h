@@ -10,7 +10,10 @@ namespace Raytracer {
 
 class Material{
 public:
-	Material(Color aColor, real aRefl, real aRefr, real aDiff, real aSpec, real aRIndex = 1, Color Ka = BLACK)
+	Material(){
+		mTexture = NULL;
+	}
+	Material(Color aColor, real aRefl, real aRefr, Color aDiff, Color aSpec, real aRIndex = 1, Color Ka = BLACK)
 		: mColor(aColor), mRefl(aRefl), mRefr(aRefr), mDiff(aDiff), mSpec(aSpec), mRIndex(aRIndex), mKa(Ka){
 		mTexture = NULL;
 	}
@@ -23,16 +26,16 @@ public:
 	Color getColor(){
 		return mColor;
 	}
-	void setDiffuse(real aDiff){
+	void setDiffuse(Color aDiff){
 		mDiff = aDiff;
 	}
-	real getDiffuse(){
+	Color getDiffuse(){
 		return mDiff;
 	}
-	void setSpecular(real aDiff){
+	void setSpecular(Color aDiff){
 		mDiff = aDiff;
 	}
-	real getSpecular(){
+	Color getSpecular(){
 		return mSpec;
 	}
 	void setReflection(real aRefl){
@@ -74,7 +77,7 @@ public:
 private:
 	Color mKa;
 	Color mColor;
-	real mDiff, mSpec;
+	Color mDiff, mSpec;
 	real mRefl, mRefr;
 	real mRIndex;
 	Texture* mTexture;

@@ -26,6 +26,7 @@ public:
 	void setPos(Vec3f aPos){
 		mPos = aPos;
 	}
+	virtual void setLookAt(Vec3f lookAt, Vec3f aI) = 0;
 	virtual Ray generateRay(real dx, real dy, int i, int j) = 0;
 	virtual vector<Ray> generateRays(const Args& args) = 0;
 	virtual ~Camera(){
@@ -43,6 +44,11 @@ public:
 		: Camera(aPos), mLookAt(aLookAt), mI(aI), mFov(aFov){
 			mJ = cross(mI, mLookAt);
 			mArc  = mFov / 180 * PI;
+	}
+	void setLookAt(Vec3f lookAt, Vec3f aI){
+		mLookAt = lookAt;
+		mI = aI;
+		mJ = cross(mI, mLookAt);
 	}
 	Ray generateRay(real dx, real dy, int i, int j);
 	vector<Ray> generateRays(const Args& args);

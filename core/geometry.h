@@ -201,6 +201,9 @@ public:
 	inline real length(){
 		return sqrt(L2());
 	}
+	inline real Abs(){
+		return sqrt(L2());
+	}
 	inline Vec3f Normalize(){
 		real len = length();
 		//if(len>1e-6)

@@ -38,6 +38,15 @@ public:
 		z = sqrt(max(0.0, 1 - x * x - y * y));
 		return Vec3f(x, y, z);
 	}
+	static Vec3f getDiffuseDir(Vec3f N){
+		Vec3f dir = cosSampleHemisphere();
+		Vec3f I, J;
+		while (I.L2() < EPS)
+			I = cross(N, Sampler::randVector());
+		I.Normalize();
+		J = cross(I, N).Normalize();
+		return I * dir.x + J * dir.y + N * dir.z;
+	}
 //private:
 };
 

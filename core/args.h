@@ -8,29 +8,43 @@ namespace Raytracer {
 
 struct Args{
 	int useScene;
+	string obj;
+	bool debug;
+	bool usePhoton;
+	bool loadPM;
+	bool showHelp;
+
+	//camera args
+	int cameraSample;
+	real fov;
+	real lensRadius;
+	real focalDist;
+
+	//Decimation Args
 	int useModel;
 	int needTriangle;
 	real needRatio;
 	real threshold;
 	string needOption;
-	bool debug;
-	bool usePhoton;
-	bool loadPM;
-	bool showHelp;
-	int cameraSample;
-	Args(){
-		//default
+
+	Args(){//default value
+		showHelp = false;
 		useScene = 1;
+		obj = "cornell_box";
+		debug = false;
+		usePhoton = false;
+		loadPM = false;
+
+		cameraSample = 20;
+		fov = 60;
+		lensRadius = 0;
+		focalDist = 10;
+
 		useModel = 1;
 		needTriangle = 400;
 		needRatio = 0.01;
 		threshold = 0;
-		cameraSample = 20;
 		needOption = "ratio";
-		debug = false;
-		showHelp = false;
-		usePhoton = false;
-		loadPM = false;
 	}
 	void showHelpInfo(){
 		showHelp = true;
@@ -41,12 +55,24 @@ struct Args{
 		colorMessage(helpInfo, 3);
 		sprintf(helpInfo, "-scene [int]		default = %d		Choose which scene to use", useScene);
 		colorMessage(helpInfo, 3);
+		sprintf(helpInfo, "-obj [string]		default = %s		Choose which scene to use", obj.c_str());
+		colorMessage(helpInfo, 3);
 		sprintf(helpInfo, "--photon		default = false		set Rendering model as Photon Mapping");
 		colorMessage(helpInfo, 3);
 		sprintf(helpInfo, "--loadpm		default = false		use pre-computed Photon Mapping(according to scene id)");
 		colorMessage(helpInfo, 3);
+
+		colorMessage("Args for Camera", 5);
 		sprintf(helpInfo, "-csample [int] 		default = %d		Sample times for camera", cameraSample);
 		colorMessage(helpInfo, 3);
+		sprintf(helpInfo, "-fov [real] 		default = %lf	Fov for camera", fov);
+		colorMessage(helpInfo, 3);
+		sprintf(helpInfo, "-lradius [real] 	default = %lf	Radius of lens for camera", lensRadius);
+		colorMessage(helpInfo, 3);
+		sprintf(helpInfo, "-fdist [real] 		default = %lf	Focal Distance for camera", focalDist);
+		colorMessage(helpInfo, 3);
+
+		colorMessage("Args for Decimation", 5);
 		sprintf(helpInfo, "-model [int] 		default = %d		Choose which model to use", useModel);
 		colorMessage(helpInfo, 3);
 		sprintf(helpInfo, "-deoption [string] 	default = %s 	Option model for decimation", needOption.c_str());
@@ -68,14 +94,22 @@ struct Args{
 					showHelpInfo(), --ind;
 				if (param == "--debug")
 					debug = true, --ind;
+				else if (param == "-scene")
+					readBuf(ptr, useScene);
+				else if (param == "-obj")
+					obj = argv[ind];
 				else if (param == "--photon")
 					usePhoton = true, --ind;
 				else if (param == "--loadpm")
 					loadPM = true, --ind;
 				else if (param == "-csample")
 					readBuf(ptr, cameraSample);
-				else if (param == "-scene")
-					readBuf(ptr, useScene);
+				else if (param == "-fov")
+					readBuf(ptr, fov);
+				else if (param == "-lradius")
+					readBuf(ptr, lensRadius);
+				else if (param == "-fdist")
+					readBuf(ptr, focalDist);
 				else if (param == "-model")
 					readBuf(ptr, useModel);
 				else if (param == "-need")
@@ -86,7 +120,6 @@ struct Args{
 					readBuf(ptr, needRatio);
 				else if (param == "-threshold")
 					readBuf(ptr, threshold);
-
 			}
 			++ind;
 		}

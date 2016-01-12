@@ -6,7 +6,7 @@
 
 namespace Raytracer {
 
-const int PROGRESSIVE = 20;
+const int PROGRESSIVE = 10;
 const int PHOTONDEPTH = 10;
 const int GLOBALWANT = 100000;
 const int CAUSTICWANT = 10000;

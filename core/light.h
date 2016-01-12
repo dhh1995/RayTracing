@@ -26,6 +26,9 @@ public:
 	Vec3f getPos(){
 		return mPos;
 	}
+	virtual Color getPower(){
+		return mColor * (mPower / 4 / PI);
+	}
 	virtual real getPower(Vec3f dir){
 		return mPower / 4 / PI;
 	}
@@ -64,6 +67,9 @@ public:
 	bool visible(Vec3f pos){
 		return dot(mNorm, pos - mPos) > 0;
 	}
+	virtual Color getPower(){
+		return mColor * (mPower / PI);
+	}
 	virtual real getPower(Vec3f dir){
 		return mPower * dot(mNorm, dir) / PI;
 	}
@@ -73,6 +79,9 @@ public:
 		u = (Sampler::getRandReal() - 0.5) * mUScale;
 		v = (Sampler::getRandReal() - 0.5) * mVScale;
 		return mPos + mU * u + mV * v;
+	}
+	Vec3f sampleDir(){
+		return Sampler::getDiffuseDir(mNorm);
 	}
 private:
 	Vec3f mNorm, mU, mV;

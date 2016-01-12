@@ -32,10 +32,22 @@ void PhotonRenderer::photonTracing(Photon* photon, int depth, bool meetSpecular)
 	Material* matter = isect.getPrim()->getMaterial();
 	Vec3f pi = isect.getPos();
 	Vec3f norm = isect.getNorm();
-	Color color = isect.getColor();
+	// Color color = isect.getColor();
 
-	real diff = matter->getDiffuse();
-	real spec = matter->getSpecular();
+	Color diff = matter->getDiffuse();
+	Color spec = matter->getSpecular();
+	Color P = photon->getPower();
+	real pContinue = P.Abs() / 1000;
+	if (pContinue < EPS)
+		return;
+	// real ran = Sampler::getRandReal() * 100;
+	// if (pContinue < 1.0f && ran < pContinue){
+	// 	photon->updatePower(1 / pContinue);
+	// 	P = photon->getPower();
+	// }
+
+	real Pd = (P * diff).getMax() / P.getMax();
+	real Ps = (P * spec).getMax() / P.getMax();
 	// real refr = matter->getRefraction();
 	// real refl = matter->getReflection();
 	real ran = Sampler::getRandReal();
@@ -43,8 +55,13 @@ void PhotonRenderer::photonTracing(Photon* photon, int depth, bool meetSpecular)
 	// ray.prt();
 	// printf("%lf %lf\n", ran , spec);
 
+	// if (spec.L2() > EPS){
+	// 	spec.prt();
+	// 	printf("%lf\n", (P * spec).getMax());
+	// 	printf("%lf\n", P.getMax());
+	// }
 	//printf("%lf %lf\n",ran, spec);
-	if (ran < spec){
+	if (ran < Ps){
 		//spec, reflection or refraction
 		real rindex = matter->getRefrIndex();
 		real n = 1.0f / rindex;
@@ -61,21 +78,21 @@ void PhotonRenderer::photonTracing(Photon* photon, int depth, bool meetSpecular)
 		if (cosT2 < 0)
 			refl = 1.;
 		Vec3f R;
-		if (ran < refl * spec)
+		if (ran < refl * Ps)
 			R = ray.d - 2.0f * dot(ray.d, N) * N;
 		else{
 			R = (n * ray.d) + (n * cosI - sqrt( cosT2 )) * N;
 		}
 		meetSpecular = true;
 		photon->setRay(Ray(pi + EPS * R, R));
-		photon->updatePower(color);
+		photon->updatePower(spec / Ps);
 		photonTracing(photon, depth + 1, meetSpecular);
-	}else if (ran < diff + spec){
+	}else if (ran < Pd + Ps){
 		// diffuse, get new direction and save it in photon map
 		_addPhoton(pi, ray.d, photon->getPower(), meetSpecular);
-		Vec3f dir = _getDiffuseDir(norm);
+		Vec3f dir = Sampler::getDiffuseDir(norm);
 		photon->setRay(Ray(pi + EPS * dir, dir));
-		photon->updatePower(color);
+		photon->updatePower(diff / Pd);
 		photonTracing(photon, depth + 1, false);
 	}else{
 		_addPhoton(pi, ray.d, photon->getPower(), meetSpecular);
@@ -108,15 +125,13 @@ void PhotonRenderer::genPhotonMap(const Args& args, string path){
 	while (mGlobal.getN() < mGlobalWant || mCaustic.getN() < mCausticWant){
 		int ind = Sampler::getRandInt(lights.size());
 		Light* light = lights[ind];
-		if (light->getType() == "Point"){
-			Vec3f centre = light->getPos();
-			Vec3f dir = Sampler::getRandomDir();
-			Photon* photon = new Photon(Ray(centre, dir), light->getColor());
-			//puts("new Photon emits");
-			mPhotonEmits++;
-			photonTracing(photon, 0, false);
-			delete photon;
-		}
+		Vec3f centre = light->samplePos();
+		Vec3f dir = Sampler::getRandomDir();
+		Photon* photon = new Photon(Ray(centre, dir), light->getPower());
+		//puts("new Photon emits");
+		mPhotonEmits++;
+		photonTracing(photon, 0, false);
+		delete photon;
 		if (mGlobal.getN() + mCaustic.getN() >= last * total / showStages)
 			printf("photon emits %d/%d global : %d caustic : %d\n", last++, showStages, mGlobal.getN(), mCaustic.getN());
 	}
@@ -148,19 +163,19 @@ void PhotonRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, re
 	//res = mScene->getLi(ray, isect);
 	res = BLACK;
 	// need to gather photon.
-	real diff = matter->getDiffuse();
+	Color diff = matter->getDiffuse();
 	// puts("------------------");
 	// ray.prt();
-	// pi.prt();
+	// p;
 	// printf("%lf\n",diff);
-	if (diff > 0){
+	if (diff.L2() > 0){
 		Color radiance, caustic;
 		int nPhotons = SEARCH_PHOTONS;
 		real alpha = CAUSTIC_SEARCH_RADIUS, beta = GLOBAL_SEARCH_RADIUS;
 		pair<real, Photon* > * photons = new pair<real, Photon* >[nPhotons + 5];
 		{
 			int m = mCaustic.getKNearest(pi, nPhotons, photons, (alpha + mProgress) / (1. + mProgress));
-			if (m >= 8){
+			if (m >= 1){
 				real radius2 = photons[0].first;
 				for (int i = 0; i < m; ++ i){
 					Photon* photon = photons[i].second;
@@ -201,8 +216,8 @@ void PhotonRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, re
 
 	// calculate specular
 	//real refr = matter->getRefraction();
-	real spec = matter->getSpecular();
-	if ((spec > 0.0f) && (depth < TRACEDEPTH))
+	Color spec = matter->getSpecular();
+	if ((spec.L2() > 0.0f) && (depth < TRACEDEPTH))
 	{
 		real rindex = matter->getRefrIndex();
 		real n = 1.0f / rindex;
@@ -230,7 +245,7 @@ void PhotonRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, re
 			// apply Beer's law
 			Color absorbance = matter->getColor() * 0.1f * -dist;
 			Color transparency = Color( exp( absorbance.r ), exp( absorbance.g ), exp( absorbance.b ) );
-			Color add = refr * rcol;
+			Color add = refr * rcol * color;
 			// if (!isect.isBack())
 			// 	add = add * transparency;
 			res += add;
@@ -252,11 +267,10 @@ void PhotonRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, re
 }
 
 void PhotonRenderer::render(const Args& args){
-	char names[105];
-	sprintf(names, "PhotonMaps/scene%d", args.useScene);
-	//genPhotonMap(args, names);
-	//genCausticPhotonMap("caustic", 100);
-	progressMessage("Generate photon maps done.");
+	// char names[105];
+	// sprintf(names, "PhotonMaps/scene%d", args.useScene);
+	// genPhotonMap(args, names);
+	// progressMessage("Generate photon maps done.");
 
 	//assert(mCamera != NULL);
 	vector<Ray> rays = mCamera->generateRays(args);
@@ -289,7 +303,7 @@ void PhotonRenderer::render(const Args& args){
 			real dist;
 			rayTracing(ray, res, 0, 1, dist);
 			//mCamera->getFilm()->setColor(x, y, res);
-			resultColor[x * h + y] += res / progressive;
+			resultColor[x * h + y] += res;
 			counter[x * h + y] ++;
 		}
 		bool showImg = true;

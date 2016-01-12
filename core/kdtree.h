@@ -225,6 +225,7 @@ public:
 		mData.clear();
 	}
 	void add(Triangle* x){
+		// x->prt();
 		mData.push_back(x);
 	}
 	// void buildLeaf(KdNode*& root, const vector<Triangle* > a, int l, int r);

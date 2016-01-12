@@ -25,14 +25,6 @@ public:
 	}
 protected:
 	real _FresnelReflection(real n, real cosI, real cosT2);
-	Vec3f _getDiffuseDir(Vec3f N){
-		Vec3f dir;
-		do
-			dir = Sampler::getRandomDir();
-		while (dot(N, dir) < 0);
-		return dir;
-	}
-
 	int mRaysCast;
 };
 

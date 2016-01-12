@@ -42,7 +42,7 @@ public:
 	real visible(const Ray& ray, real dist);
 	// real calcShade(Light* light, Vec3f pos, Vec3f& dir);
 	// Color getLi(const Ray& ray, const Intersection& isect);
-	bool loadObj(string path);
+	bool loadObj(string folder, string fileName);
 private:
 	int chg(int n, int x){
 		if (x < 0)

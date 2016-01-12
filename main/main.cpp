@@ -42,7 +42,7 @@ int main(int argc, char** argv)
 
 	Film* film = new Image(500, 500);
 	film->setName("test");
-	Camera* camera = new PerspectiveCamera(Vec3f(0, 0, -0), Vec3f(1, 0, 0), Vec3f(0, 0, 1), 90, 0, 10);
+	Camera* camera = new PerspectiveCamera(Vec3f(0, 0, -0), Vec3f(1, 0, 0), Vec3f(0, 0, 1), args.fov, args.lensRadius, args.focalDist);
 	//Camera *camera = new ProjectiveCamera(Vector(0, 5, 10), Vector(0, 0, -1), Vector(0, 1, 0), 90); 
 	camera->setFilm(film);
 
@@ -59,34 +59,41 @@ int main(int argc, char** argv)
 	camera->setPos(Vec3f(0, 0, 3));
 
 	if (useScene == 0){
-		if (!scene->loadObj("model/cornell_box.obj"))
-			puts("load scene unsuccessfully");
+		if (!scene->loadObj("model", args.obj)){
+			colorMessage("load scene unsuccessfully", 1);
+			return 0;
+		}
+		Light* light4 = new AreaLight(WHITE, Vec3f(278, 548.8, 279.5), 20, Vec3f(0, -1, 0), Vec3f(1, 0, 0), 1, 65, 52.5);
+		scene->addLight(light4);
+		
+		camera->setPos(Vec3f(278, 273, 0));
+		camera->setLookAt(Vec3f(0, 1, 0), Vec3f(1, 0, 0));
 	}
 
 	Vec3f testTransForCube(3, -0.5, 0.5);
 
 	//Material(Color aColor, real aRefl, real aRefr, real aDiff, real aSpec, real aRIndex = 1, Color Ka = BLACK)
-	Material* mPink = new Material(PINK, 0, 0, 0.8, 0, 1, WHITE / 5);
-	Material* mGreen = new Material(GREEN, 0, 0, 0.8, 0, 1, WHITE / 5);
-	Material* mBlue = new Material(BLUE, 0, 0, 0.8, 0, 1, WHITE / 5);
-	Material* mRed = new Material(RED, 0, 0, 0.8, 0, 1, WHITE / 5);
-	Material* mYellow = new Material(YELLOW, 0, 0, 0.8, 0, 1, WHITE / 5);
-	Material* mWhite = new Material(WHITE, 0, 0, 0.8, 0, 1, WHITE / 5);
+	Material* mPink = new Material(PINK, 0, 0, PINK, BLACK, 1, WHITE / 5);
+	Material* mGreen = new Material(GREEN, 0, 0, GREEN, BLACK, 1, WHITE / 5);
+	Material* mBlue = new Material(BLUE, 0, 0, BLUE, BLACK, 1, WHITE / 5);
+	Material* mRed = new Material(RED, 0, 0, RED, BLACK, 1, WHITE / 5);
+	Material* mYellow = new Material(YELLOW, 0, 0, YELLOW, BLACK, 1, WHITE / 5);
+	Material* mWhite = new Material(WHITE, 0, 0, WHITE, BLACK, 1, WHITE / 5);
 
-	Material* mat1 = new Material(CYAN, 0, 0, 0.6, 0.4, 1, WHITE / 5);
-	Material* mat2 = new Material(PINK, 0, 1, 0, 1, 1.5, WHITE / 5);
+	Material* mat1 = new Material(CYAN, 0, 0, CYAN * 0.6, CYAN * 0.4, 1, WHITE / 5);
+	Material* mat2 = new Material(PINK, 0, 1, WHITE * 0, PINK, 1.5, WHITE / 5);
 	
-	Material* wall1 = new Material(WHITE, 0., 0. , 0.8, 0, 1.0, WHITE / 10);
+	Material* wall1 = new Material(WHITE, 0., 0. , WHITE * 0.8, WHITE * 0, 1.0, WHITE / 10);
 	Image* image0 = new Image("texture/lena.jpg");
 	Image* image1 = new Image("texture/world1.jpg");
 	Texture* texture1 = new Texture(image0, 20, 20);
 	wall1->setTexture(texture1);
-	Material* floor3 = new Material(WHITE, 0., 0. , 0.8, 0, 1.0, WHITE / 10);
+	Material* floor3 = new Material(WHITE, 0., 0. , WHITE * 0.8, WHITE * 0, 1.0, WHITE / 10);
 	Image* image3 = new Image("texture/parquet.jpg");
 	Texture* texture3 = new Texture(image3, 50, 50);
 	floor3->setTexture(texture3);
 
-	Material* mat4 = new Material(WHITE, 0., 0., 0.8, 0, 1.0, WHITE/5);
+	Material* mat4 = new Material(WHITE, 0., 0., WHITE * 0.8, WHITE * 0, 1.0, WHITE/5);
 
 	if (useScene == 666){ //Decimation Task
 		Decimation::Run(args);
@@ -164,7 +171,7 @@ int main(int argc, char** argv)
 			mat2, Matrix44::scale(5) * Matrix44::rotateX(PI / 2) * Matrix44::rotateY(-PI / 2));
 		scene->addObject(obj0);
 
-		Light* light0 = new Light(WHITE * 10000 , Vec3f(0, 0, 4));
+		Light* light0 = new Light(WHITE , Vec3f(0, 0, 4), 10000);
 		scene->addLight(light0);
 
 		Light* light1 = new Light(PINK / 2 , Vec3f(-4, 0, 0));
@@ -176,9 +183,9 @@ int main(int argc, char** argv)
 		Light* light4 = new Light(BLUE / 2, Vec3f(0, 0, 3));
 		//scene->addLight(light4);
 
-		Material* mat5 = new Material(RED, 0, 0., 0.8, 0, 1.0, WHITE/5);
-		Material* mat6 = new Material(GREEN, 0, 0., 0.8, 0, 1.0, WHITE/5);
-		Material* mat7 = new Material(WHITE, 0, 0., 0.8, 0, 1.0, WHITE/5);
+		Material* mat5 = new Material(RED, 0, 0., WHITE * 0.8, BLACK, 1.0, WHITE/5);
+		Material* mat6 = new Material(GREEN, 0, 0., WHITE * 0.8, BLACK, 1.0, WHITE/5);
+		Material* mat7 = new Material(WHITE, 0, 0., WHITE * 0.8, BLACK, 1.0, WHITE/5);
 
 		// Primitive* obj5 = new Plane(Vec3f(-1, 0, 0), Vec3f(0, -1, 0), 6);
 		Primitive* obj5_1 = new Triangle(new Vertex(10, -10, -10), new Vertex(10, -10, 15), new Vertex(10, 10, -10));
@@ -266,13 +273,13 @@ int main(int argc, char** argv)
 
 	//--------------------------------------test_scene 3----------------------------
 	if (useScene == 4){
-		camera->setPos(Vec3f(0, 0 ,-1));
+		camera->setPos(Vec3f(-5, 0 ,-1));
 
-		Material* mat5 = new Material(RED, 0.3, 0., 0.5, 0, 1.0, WHITE/5);
-		Material* mat6 = new Material(GREEN, 0.3, 0., 0.5, 0, 1.0, WHITE/5);
-		Material* mat7 = new Material(WHITE, 0, 1, 0, 1, 1.33);
-		Material* mat8 = new Material(WHITE, 1, 0, 0, 1, 1);
-		Material* mat9 = new Material(WHITE, 0, 0., 0.5, 0, 1.0, WHITE/5);
+		Material* mat5 = new Material(RED, 0, 0., RED, WHITE * 0, 1.0, WHITE/5);
+		Material* mat6 = new Material(GREEN, 0, 0., GREEN, WHITE * 0, 1.0, WHITE/5);
+		Material* mat7 = new Material(WHITE, 0, 1, WHITE * 0, WHITE * 1, 1.33);
+		Material* mat8 = new Material(WHITE, 1, 0, WHITE * 0, WHITE * 1, 1);
+		Material* mat9 = new Material(WHITE, 0, 0., WHITE, WHITE *0, 1.0, WHITE/5);
 
 		Primitive* obj1 = new Plane(Vec3f(0, 0, 1), Vec3f(1, 0, 0), 5);
 		obj1->setMaterial(mat9);
@@ -314,11 +321,11 @@ int main(int argc, char** argv)
 		//Light* light2 = new Light(YELLOW, Vec3f(5,9,-9));
 		//scene->addLight(light2);
 
-		Light* light3 = new Light(WHITE, Vec3f(6,0,4), 300);
-		scene->addLight(light3);
+		Light* light3 = new Light(WHITE, Vec3f(6,0,4), 500);
+		// scene->addLight(light3);
 
 		Light* light4 = new AreaLight(WHITE, Vec3f(7, 0, 4.9), 300, Vec3f(0, 0, -1), Vec3f(1, 0, 0), 2, 2, 2);
-		// scene->addLight(light4);
+		scene->addLight(light4);
 	}
 
 

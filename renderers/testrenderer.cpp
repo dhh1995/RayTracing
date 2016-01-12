@@ -43,24 +43,24 @@ Color TestRenderer::directLight(const Ray& ray, const Intersection& isect){
 			real shading = mScene->visible(Ray(lPos, L), dist);
 			L = -L;
 			if (shading > 0){
-				real diff = matter->getDiffuse();
+				Color diff = matter->getDiffuse();
 				Color Ltemp;
-				if (diff > 0){
+				if (diff.L2() > 0){
 					real dt = dot(L, N);
 					if (dt > 0){
-						real diffuse = dt * diff;
+						Color diffuse = dt * diff;
 						// add diffuse component to ray color
 						Ltemp += diffuse * color * light->getColor();
 					}
 				}
 				// determine specular component using Schlick's BRDF approximation
-				real spec = matter->getSpecular();
-				if (spec > 0){
+				Color spec = matter->getSpecular();
+				if (spec.L2() > 0){
 					// point light source: sample once for specular highlight
 					Vec3f R = L - 2.0f * dot( L, N ) * N;
 					real dt = dot(ray.d, R);	
 					if (dt > 0){
-						real specular = dt * spec / (50 - 50 * dt + dt);
+						Color specular = dt * spec / (50 - 50 * dt + dt);
 						// add specular component to ray color
 						Ltemp += specular * light->getColor();
 					}
@@ -95,6 +95,9 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real
 	Vec3f pos = isect.getPos();
 	Vec3f norm = isect.getNorm();
 	Color color = isect.getColor();
+	
+	// res = color;
+	// return;
 
 	// color.prt();
 	// ray.prt();
@@ -184,14 +187,14 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real
 			res += refl * rcol * color;
 		}
 	}
-	bool traceDiffuse = true;
+	bool traceDiffuse = false;
 	if (traceDiffuse){
-		real diff = matter->getDiffuse();
-		if ((diff > 0) && (depth < TRACEDEPTH)){
+		Color diff = matter->getDiffuse();
+		if ((diff.L2() > 0) && (depth < TRACEDEPTH)){
 			int nSample = 1;
 			Color Ld;
 			for (int i = 0; i < nSample; ++ i){
-				Vec3f R = _getDiffuseDir(norm);
+				Vec3f R = Sampler::getDiffuseDir(norm);
 				Color rcol;
 				real dist;
 				rayTracing( Ray( pos + R * EPS, R ), rcol, depth + 1, aRIndex, dist); //, a_Samples * 0.5f, a_SScale * 2 );
@@ -220,7 +223,7 @@ void TestRenderer::render(const Args& args){
 			resultColor[i] = BLACK, counter[i] = 0;
 	cout << "number of pixels " << nRays << endl;
 
-	for (int iter = 0; iter < 10; ++ iter){
+	for (int iter = 0; iter < 1; ++ iter){
 		#pragma omp parallel for
 		//for (Ray ray : rays){
 		for (int _ = 0; _ < rays.size(); ++ _){
@@ -240,7 +243,7 @@ void TestRenderer::render(const Args& args){
 			resultColor[x * h + y] += res;
 			counter[x * h + y] ++;
 		}
-		bool showImage = true;
+		bool showImage = false;
 		if (showImage){
 			for (int i = 0; i < w; ++ i)
 				for (int j = 0; j < h; ++ j){
