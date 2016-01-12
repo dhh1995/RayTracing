@@ -52,8 +52,8 @@ vector<Ray> PerspectiveCamera::generateRays(const Args& args){
 			//	printf("%lf %lf\n",tan(mArc / (w-1) * i - mArc / 2), tan(mArc / (h-1) * j - mArc / 2));
 			//rays.push_back(generateRay(tan(mArc / (w-1) * i - mArc / 2), tan(mArc / (h-1) * j - mArc / 2), i, j));
 			int sampleTimes = 1;
-			if (mLensRadius > 1e-8)
-				sampleTimes = args.cameraSample;
+			// if (mLensRadius > 1e-8)
+			// 	sampleTimes = args.cameraSample;
 			for (int k = 0; k < sampleTimes; ++ k)
 				rays.push_back(generateRay( l + (r-l)/(w-1) * (w-1-i), l + (r-l) / (h-1) * (h-1-j) , i, j));
 		}

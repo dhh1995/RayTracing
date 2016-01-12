@@ -15,7 +15,7 @@ struct Args{
 	bool showHelp;
 
 	//camera args
-	int cameraSample;
+	// int cameraSample;
 	real fov;
 	real lensRadius;
 	real focalDist;
@@ -35,7 +35,7 @@ struct Args{
 		usePhoton = false;
 		loadPM = false;
 
-		cameraSample = 20;
+		// cameraSample = 20;
 		fov = 60;
 		lensRadius = 0;
 		focalDist = 10;
@@ -63,8 +63,8 @@ struct Args{
 		colorMessage(helpInfo, 3);
 
 		colorMessage("Args for Camera", 5);
-		sprintf(helpInfo, "-csample [int] 		default = %d		Sample times for camera", cameraSample);
-		colorMessage(helpInfo, 3);
+		// sprintf(helpInfo, "-csample [int] 		default = %d		Sample times for camera", cameraSample);
+		// colorMessage(helpInfo, 3);
 		sprintf(helpInfo, "-fov [real] 		default = %lf	Fov for camera", fov);
 		colorMessage(helpInfo, 3);
 		sprintf(helpInfo, "-lradius [real] 	default = %lf	Radius of lens for camera", lensRadius);
@@ -102,8 +102,8 @@ struct Args{
 					usePhoton = true, --ind;
 				else if (param == "--loadpm")
 					loadPM = true, --ind;
-				else if (param == "-csample")
-					readBuf(ptr, cameraSample);
+				// else if (param == "-csample")
+				// 	readBuf(ptr, cameraSample);
 				else if (param == "-fov")
 					readBuf(ptr, fov);
 				else if (param == "-lradius")

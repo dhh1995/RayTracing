@@ -63,11 +63,14 @@ int main(int argc, char** argv)
 			colorMessage("load scene unsuccessfully", 1);
 			return 0;
 		}
-		Light* light4 = new AreaLight(WHITE, Vec3f(278, 548.8, 279.5), 20, Vec3f(0, -1, 0), Vec3f(1, 0, 0), 1, 65, 52.5);
+		int power = 1000000;
+		if (args.usePhoton)
+			power = 3000000;
+		Light* light4 = new AreaLight(WHITE, Vec3f(278, 548.8, 279.5), power, Vec3f(0, -1, 0), Vec3f(1, 0, 0), 1, 65, 52.5);
 		scene->addLight(light4);
-		
-		camera->setPos(Vec3f(278, 273, 0));
-		camera->setLookAt(Vec3f(0, 1, 0), Vec3f(1, 0, 0));
+
+		camera->setPos(Vec3f(278, 273, -400));
+		camera->setLookAt(Vec3f(0, 0, 1), Vec3f(0, 1, 0));
 	}
 
 	Vec3f testTransForCube(3, -0.5, 0.5);
@@ -170,8 +173,10 @@ int main(int argc, char** argv)
 		Primitive* obj0 = new TriangleMesh("test_data/fixed.perfect.dragon.100K.0.07.obj",
 			mat2, Matrix44::scale(5) * Matrix44::rotateX(PI / 2) * Matrix44::rotateY(-PI / 2));
 		scene->addObject(obj0);
-
-		Light* light0 = new Light(WHITE , Vec3f(0, 0, 4), 10000);
+		int power = 1000;
+		if (args.usePhoton)
+			power = 10000;
+		Light* light0 = new Light(WHITE , Vec3f(0, 0, 4), power);
 		scene->addLight(light0);
 
 		Light* light1 = new Light(PINK / 2 , Vec3f(-4, 0, 0));

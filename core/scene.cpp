@@ -76,6 +76,7 @@ bool Scene::loadObj(string folder, string fileName){
 				}else if (type == "Ka"){
 				}else if (type == "Kd"){
 					fscanf(mtllib, "%lf %lf %lf", &r, &g, &b);
+					mtl->setColor(Color(r,g,b));
 					mtl->setDiffuse(Color(r,g,b));
 				}else if (type == "Ks"){
 					fscanf(mtllib, "%lf %lf %lf", &r, &g, &b);

@@ -17,7 +17,7 @@ public:
 		: mColor(aColor), mRefl(aRefl), mRefr(aRefr), mDiff(aDiff), mSpec(aSpec), mRIndex(aRIndex), mKa(Ka){
 		mTexture = NULL;
 	}
-	void setColor(Color &aColor){
+	void setColor(const Color &aColor){
 		mColor = aColor;
 	}
 	bool haveTexture(){
@@ -32,8 +32,8 @@ public:
 	Color getDiffuse(){
 		return mDiff;
 	}
-	void setSpecular(Color aDiff){
-		mDiff = aDiff;
+	void setSpecular(Color aSpec){
+		mSpec = aSpec;
 	}
 	Color getSpecular(){
 		return mSpec;

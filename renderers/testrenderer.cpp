@@ -88,16 +88,19 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real
 	//printf("%lf\n",isect.getDist());
 	//Vec3f pos = ray.o + ray.d * isect.getDist();
 	//res = WHITE / (1 + (isect.getDist()));
-	res = directLight(ray, isect);
+	
+	// res = color;
+	// res = WHITE / ( 1 + aDist/ 300); //depth
+	// return;
+
 	aDist = isect.getDist();
+	res = directLight(ray, isect);
 
 	Material* matter = isect.getPrim()->getMaterial();
 	Vec3f pos = isect.getPos();
 	Vec3f norm = isect.getNorm();
 	Color color = isect.getColor();
-	
-	// res = color;
-	// return;
+
 
 	// color.prt();
 	// ray.prt();
@@ -147,47 +150,18 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real
 	real refl = matter->getReflection();
 	if (totalReflection)
 		refl = 1.0f;
-	if ((refl > 0.0f) && (depth < TRACEDEPTH))
-	{
-		// real drefl = prim->getMaterial()->getDiffuseRefl();
-		// if ((drefl > 0) && (depth < 3))
-		// {
-		// 	// calculate diffuse reflection
-		// 	Vec3f RP = ray.d - 2.0f * dot(ray.d, N) * N;
-		// 	Vec3f RN1 = Vec3f(RP.z, RP.y, -RP.x);
-		// 	Vec3f RN2 = cross(RP, RN1);
-		// 	refl *= a_SScale;
-		// 	for ( int i = 0; i < SAMPLES; i++ )
-		// 	{
-		// 		real xoffs, yoffs;
-		// 		do
-		// 		{
-		// 			xoffs = (m_Twister.Rand() - 0.5f) * drefl;
-		// 			yoffs = (m_Twister.Rand() - 0.5f) * drefl;
-		// 		}
-		// 		while ((xoffs * xoffs + yoffs * yoffs) > (drefl * drefl));
-		// 		Vec3f R = RP + RN1 * xoffs + RN2 * yoffs * drefl;
-		// 		NORMALIZE( R );
-		// 		real dist;
-		// 		Color rcol( 0, 0, 0 );
-		// 		rayTracing( Ray( pos + R * EPS, R ), rcol, depth + 1, a_RIndex, dist, a_Samples * 0.25f, a_SScale * 4 );
-		// 		mRaysCast++;
-		// 		res += refl * rcol * color;
-		// 	}
-		// }
-		// else
-		{
-			// calculate perfect reflection
-			Vec3f N = isect.getNorm();
-			Vec3f R = ray.d - 2.0f * dot(ray.d, N) * N;
-			Color rcol(0, 0, 0);
-			real dist;
-			rayTracing( Ray( pos + R * EPS, R ), rcol, depth + 1, aRIndex, dist); //, a_Samples * 0.5f, a_SScale * 2 );
-			mRaysCast++;
-			res += refl * rcol * color;
-		}
+	if ((refl > 0.0f) && (depth < TRACEDEPTH)){
+		// calculate perfect reflection
+		Vec3f N = isect.getNorm();
+		Vec3f R = ray.d - 2.0f * dot(ray.d, N) * N;
+		Color rcol(0, 0, 0);
+		real dist;
+		rayTracing( Ray( pos + R * EPS, R ), rcol, depth + 1, aRIndex, dist); //, a_Samples * 0.5f, a_SScale * 2 );
+		mRaysCast++;
+		res += refl * rcol * color;
 	}
-	bool traceDiffuse = false;
+	
+	bool traceDiffuse = true;
 	if (traceDiffuse){
 		Color diff = matter->getDiffuse();
 		if ((diff.L2() > 0) && (depth < TRACEDEPTH)){
@@ -223,7 +197,7 @@ void TestRenderer::render(const Args& args){
 			resultColor[i] = BLACK, counter[i] = 0;
 	cout << "number of pixels " << nRays << endl;
 
-	for (int iter = 0; iter < 1; ++ iter){
+	for (int iter = 0; iter < 100; ++ iter){
 		#pragma omp parallel for
 		//for (Ray ray : rays){
 		for (int _ = 0; _ < rays.size(); ++ _){
@@ -243,14 +217,14 @@ void TestRenderer::render(const Args& args){
 			resultColor[x * h + y] += res;
 			counter[x * h + y] ++;
 		}
-		bool showImage = false;
+		bool showImage = true;
 		if (showImage){
 			for (int i = 0; i < w; ++ i)
 				for (int j = 0; j < h; ++ j){
 					assert(counter[i * h + j] > 0);
 					mCamera->getFilm()->setColor(i, j, resultColor[i * h + j] / counter[i * h + j]);
 				}
-			show(true);
+			show(false);
 		}
 	}
 	for (int i = 0; i < w; ++ i)

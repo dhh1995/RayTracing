@@ -160,6 +160,10 @@ void PhotonRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, re
 	Vec3f pi = isect.getPos();
 	Vec3f norm = isect.getNorm();
 	Color color = isect.getColor();
+	if (isect.isLight()){
+		res = isect.getColor();
+		return;
+	}
 	//res = mScene->getLi(ray, isect);
 	res = BLACK;
 	// need to gather photon.
@@ -175,7 +179,7 @@ void PhotonRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, re
 		pair<real, Photon* > * photons = new pair<real, Photon* >[nPhotons + 5];
 		{
 			int m = mCaustic.getKNearest(pi, nPhotons, photons, (alpha + mProgress) / (1. + mProgress));
-			if (m >= 1){
+			if (m >= 8){
 				real radius2 = photons[0].first;
 				for (int i = 0; i < m; ++ i){
 					Photon* photon = photons[i].second;
@@ -188,7 +192,7 @@ void PhotonRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, re
 		}
 		{
 			int m = mGlobal.getKNearest(pi, nPhotons, photons, (beta + mProgress) / (1. + mProgress));
-			if (m >= 1){
+			if (m >= 2){
 				real radius2 = photons[0].first;
 				for (int i = 0; i < m; ++ i){
 					Photon* photon = photons[i].second;
