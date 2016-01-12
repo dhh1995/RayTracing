@@ -277,54 +277,39 @@ void PhotonRenderer::render(const Args& args){
 	// progressMessage("Generate photon maps done.");
 
 	//assert(mCamera != NULL);
-	vector<Ray> rays = mCamera->generateRays(args);
-	int nRays = rays.size(), cnt = 0, tot = 10;
+	Film* film = mCamera->getFilm();
 	int lastShow = -1;
-	int w = mCamera->getFilm()->getW();
-	int h = mCamera->getFilm()->getH();
-	int* counter = new int[w * h];
-	Color* resultColor = new Color[w * h];
-	for (int i = 0; i < w * h; ++ i)
+	int w = film->getW();
+	int h = film->getH();
+	int nPixels = w * h, cnt = 0, tot = 10;
+	int* counter = new int[nPixels];
+	Color* resultColor = new Color[nPixels];
+	for (int i = 0; i < nPixels; ++ i)
 			resultColor[i] = BLACK, counter[i] = 0;
-	cout << "number of pixels " << nRays << endl;
+	cout << "number of pixels " << nPixels << endl;
 
-	int progressive = PROGRESSIVE;
-	for (mProgress = 0; mProgress < progressive; ++ mProgress){
+	for (int iter = 0; iter < PROGRESSIVE; ++ iter){
 		genPhotonMap(args, "");
 		#pragma omp parallel for
-		//for (Ray ray : rays){
-		for (int _ = 0; _ < rays.size(); ++ _){
-			Ray ray = rays[_];
-			++cnt;
-			int percent = cnt * tot / nRays;
+		for (int pixel = 0; pixel < nPixels; ++ pixel){
+			int x = pixel / h, y = pixel - x * h;
+			Ray ray = mCamera->sampleRay(x, y);
+			int percent = (++cnt) * tot / nPixels;
 			if (percent != lastShow){
 				lastShow = percent;
 				printf("%d/%d\n", percent,tot);
 			}
-
-			int x = ray.mFilmX, y = ray.mFilmY;
 			Color res;
 			real dist;
 			rayTracing(ray, res, 0, 1, dist);
-			//mCamera->getFilm()->setColor(x, y, res);
-			resultColor[x * h + y] += res;
-			counter[x * h + y] ++;
+			resultColor[pixel] += res;
+			counter[pixel] ++;
 		}
-		bool showImg = true;
-		if (showImg){
-			for (int i = 0; i < w; ++ i)
-				for (int j = 0; j < h; ++ j){
-					assert(counter[i * h + j] > 0);
-					mCamera->getFilm()->setColor(i, j, resultColor[i * h + j] / counter[i * h + j]);
-				}
-			show();
-		}
+		bool snapshot = true;
+		if (snapshot)
+			_showImage(film, w, h, resultColor, counter);
 	}
-	for (int i = 0; i < w; ++ i)
-		for (int j = 0; j < h; ++ j){
-			assert(counter[i * h + j] > 0);
-			mCamera->getFilm()->setColor(i, j, resultColor[i * h + j] / counter[i * h + j]);
-		}
+	_showImage(film, w, h, resultColor, counter, false);
 }
 
 }; // namespace Raytracer

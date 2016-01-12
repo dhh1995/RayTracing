@@ -25,6 +25,7 @@ public:
 	}
 protected:
 	real _FresnelReflection(real n, real cosI, real cosT2);
+	void _showImage(Film* film, int w, int h, Color* resultColor, int* counter, bool tem = true);
 	int mRaysCast;
 };
 

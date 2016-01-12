@@ -27,8 +27,7 @@ public:
 		mPos = aPos;
 	}
 	virtual void setLookAt(Vec3f lookAt, Vec3f aI) = 0;
-	virtual Ray generateRay(real dx, real dy, int i, int j) = 0;
-	virtual vector<Ray> generateRays(const Args& args) = 0;
+	virtual Ray sampleRay(int x, int y) = 0;
 	virtual ~Camera(){
 		delete(mFilm);
 	}
@@ -44,19 +43,22 @@ public:
 		: Camera(aPos), mLookAt(aLookAt), mI(aI), mFov(aFov){
 			mJ = cross(mI, mLookAt);
 			mArc  = mFov / 180 * PI;
+			l = tan(- mArc / 2), r = tan(mArc / 2);
+			printf("camera left = %lf right = %lf\n",l,r);
 	}
+	void convert(int x, int y, real &dx, real &dy);
 	void setLookAt(Vec3f lookAt, Vec3f aI){
 		mLookAt = lookAt;
 		mI = aI;
 		mJ = cross(mI, mLookAt);
 	}
-	Ray generateRay(real dx, real dy, int i, int j);
-	vector<Ray> generateRays(const Args& args);
+	Ray sampleRay(int x, int y);
 protected:
 	//J x I = LookAt
 	Vec3f mLookAt;
 	Vec3f mI, mJ;
 	real mFov, mArc;
+	real l, r;
 };
 
 class PerspectiveCamera : public ProjectiveCamera{
@@ -64,8 +66,7 @@ public:
 	PerspectiveCamera(Vec3f aPos, Vec3f aLookAt, Vec3f aI, real aFov, real aLensRadius, real aFocalDist)
 		: ProjectiveCamera(aPos, aLookAt, aI, aFov), mLensRadius(aLensRadius), mFocalDist(aFocalDist){
 	}
-	Ray generateRay(real dx, real dy, int i, int j);
-	vector<Ray> generateRays(const Args& args);
+	Ray sampleRay(int x, int y);
 private:
 	real mLensRadius, mFocalDist;
 };

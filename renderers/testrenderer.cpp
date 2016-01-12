@@ -89,11 +89,8 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real
 	//Vec3f pos = ray.o + ray.d * isect.getDist();
 	//res = WHITE / (1 + (isect.getDist()));
 	
-	// res = color;
-	// res = WHITE / ( 1 + aDist/ 300); //depth
-	// return;
+	// aDist = isect.getDist();
 
-	aDist = isect.getDist();
 	res = directLight(ray, isect);
 
 	Material* matter = isect.getPrim()->getMaterial();
@@ -101,6 +98,9 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real
 	Vec3f norm = isect.getNorm();
 	Color color = isect.getColor();
 
+	// res = color;
+	// res = WHITE / ( 1 + aDist/ 1.5); //depth
+	// return;
 
 	// color.prt();
 	// ray.prt();
@@ -160,8 +160,8 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real
 		mRaysCast++;
 		res += refl * rcol * color;
 	}
-	
-	bool traceDiffuse = true;
+
+	bool traceDiffuse = false;
 	if (traceDiffuse){
 		Color diff = matter->getDiffuse();
 		if ((diff.L2() > 0) && (depth < TRACEDEPTH)){
@@ -186,53 +186,49 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real
 
 void TestRenderer::render(const Args& args){
 	//assert(mCamera != NULL);
-	vector<Ray> rays = mCamera->generateRays(args);
-	int nRays = rays.size(), cnt = 0, tot = 10;
+	Film* film = mCamera->getFilm();
 	int lastShow = -1;
-	int w = mCamera->getFilm()->getW();
-	int h = mCamera->getFilm()->getH();
-	int* counter = new int[w * h];
-	Color* resultColor = new Color[w * h];
-	for (int i = 0; i < w * h; ++ i)
+	int w = film->getW();
+	int h = film->getH();
+	int nPixels = w * h, cnt = 0, tot = 10;
+	int* counter = new int[nPixels];
+	Color* resultColor = new Color[nPixels];
+	for (int i = 0; i < nPixels; ++ i)
 			resultColor[i] = BLACK, counter[i] = 0;
-	cout << "number of pixels " << nRays << endl;
+	cout << "number of pixels " << nPixels << endl;
 
 	for (int iter = 0; iter < 100; ++ iter){
 		#pragma omp parallel for
-		//for (Ray ray : rays){
-		for (int _ = 0; _ < rays.size(); ++ _){
-			Ray ray = rays[_];
-			++cnt;
-			int percent = cnt * tot / nRays;
+		for (int pixel = 0; pixel < nPixels; ++ pixel){
+			int x = pixel / h, y = pixel - x * h;
+			Ray ray = mCamera->sampleRay(x, y);
+			// ray.prt();
+			int percent = (++cnt) * tot / nPixels;
 			if (percent != lastShow){
 				lastShow = percent;
 				printf("%d/%d\n", percent,tot);
 			}
-
-			int x = ray.mFilmX, y = ray.mFilmY;
 			Color res;
 			real dist;
 			rayTracing(ray, res, 0, 1, dist);
-			//mCamera->getFilm()->setColor(x, y, res);
-			resultColor[x * h + y] += res;
-			counter[x * h + y] ++;
+			//dist.prt();
+			resultColor[pixel] += res;
+			counter[pixel] ++;
 		}
-		bool showImage = true;
-		if (showImage){
-			for (int i = 0; i < w; ++ i)
-				for (int j = 0; j < h; ++ j){
-					assert(counter[i * h + j] > 0);
-					mCamera->getFilm()->setColor(i, j, resultColor[i * h + j] / counter[i * h + j]);
-				}
-			show(false);
-		}
+		bool snapshot = true;
+		if (snapshot)
+			_showImage(film, w, h, resultColor, counter);
 	}
+	_showImage(film, w, h, resultColor, counter, false);
+}
+
+void TestRenderer::_showImage(Film* film, int w, int h, Color* resultColor, int* counter, bool temp){
 	for (int i = 0; i < w; ++ i)
 		for (int j = 0; j < h; ++ j){
 			assert(counter[i * h + j] > 0);
-			mCamera->getFilm()->setColor(i, j, resultColor[i * h + j] / counter[i * h + j]);
+			film->setColor(i, j, resultColor[i * h + j] / counter[i * h + j]);
 		}
+	show(false);
 }
-
 
 }; // namespace Raytracer
