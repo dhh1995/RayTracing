@@ -5,6 +5,7 @@
 #include "common.h"
 #include "reflection.h"
 #include "texture.h"
+#include "sampler.h"
 
 namespace Raytracer {
 
@@ -40,9 +41,6 @@ public:
 	}
 	Color sample(const Vec3f& wi, Vec3f &wo, Vec3f norm, Vec3f pos, real& pdf);
 
-	bool haveTexture(){
-		return mTexture != NULL;
-	}
 	void setTexture(Texture* aTexture){
 		mTexture = aTexture;
 	}
@@ -50,7 +48,7 @@ public:
 		return mTexture;
 	}
 	Color getColor(real u, real v){
-		return mTexture->getColor(u, v);
+		return mTexture->getColor(make_pair(u, v));
 	}
 	Vec3f getNorm(real u, real v){
 		return ZERO;

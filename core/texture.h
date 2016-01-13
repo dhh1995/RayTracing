@@ -18,7 +18,8 @@ public:
 		mUScale = aUScale;
 		mVScale = aVScale;
 	}
-	Color getColor(real u, real v);
+	Color getColor(UV uv);
+	virtual Vec3f getNorm(Vec3f norm, UV uv){ return norm; }
 		//return mImg->getColor(mod(int(u * mUScale), mImg->w), mod(int(v * mVScale), mImg->h) );
 private:
 	int mod(int x, int y){
@@ -32,15 +33,12 @@ private:
 	int mUScale, mVScale;
 };
 
-class ImgTexture : public Texture{
+// class BumpTexture : public Texture{
+// 	Vec3f getNorm(Vec3f norm, UV uv){
 
 
-};
-
-class BumpTexture : public ImgTexture{
-	
-	
-};
+// 	}
+// };
 
 }; // namespace Raytracer
 

@@ -2,8 +2,8 @@
 
 namespace Raytracer {
 
-Color Texture::getColor(real u, real v)
-{
+Color Texture::getColor(UV uv){
+	real u = uv.first, v = uv.second;
 	// fetch a bilinearly filtered texel
 	real fu = u * mUScale;
 	real fv = v * mVScale;

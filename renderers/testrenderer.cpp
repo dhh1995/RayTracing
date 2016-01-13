@@ -75,15 +75,16 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth){
 	//res = WHITE / (1 + (isect.getDist()));
 	
 	// aDist = isect.getDist();
-
+	// ray.prt();
+	// printf("%d\n",prim);
 	Material* mtl = prim->getMaterial();
 	Vec3f pos = isect.getPos();
 	Vec3f norm = isect.getNorm();
 
 	res = directLight(ray, isect);
+	// return;
 
-	// res = color;
-	// res = WHITE / ( 1 + aDist/ 1.5); //depth
+	// res = WHITE / ( 1 + isect.getDist()/ 1.5); //depth
 	// return;
 	if (depth >= TRACEDEPTH)
 		return;
@@ -93,7 +94,7 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth){
 	real pdf;
 	Color F = mtl->sample(ray.d, R, norm, pos, pdf);
 	rayTracing(Ray(pos + R * EPS, R), rcol, depth + 1);
-	res = rcol * F / pdf; 
+	res += rcol * F / pdf; 
 
 	return;
 }
@@ -112,7 +113,7 @@ void TestRenderer::render(const Args& args){
 	cout << "number of pixels " << nPixels << endl;
 
 	for (int iter = 0; iter < args.pathIter; ++ iter){
-		#pragma omp parallel for
+		// #pragma omp parallel for
 		for (int pixel = 0; pixel < nPixels; ++ pixel){
 			int x = pixel / h, y = pixel - x * h;
 			Ray ray = mCamera->sampleRay(x, y);

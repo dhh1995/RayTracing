@@ -160,9 +160,9 @@ int main(int argc, char** argv)
 		obj5->setMaterial(mat2);
 		//scene->addObject(obj5);
 
-		Light* light1 = new Light(WHITE, Vec3f(3, 0, 6), 10000);
+		Light* light1 = new Light(WHITE, Vec3f(3, 0, 6), 100);
 		scene->addLight(light1);
-		Light* light2 = new Light(WHITE, Vec3f(0, 0, 4), 10000);
+		Light* light2 = new Light(WHITE, Vec3f(0, 0, 4), 100);
 		scene->addLight(light2);
 		//Light* light3 = new Light(WHITE, Vec3f(2.5, 0, 1.5));
 		//scene->addLight(light3);
