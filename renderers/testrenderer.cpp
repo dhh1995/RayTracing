@@ -4,28 +4,12 @@ bool debug = false;
 
 namespace Raytracer {
 
-real TestRenderer::_FresnelReflection(real n, real cosI, real cosT2){
-	if (cosT2 > 0.0f){
-		// need to adopt fresnel equation
-		// https://en.wikipedia.org/wiki/Fresnel_equations
-		// http://www.cnblogs.com/starfallen/p/4019350.html
-		// ? refl = 1 - refr;
-		real cosT = sqrt(cosT2);
-		real r_p = (n * cosI - cosT) / (n * cosI + cosT);
-		real r_v = (cosI - n * cosT) / (cosI + n * cosT);
-		return (r_p * r_p + r_v * r_v) / 2.0;
-		// refr = 1 - refl;
-	}// else totally internal reflection
-	return 1.0;
-}
-
 Color TestRenderer::directLight(const Ray& ray, const Intersection& isect){
-	Material* matter = isect.getPrim()->getMaterial();
+	Material* mtl = isect.getPrim()->getMaterial();
 	Vec3f hitPoint = isect.getPos();
 	Vec3f N = isect.getNorm();
-	Color color = isect.getColor();
 
-	Color res; // = mAmbient * matter->getKa();
+	Color res = mScene->getAmbient() * mtl->getAmbient();
 	vector<Light* > lights = mScene->getLights();
 	for (Light* light : lights){
 		if (!light->visible(hitPoint))
@@ -43,18 +27,18 @@ Color TestRenderer::directLight(const Ray& ray, const Intersection& isect){
 			real shading = mScene->visible(Ray(lPos, L), dist);
 			L = -L;
 			if (shading > 0){
-				Color diff = matter->getDiffuse();
+				Color diff = mtl->getDiffuse();
 				Color Ltemp;
 				if (diff.L2() > 0){
 					real dt = dot(L, N);
 					if (dt > 0){
 						Color diffuse = dt * diff;
 						// add diffuse component to ray color
-						Ltemp += diffuse * color * light->getColor();
+						Ltemp += diffuse * light->getColor();
 					}
 				}
 				// determine specular component using Schlick's BRDF approximation
-				Color spec = matter->getSpecular();
+				Color spec = mtl->getSpecular();
 				if (spec.L2() > 0){
 					// point light source: sample once for specular highlight
 					Vec3f R = L - 2.0f * dot( L, N ) * N;
@@ -73,15 +57,16 @@ Color TestRenderer::directLight(const Ray& ray, const Intersection& isect){
 	return res;
 }
 
-void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real &aDist){
+void TestRenderer::rayTracing(Ray ray, Color& res, int depth){
 	if (debug) ray.prt();
 	Intersection isect;
 	if (mScene->intersect(ray, isect) == MISS){
 		res = BACKGROUND;
 		return;
 	}
+	Primitive* prim = isect.getPrim();
 	if (isect.isLight()){
-		res = isect.getColor();
+		res = (static_cast<Light*>(prim))->getColor();
 		return;
 	}
 	//real Li = mScene->getLi(isect);
@@ -91,95 +76,24 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth, real aRIndex, real
 	
 	// aDist = isect.getDist();
 
-	res = directLight(ray, isect);
-
-	Material* matter = isect.getPrim()->getMaterial();
+	Material* mtl = prim->getMaterial();
 	Vec3f pos = isect.getPos();
 	Vec3f norm = isect.getNorm();
-	Color color = isect.getColor();
+
+	res = directLight(ray, isect);
 
 	// res = color;
 	// res = WHITE / ( 1 + aDist/ 1.5); //depth
 	// return;
+	if (depth >= TRACEDEPTH)
+		return;
 
-	// color.prt();
-	// ray.prt();
-	// printf("dist = %lf\n",aDist);
-	// norm.prt();
-	// pos.prt();
-
-	bool totalReflection = false;
-	// calculate refraction
-	real refr = matter->getRefraction();
-	if ((refr > 0.0f) && (depth < TRACEDEPTH))
-	{
-		real rindex = matter->getRefrIndex();
-		real n = 1.0f / rindex;
-		Vec3f N = norm;
-		if (isect.isBack()){
-			n = rindex;
-			N = -N;
-		}
-		//printf("%lf\n",n);
-		real cosI = -dot(N, ray.d);
-		real cosT2 = 1.0f - n * n * (1.0f - cosI * cosI);
-		if (cosT2 > 0.0f)
-		{
-			Vec3f T = (n * ray.d) + (n * cosI - sqrt( cosT2 )) * N;
-			Color rcol( 0, 0, 0 );
-			real dist;
-			//printf("%d\n", isect.isBack());
-			//puts("enter");
-			//ray.prt();
-			//Ray(pos + T * EPS, T).prt();
-			rayTracing(Ray(pos + T * EPS, T), rcol, depth + 1, rindex, dist); //, a_Samples * 0.5f, a_SScale * 2 );
-			//puts("quit");
-			mRaysCast++;
-			// apply Beer's law
-			Color absorbance = matter->getColor() * 0.1f * -dist;
-			Color transparency = Color( exp( absorbance.r ), exp( absorbance.g ), exp( absorbance.b ) );
-			Color add = refr * rcol;
-			if (!isect.isBack())
-				add = add * transparency;
-			res += add; 
-		}else
-			totalReflection = true;
-	}
-
-	// calculate reflection
-	real refl = matter->getReflection();
-	if (totalReflection)
-		refl = 1.0f;
-	if ((refl > 0.0f) && (depth < TRACEDEPTH)){
-		// calculate perfect reflection
-		Vec3f N = isect.getNorm();
-		Vec3f R = ray.d - 2.0f * dot(ray.d, N) * N;
-		Color rcol(0, 0, 0);
-		real dist;
-		rayTracing( Ray( pos + R * EPS, R ), rcol, depth + 1, aRIndex, dist); //, a_Samples * 0.5f, a_SScale * 2 );
-		mRaysCast++;
-		res += refl * rcol * color;
-	}
-
-	bool traceDiffuse = false;
-	if (traceDiffuse){
-		Color diff = matter->getDiffuse();
-		if ((diff.L2() > 0) && (depth < TRACEDEPTH)){
-			int nSample = 1;
-			Color Ld;
-			for (int i = 0; i < nSample; ++ i){
-				Vec3f R = Sampler::getDiffuseDir(norm);
-				Color rcol;
-				real dist;
-				rayTracing( Ray( pos + R * EPS, R ), rcol, depth + 1, aRIndex, dist); //, a_Samples * 0.5f, a_SScale * 2 );
-				mRaysCast++;
-				Ld += rcol * color * diff * dot(R, norm);
-			}
-			res += Ld / nSample;
-		}
-	}
-	//printf("res =");
-	//res.prt();
+	Color rcol;
+	Vec3f R;
+	real pdf;
+	Color F = mtl->sample(ray.d, R, norm, pos, pdf);
+	rayTracing(Ray(pos + R * EPS, R), rcol, depth + 1);
+	res = rcol * F / pdf; 
 
 	return;
 }
@@ -197,7 +111,7 @@ void TestRenderer::render(const Args& args){
 			resultColor[i] = BLACK, counter[i] = 0;
 	cout << "number of pixels " << nPixels << endl;
 
-	for (int iter = 0; iter < 1; ++ iter){
+	for (int iter = 0; iter < args.pathIter; ++ iter){
 		#pragma omp parallel for
 		for (int pixel = 0; pixel < nPixels; ++ pixel){
 			int x = pixel / h, y = pixel - x * h;
@@ -210,7 +124,7 @@ void TestRenderer::render(const Args& args){
 			}
 			Color res;
 			real dist;
-			rayTracing(ray, res, 0, 1, dist);
+			rayTracing(ray, res, 0);
 			//dist.prt();
 			resultColor[pixel] += res;
 			counter[pixel] ++;

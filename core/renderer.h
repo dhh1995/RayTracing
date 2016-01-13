@@ -26,7 +26,7 @@ public:
 		return mCamera;
 	}
 
-	virtual void rayTracing(Ray ray, Color& res, int depth, real aRIndex, real &aDist) = 0; // for debug
+	virtual void rayTracing(Ray ray, Color& res, int depth) = 0; // for debug
 	virtual void render(const Args& args) = 0;
 	virtual void show(bool wait = false) = 0;
 protected:

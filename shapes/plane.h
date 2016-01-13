@@ -24,7 +24,7 @@ public:
 	string getType(){
 		return "Plane";
 	}
-	void setIsect(Intersection& isect, real dist, Vec3f pos, bool backSide);
+	void setIsect(Intersection& isect, real dist, Vec3f pos);
 	bool intersect(const Ray& aRay, Intersection& isect);
 	bool intersectP(const Ray& aRay);
 private:

@@ -6,7 +6,9 @@
 
 namespace Raytracer {
 
-//unfinish
+// inline Vec3f reflect(Vec3f incident, Vec3f norm){
+// 	return incident - 2.0f * dot(incident, norm) * norm;
+// }
 
 class Fresnel{
 public:
@@ -20,7 +22,7 @@ public:
 			real r_v = (cosI - n * cosT) / (cosI + n * cosT);
 			return (r_p * r_p + r_v * r_v) / 2.0;
 		}else
-			return 1.0;
+			return 1.0f;
 	}
 private:
 	real eta;
@@ -28,7 +30,6 @@ private:
 
 class NoFresnel : public Fresnel{
 public:
-	NoFresnel() : Fresnel(1.0f){}
 	real getReflection(real cosI){
 		return 1.0f;
 	}

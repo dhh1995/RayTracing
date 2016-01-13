@@ -12,22 +12,15 @@ void Box::getNearFar(const Ray& ray, real& near, real& far){
 			swap(rMin[i], rMax[i]);
 	near = rMin.getMax();
 	far  = rMax.getMin();
-	// if (near < far){
-	// 	ray.prt();
-	// 	printf("%lf %lf\n", near, far);
-	// }
 }
 
-void Box::setIsect(Intersection& isect, real dist, Vec3f pos, bool backSide){
+void Box::setIsect(Intersection& isect, real dist, Vec3f pos){
 	isect.setPrim(this);
 	isect.setDist(dist);
 	isect.setPos(pos);
-	isect.setBack(backSide);
 	Vec3f norm = getNorm(pos);
-	//pos.prt();
-	//norm.prt();
 	isect.setNorm(norm);
-	isect.setColor(mMaterial->getColor());
+	// isect.setUV();
 }
 
 bool Box::intersect(const Ray& ray, Intersection& isect){
@@ -36,14 +29,12 @@ bool Box::intersect(const Ray& ray, Intersection& isect){
 	if (near > far || far < 0)
 		return MISS;
 	real dist = INF;
-	bool backSide = false;
-	if (near < 0){
+	if (near < 0)
 		dist = far;
-		backSide = true;
-	}else
+	else
 		dist = near;
 	if (dist < isect.getDist())
-		setIsect(isect, dist, ray(dist), backSide);
+		setIsect(isect, dist, ray(dist));
 	return HIT;
 }
 

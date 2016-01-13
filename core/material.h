@@ -14,55 +14,34 @@ class Material{
 public:
 	Material(){
 		mTexture = NULL;
+		mFresnel = new NoFresnel;
 	}
-	Material(Color aColor, real aRefl, real aRefr, Color aDiff, Color aSpec, real aRIndex = 1, Color Ka = BLACK)
-		: mColor(aColor), mRefl(aRefl), mRefr(aRefr), mDiff(aDiff), mSpec(aSpec), mRIndex(aRIndex), mKa(Ka){
+	Material(Color Ka, Color Kd, Color Ks, Fresnel* fresnel = NULL)
+		: mAmb(Ka), mDiff(Kd), mSpec(Ks){
+		if (fresnel == NULL)
+			mFresnel = new NoFresnel;
+		else
+			mFresnel = fresnel;
 		mTexture = NULL;
 	}
-	void setColor(const Color &aColor){
-		mColor = aColor;
+	void	setAmbient(Color Ka){ mAmb = Ka; }
+	Color 	getAmbient(){	return mAmb; }
+	void	setDiffuse(Color Kd){ mDiff = Kd; }
+	Color	getDiffuse(){	return mDiff; }
+	void	setSpecular(Color Ks){ mSpec = Ks; }
+	Color	getSpecular(){	return mSpec; }
+	void	setFresnel(Fresnel* fresnel){ mFresnel = fresnel;}
+
+	real getReflect(real cosI){
+		return mFresnel->getReflection(cosI);
 	}
+	real getRefract(real cosI){
+		return 1.0f - mFresnel->getReflection(cosI);
+	}
+	Color sample(const Vec3f& wi, Vec3f &wo, Vec3f norm, Vec3f pos, real& pdf);
+
 	bool haveTexture(){
 		return mTexture != NULL;
-	}
-	Color getColor(){
-		return mColor;
-	}
-	void setDiffuse(Color aDiff){
-		mDiff = aDiff;
-	}
-	Color getDiffuse(){
-		return mDiff;
-	}
-	void setSpecular(Color aSpec){
-		mSpec = aSpec;
-	}
-	Color getSpecular(){
-		return mSpec;
-	}
-	void setReflection(real aRefl){
-		mRefl = aRefl;
-	}
-	real getReflection(){
-		return mRefl;
-	}
-	void setRefraction(real aRefr){
-		mRefl = aRefr;
-	}
-	real getRefraction(){
-		return mRefr;
-	}
-	void setRefrIndex(real aRIndex){
-		mRIndex = aRIndex;
-	}
-	real getRefrIndex(){
-		return mRIndex;
-	}
-	void setKa(Color Ka){
-		mKa = Ka;
-	}
-	Color getKa(){
-		return mKa;
 	}
 	void setTexture(Texture* aTexture){
 		mTexture = aTexture;
@@ -77,13 +56,9 @@ public:
 		return ZERO;
 	}
 private:
-	Color mKa;
-	Color mColor;
-	Color mDiff, mSpec;
-	real mRefl, mRefr;
-	real mRIndex;
+	Color mAmb, mDiff, mSpec;
+	Fresnel* mFresnel;
 	Texture* mTexture;
-	// Fresnel* fresnel;
 };
 
 }; // namespace Raytracer

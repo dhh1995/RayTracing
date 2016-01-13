@@ -18,13 +18,12 @@ public:
 	TestRenderer():mRaysCast(0){
 	}
 	Color directLight(const Ray& ray, const Intersection& isect);
-	void rayTracing(Ray ray, Color& res, int depth, real aRIndex, real &aDist);
+	void rayTracing(Ray ray, Color& res, int depth);
 	void render(const Args& args);
 	void show(bool wait = false){
 		mCamera->getFilm()->show(wait);
 	}
 protected:
-	real _FresnelReflection(real n, real cosI, real cosT2);
 	void _showImage(Film* film, int w, int h, Color* resultColor, int* counter, bool tem = true);
 	int mRaysCast;
 };

@@ -13,9 +13,10 @@ struct Args{
 	bool usePhoton;
 	bool loadPM;
 	bool showHelp;
+	int pathIter;
+	int photonIter;
 
 	//camera args
-	// int cameraSample;
 	real fov;
 	real lensRadius;
 	real focalDist;
@@ -35,7 +36,8 @@ struct Args{
 		usePhoton = false;
 		loadPM = false;
 
-		// cameraSample = 20;
+		pathIter = 10;
+		photonIter = 5;
 		fov = 60;
 		lensRadius = 0;
 		focalDist = 10;
@@ -62,9 +64,12 @@ struct Args{
 		sprintf(helpInfo, "--loadpm		default = false		use pre-computed Photon Mapping(according to scene id)");
 		colorMessage(helpInfo, 3);
 
+		sprintf(helpInfo, "-pmiter [int] 		default = %d		Iterations for photon mapping", photonIter);
+		colorMessage(helpInfo, 3);
+		sprintf(helpInfo, "-ptiter [int] 		default = %d		Iterations for path tracing", pathIter);
+		colorMessage(helpInfo, 3);
+
 		colorMessage("Args for Camera", 5);
-		// sprintf(helpInfo, "-csample [int] 		default = %d		Sample times for camera", cameraSample);
-		// colorMessage(helpInfo, 3);
 		sprintf(helpInfo, "-fov [real] 		default = %lf	Fov for camera", fov);
 		colorMessage(helpInfo, 3);
 		sprintf(helpInfo, "-lradius [real] 	default = %lf	Radius of lens for camera", lensRadius);
@@ -102,8 +107,10 @@ struct Args{
 					usePhoton = true, --ind;
 				else if (param == "--loadpm")
 					loadPM = true, --ind;
-				// else if (param == "-csample")
-				// 	readBuf(ptr, cameraSample);
+				else if (param == "-pmiter")
+					readBuf(ptr, photonIter);
+				else if (param == "-ptiter")
+					readBuf(ptr, pathIter);
 				else if (param == "-fov")
 					readBuf(ptr, fov);
 				else if (param == "-lradius")

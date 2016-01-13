@@ -6,10 +6,9 @@
 
 namespace Raytracer {
 
-const int PROGRESSIVE = 10;
 const int PHOTONDEPTH = 10;
-const int GLOBALWANT = 100000;
-const int CAUSTICWANT = 0;
+const int GLOBALWANT = 1000000;
+const int CAUSTICWANT = 10000;
 const real CAUSTIC_SEARCH_RADIUS = 1;
 const real GLOBAL_SEARCH_RADIUS = 10;
 const int SEARCH_PHOTONS = 200;
@@ -21,7 +20,7 @@ public:
 	}
 	void photonTracing(Photon* photon, int depth, bool meetSpecular);
 	void genPhotonMap(const Args& args, string path);
-	void rayTracing(Ray ray, Color& res, int depth, real aRIndex, real &aDist);
+	void rayTracing(Ray ray, Color& res, int depth);
 	void render(const Args& args);
 	//Options options;
 private:

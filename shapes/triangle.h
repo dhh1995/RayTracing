@@ -50,7 +50,7 @@ public:
 			return 1;
 		return 0;
 	}
-	void setIsect(Intersection& isect, real dist, Vec3f pos, bool backSide);
+	void setIsect(Intersection& isect, real dist, Vec3f pos);
 	bool inside(const Vec3f pos);
 	bool intersect(const Ray& ray, Intersection& isect);
 	bool intersectP(const Ray& ray);

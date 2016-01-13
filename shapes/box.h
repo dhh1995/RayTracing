@@ -76,7 +76,7 @@ public:
 	string getType(){
 		return "Box";
 	}
-	void setIsect(Intersection& isect, real dist, Vec3f pos, bool backSide);
+	void setIsect(Intersection& isect, real dist, Vec3f pos);
 	bool intersect(const Ray& aRay, Intersection& isect);
 	bool intersectP(const Ray& aRay);
 private:

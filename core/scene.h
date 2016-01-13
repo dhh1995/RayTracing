@@ -35,6 +35,9 @@ public:
 		}else
 			mPrimitives.push_back(aObject);
 	}
+	Color getAmbient(){
+		return mAmbient;
+	}
 	void construct(bool debug = false){
 		KdTreeTri::debug = debug;
 		mAggregate.construct();

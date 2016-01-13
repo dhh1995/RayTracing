@@ -26,6 +26,7 @@ const bool MISS = false;
 const real PI = acos(-1.);
 const real INF = 1e18;
 
+typedef pair<real, real> UV;
 typedef Vec3f Color;
 const Vec3f ZERO 	 = Vec3f(0., 0., 0.);
 const Vec3f ORIGINAL = Vec3f(0., 0., 0.);
@@ -78,7 +79,7 @@ inline char getChar(char*& ptr){
 	return *(ptr ++);
 }
 
-inline void readBuf(char*& ptr, int &x){
+inline char readBuf(char*& ptr, int &x){
 	char ch;
 	x = 0;
 	bool neg = false;
@@ -89,9 +90,10 @@ inline void readBuf(char*& ptr, int &x){
 		x = x * 10 + (ch - '0');
 	if (neg)
 		x = -x;
+	return ch;
 }
 
-inline void readBuf(char*& ptr, real &x){
+inline char readBuf(char*& ptr, real &x){
 	char ch;
 	x = 0;
 	real y = 1;
@@ -112,6 +114,7 @@ inline void readBuf(char*& ptr, real &x){
 		}
 	if (neg)
 		x = -x;
+	return ch;
 }
 
 template<class T> class KdTree;

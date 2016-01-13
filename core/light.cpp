@@ -12,7 +12,6 @@ bool AreaLight::intersect(const Ray& ray, Intersection& isect){
 				if (abs(dot(hitPos, mU)) < mUScale / 2 && abs(dot(hitPos, mV)) < mVScale / 2){
 					isect.setDist(dist);
 					isect.setLight(true);
-					isect.setColor(mColor);
 					return HIT;
 				}
 			}

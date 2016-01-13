@@ -39,10 +39,11 @@ bool Scene::loadObj(string folder, string fileName){
 		return false;
 
 	vector<Vertex* > vertexs;
+	vector<UV> vt;
 	Box* boundingBox = new Box;
 	map<string, Material*> materials;
 	Material* currentMaterial = NULL;
-	Material* defaultMtl = new Material(WHITE, 0, 0, WHITE, BLACK, 1, WHITE / 5);
+	Material* defaultMtl = new Material(WHITE / 5, WHITE, BLACK);
 	int lines = 0;
 	char tmp[105];
 	char buf[1005];
@@ -74,9 +75,10 @@ bool Scene::loadObj(string folder, string fileName){
 					fscanf(mtllib, "%s", tmp);
 					name = tmp;
 				}else if (type == "Ka"){
+					fscanf(mtllib, "%lf %lf %lf", &r, &g, &b);
+					mtl->setAmbient(Color(r,g,b));
 				}else if (type == "Kd"){
 					fscanf(mtllib, "%lf %lf %lf", &r, &g, &b);
-					mtl->setColor(Color(r,g,b));
 					mtl->setDiffuse(Color(r,g,b));
 				}else if (type == "Ks"){
 					fscanf(mtllib, "%lf %lf %lf", &r, &g, &b);
@@ -84,7 +86,7 @@ bool Scene::loadObj(string folder, string fileName){
 				}else if (type == "Ni"){
 					real index;
 					fscanf(mtllib, "%lf", &index);
-					mtl->setRefrIndex(index);
+					mtl->setFresnel(new Fresnel(index));
 				}
 			}
 			if (mtl != NULL)
@@ -98,9 +100,15 @@ bool Scene::loadObj(string folder, string fileName){
 			boundingBox->update(pos);
 			// printf("%lf %lf %lf\n",x,y,z);
 			vertexs.push_back(vex);
+		}else if (type == "vt"){
+			real u, v;
+			fscanf(fp, "%lf %lf", &u, &v);
+			// printf("%lf %lf %lf\n",x,y,z);
+			vt.push_back(make_pair(u,v));
 		}else if (type == "f"){
+			char blank;
 			int n = vertexs.size();
-			int a, b, c;
+			int a, b, c, d;
 			fscanf(fp, "%d %d %d", &a, &b, &c);
 			a = chg(n, a), b = chg(n, b), c = chg(n, c);
 			// printf("%d %d %d\n",a,b,c);
@@ -108,6 +116,16 @@ bool Scene::loadObj(string folder, string fileName){
  			assert(currentMaterial != NULL);
  			tri->setMaterial(currentMaterial);
  			mAggregate.add(tri);
+
+ 			fscanf(fp, "%c", &blank);
+			if (blank == ' '){
+				fscanf(fp, "%d", &d);
+				d = chg(n, d);
+				tri = new Triangle(vertexs, d, c, b);
+	 			assert(currentMaterial != NULL);
+	 			tri->setMaterial(currentMaterial);
+	 			mAggregate.add(tri);
+			}
 		}else if (type == "usemtl"){
 			fscanf(fp, "%s", tmp);
 			string materialName = tmp;

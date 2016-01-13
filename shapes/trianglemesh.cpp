@@ -95,11 +95,11 @@ void TriangleMesh::dump(string file){
 }
 
 bool TriangleMesh::intersect(const Ray& ray, Intersection& isect){
+	//bruteForce
 	int retval = MISS;
-	for (Triangle* triangle : mTriangles){
+	for (Triangle* triangle : mTriangles)
 		if (triangle->intersect(ray, isect) == HIT)
 			retval = HIT;
-	}
 	return retval;
 }
 
