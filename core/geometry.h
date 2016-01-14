@@ -219,6 +219,9 @@ public:
 	inline real getMax(){
 		return max(x, y, z);
 	}
+	inline real getMean(){
+		return (x + y + z) / 3.0;
+	}
 	inline int argMax() const{
 		if (x > y)
 			if (x > z)

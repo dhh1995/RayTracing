@@ -27,10 +27,11 @@ public:
 		return mPos;
 	}
 	virtual Color getPower(){
-		return mColor * (mPower / 4 / PI);
+
+		return mColor * mPower;
 	}
 	virtual real getPower(Vec3f dir){
-		return mPower / 4 / PI;
+		return mPower;
 	}
 	Color getColor(){
 		return mColor;
@@ -56,6 +57,7 @@ public:
 	AreaLight(Vec3f aColor, Color aPos, real aPower, Vec3f aNorm, Vec3f aU,
 				int aSamples, real aUScale = 1.0, real aVScale = 1.0)
 			: Light(aColor, aPos, aPower, aSamples), mNorm(aNorm), mU(aU), mUScale(aUScale), mVScale(aVScale){
+		aColor.prt();
 		mNorm.Normalize();
 		mU.Normalize();
 		mV = cross(mNorm, mU).Normalize();

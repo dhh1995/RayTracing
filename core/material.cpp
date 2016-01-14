@@ -3,8 +3,8 @@
 namespace Raytracer {
 
 Color Material::sample(const Vec3f& wi, Vec3f &wo, Vec3f norm, Vec3f pos, real& pdf){
-	real Pd = mDiff.getMax();
-	real Ps = mSpec.getMax();
+	real Pd = mDiff.getMean();
+	real Ps = mSpec.getMean();
 	real ran = Sampler::getRandReal();
 	pdf = 1.0f;
 	if (ran * (Ps + Pd) < Ps){

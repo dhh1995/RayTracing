@@ -4,59 +4,6 @@ bool debug = false;
 
 namespace Raytracer {
 
-Color TestRenderer::directLight(const Ray& ray, const Intersection& isect){
-	Material* mtl = isect.getPrim()->getMaterial();
-	Vec3f hitPoint = isect.getPos();
-	Vec3f N = isect.getNorm();
-
-	Color res = mScene->getAmbient() * mtl->getAmbient();
-	vector<Light* > lights = mScene->getLights();
-	for (Light* light : lights){
-		if (!light->visible(hitPoint))
-			continue;
-		int nSamples = 1;//light->getNSamples();
-		Color Ld;
-		#pragma omp parallel for
-		for (int i = 0; i < nSamples; ++ i){
-			Vec3f lPos = light->samplePos();
-			Vec3f L = hitPoint - lPos;
-			real dist2 = L.L2();
-			real dist = sqrt(dist2);
-			L /= dist;
-			real power = light->getPower(L);
-			real shading = mScene->visible(Ray(lPos, L), dist);
-			L = -L;
-			if (shading > 0){
-				Color diff = mtl->getDiffuse();
-				Color Ltemp;
-				if (diff.L2() > 0){
-					real dt = dot(L, N);
-					if (dt > 0){
-						Color diffuse = dt * diff;
-						// add diffuse component to ray color
-						Ltemp += diffuse * light->getColor();
-					}
-				}
-				// determine specular component using Schlick's BRDF approximation
-				Color spec = mtl->getSpecular();
-				if (spec.L2() > 0){
-					// point light source: sample once for specular highlight
-					Vec3f R = L - 2.0f * dot( L, N ) * N;
-					real dt = dot(ray.d, R);	
-					if (dt > 0){
-						Color specular = dt * spec / (50 - 50 * dt + dt);
-						// add specular component to ray color
-						Ltemp += specular * light->getColor();
-					}
-				}
-				Ld += Ltemp * (power * shading / dist2);
-			}
-		}
-		res += Ld / nSamples;
-	}
-	return res;
-}
-
 void TestRenderer::rayTracing(Ray ray, Color& res, int depth){
 	if (debug) ray.prt();
 	Intersection isect;
@@ -66,13 +13,15 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth){
 	}
 	Primitive* prim = isect.getPrim();
 	if (isect.isLight()){
-		res = (static_cast<Light*>(prim))->getColor();
+		res = (static_cast<Light*>(prim))->getPower();
 		return;
 	}
+
 	//real Li = mScene->getLi(isect);
 	//printf("%lf\n",isect.getDist());
 	//Vec3f pos = ray.o + ray.d * isect.getDist();
-	//res = WHITE / (1 + (isect.getDist()));
+	// res = WHITE / (1 + (isect.getDist() / 100));
+	// return;
 	
 	// aDist = isect.getDist();
 	// ray.prt();
@@ -80,10 +29,7 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth){
 	Material* mtl = prim->getMaterial();
 	Vec3f pos = isect.getPos();
 	Vec3f norm = isect.getNorm();
-
-	res = directLight(ray, isect);
-	// return;
-
+	res = mScene->getAmbient() * mtl->getAmbient();
 	// res = WHITE / ( 1 + isect.getDist()/ 1.5); //depth
 	// return;
 	if (depth >= TRACEDEPTH)
@@ -126,6 +72,7 @@ void TestRenderer::render(const Args& args){
 			Color res;
 			real dist;
 			rayTracing(ray, res, 0);
+			// res.prt();
 			//dist.prt();
 			resultColor[pixel] += res;
 			counter[pixel] ++;

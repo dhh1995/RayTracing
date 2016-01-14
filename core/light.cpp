@@ -10,6 +10,7 @@ bool AreaLight::intersect(const Ray& ray, Intersection& isect){
 			if (dist - EPS < isect.getDist()){
 				Vec3f hitPos = ray(dist) - mPos;
 				if (abs(dot(hitPos, mU)) < mUScale / 2 && abs(dot(hitPos, mV)) < mVScale / 2){
+					isect.setPrim(this);
 					isect.setDist(dist);
 					isect.setLight(true);
 					return HIT;

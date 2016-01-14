@@ -100,10 +100,10 @@ int main(int argc, char** argv)
 			colorMessage("load scene unsuccessfully", 1);
 			return 0;
 		}
-		int power = 1000000;
+		int power = 32;
 		if (args.usePhoton)
-			power = 10000000;
-		Light* light4 = new AreaLight(WHITE, Vec3f(278, 548.8, 279.5), power, Vec3f(0, -1, 0), Vec3f(1, 0, 0), 1, 65, 52.5);
+			power = 100;
+		Light* light4 = new AreaLight(WHITE, Vec3f(278, 548.8, 279.5), power, Vec3f(0, -1, 0), Vec3f(1, 0, 0), 1, 200, 200);
 		scene->addLight(light4);
 
 		camera->setPos(Vec3f(278, 273, -400));
@@ -160,10 +160,10 @@ int main(int argc, char** argv)
 		obj5->setMaterial(mat2);
 		//scene->addObject(obj5);
 
-		Light* light1 = new Light(WHITE, Vec3f(3, 0, 6), 100);
+		Light* light1 = new AreaLight(WHITE, Vec3f(3, 0, 6), 30, Vec3f(0, 0, -1), Vec3f(1, 0, 0), 1, 2, 2);
 		scene->addLight(light1);
-		Light* light2 = new Light(WHITE, Vec3f(0, 0, 4), 100);
-		scene->addLight(light2);
+		// Light* light2 = new AreaLight(WHITE, Vec3f(0, 0, 4), 100);
+		// scene->addLight(light2);
 		//Light* light3 = new Light(WHITE, Vec3f(2.5, 0, 1.5));
 		//scene->addLight(light3);
 		

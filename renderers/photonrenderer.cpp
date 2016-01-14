@@ -32,36 +32,14 @@ void PhotonRenderer::photonTracing(Photon* photon, int depth, bool meetSpecular)
 	Material* mtl = isect.getPrim()->getMaterial();
 	Vec3f pos = isect.getPos();
 	Vec3f norm = isect.getNorm();
-	// Color color = isect.getColor();
-
-	Color diff = mtl->getDiffuse();
-	Color spec = mtl->getSpecular();
 	Color P = photon->getPower();
-	real pContinue = P.Abs() / 1000;
-	if (pContinue < EPS)
-		return;
-	// real ran = Sampler::getRandReal() * 100;
-	// if (pContinue < 1.0f && ran < pContinue){
-	// 	photon->updatePower(1 / pContinue);
-	// 	P = photon->getPower();
-	// }
 
-	real Pd = (P * diff).getMax() / P.getMax();
-	real Ps = (P * spec).getMax() / P.getMax();
-	// real refr = mtl->getRefraction();
-	// real refl = mtl->getReflection();
-	// real ran = Sampler::getRandReal();
-	// cout << isect.getPrim()->getType() << endl;
-	// ray.prt();
-	// printf("%lf %lf\n", ran , spec);
+	if (mtl->getDiffuse().getMax() > EPS)
+		_addPhoton(pos, ray.d, P, meetSpecular);
 
-	// if (spec.L2() > EPS){
-	// 	spec.prt();
-	// 	printf("%lf\n", (P * spec).getMax());
-	// 	printf("%lf\n", P.getMax());
-	// }
-	//printf("%lf %lf\n",ran, spec);
-	// Color F = mtl->sampleP(ray.d, R, norm, pos, pdf);
+	// Color F = mtl->sample(ray.d, R, norm, pos, pdf);
+
+
 	// if (ran < Ps){
 	// 	Vec3f R;
 	// 	real pdf;
