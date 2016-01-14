@@ -2,14 +2,14 @@
 
 namespace Raytracer {
 
-bool Scene::intersect(const Ray& ray, Intersection& isect, bool ignoreLight){
+bool Scene::intersect(const Ray& ray, Intersection& isect, bool useLight){
 	isect.setDist(INF);
 	bool ans = mAggregate.intersect(ray, isect);
 	for (Primitive* obj : mPrimitives)
 		if (obj->intersect(ray, isect) == HIT)
 			ans = HIT;
 
-	if (!ignoreLight)
+	if (useLight)
 		for (Light* obj : mLights)
 			if (obj->intersect(ray, isect) == HIT)
 				ans = HIT;

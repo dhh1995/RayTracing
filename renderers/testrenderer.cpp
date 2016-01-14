@@ -7,7 +7,7 @@ namespace Raytracer {
 void TestRenderer::rayTracing(Ray ray, Color& res, int depth){
 	if (debug) ray.prt();
 	Intersection isect;
-	if (mScene->intersect(ray, isect) == MISS){
+	if (mScene->intersect(ray, isect, true) == MISS){
 		res = BACKGROUND;
 		return;
 	}
@@ -38,7 +38,8 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth){
 	Color rcol;
 	Vec3f R;
 	real pdf;
-	Color F = mtl->sample(ray.d, R, norm, pos, pdf);
+	bool isSpecular;
+	Color F = mtl->sample(ray.d, R, norm, pos, pdf, isSpecular);
 	rayTracing(Ray(pos + R * EPS, R), rcol, depth + 1);
 	res += rcol * F / pdf; 
 

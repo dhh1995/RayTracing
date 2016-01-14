@@ -2,8 +2,8 @@
 
 namespace Raytracer {
 
-void PhotonRenderer::_addPhoton(Vec3f pos, Vec3f dir, Color power, bool meetSpecular){
-	if (meetSpecular){
+void PhotonRenderer::_addPhoton(Vec3f pos, Vec3f dir, Color power, PhotonState state){
+	if (state == PhotonState::Caustic){
 		if (mCaustic.getN() < mCausticWant){
 			// puts("photon");
 			// pos.prt();
@@ -22,7 +22,7 @@ void PhotonRenderer::_addPhoton(Vec3f pos, Vec3f dir, Color power, bool meetSpec
 	}
 }
 
-void PhotonRenderer::photonTracing(Photon* photon, int depth, bool meetSpecular){
+void PhotonRenderer::photonTracing(Photon* photon, int depth, PhotonState state){
 	if (depth >= PHOTONDEPTH)
 		return;
 	Intersection isect;
@@ -34,29 +34,24 @@ void PhotonRenderer::photonTracing(Photon* photon, int depth, bool meetSpecular)
 	Vec3f norm = isect.getNorm();
 	Color P = photon->getPower();
 
+	bool isSpecular;
+	Vec3f R;
+	real pdf;
+	Color F = mtl->sample(ray.d, R, norm, pos, pdf, isSpecular);
+	PhotonState newState = state;
+    if (!isSpecular){
+    	if (state == PhotonState::Null)
+    		newState = PhotonState::Direct;
+        newState = PhotonState::Indirect;
+    } else
+        newState = PhotonState::Caustic;
+
 	if (mtl->getDiffuse().getMax() > EPS)
-		_addPhoton(pos, ray.d, P, meetSpecular);
+		_addPhoton(pos, ray.d, P, newState);
 
-	// Color F = mtl->sample(ray.d, R, norm, pos, pdf);
-
-
-	// if (ran < Ps){
-	// 	Vec3f R;
-	// 	real pdf;
-	// 	meetSpecular = true;
-	// 	photon->setRay(Ray(pos + EPS * R, R));
-	// 	photon->updatePower(spec / Ps / pdf);
-	// 	photonTracing(photon, depth + 1, meetSpecular);
-	// }else if (ran < Pd + Ps){
-	// 	// diffuse, get new direction and save it in photon map
-	// 	_addPhoton(pos, ray.d, photon->getPower(), meetSpecular);
-	// 	Vec3f dir = Sampler::getDiffuseDir(norm);
-	// 	photon->setRay(Ray(pos + EPS * dir, dir));
-	// 	photon->updatePower(diff / Pd);
-	// 	photonTracing(photon, depth + 1, false);
-	// }else{
-	// 	_addPhoton(pos, ray.d, photon->getPower(), meetSpecular);
-	// }
+	photon->setRay(Ray(pos + EPS * R, R));
+	photon->updatePower(F / pdf);
+	photonTracing(photon, depth + 1, newState);
 }
 
 void PhotonRenderer::genPhotonMap(const Args& args, string path){
@@ -90,7 +85,7 @@ void PhotonRenderer::genPhotonMap(const Args& args, string path){
 		Photon* photon = new Photon(Ray(centre, dir), light->getPower());
 		//puts("new Photon emits");
 		mPhotonEmits++;
-		photonTracing(photon, 0, false);
+		photonTracing(photon, 0, PhotonState::Null);
 		delete photon;
 		if (mGlobal.getN() + mCaustic.getN() >= last * total / showStages)
 			printf("photon emits %d/%d global : %d caustic : %d\n", last++, showStages, mGlobal.getN(), mCaustic.getN());
@@ -110,142 +105,65 @@ void PhotonRenderer::genPhotonMap(const Args& args, string path){
 }
 
 void PhotonRenderer::rayTracing(Ray ray, Color& res, int depth){
-	// Intersection isect;
-	// if (mScene->intersect(ray, isect) == MISS){
-	// 	res = BACKGROUND;
-	// 	return;
-	// }
-	// aDist = isect.getDist();
-	// Material* mtl = isect.getPrim()->getMaterial();
-	// Vec3f pos = isect.getPos();
-	// Vec3f norm = isect.getNorm();
-	// Color color = isect.getColor();
-	// if (isect.isLight()){
-	// 	res = isect.getColor();
-	// 	return;
-	// }
-	// //res = mScene->getLi(ray, isect);
-	// res = BLACK;
-	// // need to gather photon.
-	// Color diff = mtl->getDiffuse();
-	// // puts("------------------");
-	// // ray.prt();
-	// // p;
-	// // printf("%lf\n",diff);
-	// if (diff.L2() > 0){
-	// 	Color radiance, caustic;
-	// 	int nPhotons = SEARCH_PHOTONS;
-	// 	real alpha = CAUSTIC_SEARCH_RADIUS, beta = GLOBAL_SEARCH_RADIUS;
-	// 	pair<real, Photon* > * photons = new pair<real, Photon* >[nPhotons + 5];
-	// 	{
-	// 		int m = mCaustic.getKNearest(pos, nPhotons, photons, (alpha + mProgress) / (1. + mProgress));
-	// 		if (m >= 8){
-	// 			real radius2 = photons[0].first;
-	// 			for (int i = 0; i < m; ++ i){
-	// 				Photon* photon = photons[i].second;
-	// 				if (dot(norm, photon->getRay().d) < 0)
-	// 					caustic += photon->getPower();
-	// 			}
-	// 			caustic /= 0 * mCaustic.getN() + 1 * mCausticFinish;
-	// 			caustic /= PI * radius2;
-	// 		}
-	// 	}
-	// 	{
-	// 		int m = mGlobal.getKNearest(pos, nPhotons, photons, (beta + mProgress) / (1. + mProgress));
-	// 		if (m >= 2){
-	// 			real radius2 = photons[0].first;
-	// 			for (int i = 0; i < m; ++ i){
-	// 				Photon* photon = photons[i].second;
-	// 				if (dot(norm, photon->getRay().d) < 0)
-	// 					radiance += photon->getPower();
-	// 			}
-	// 			radiance /= 0 * mGlobal.getN() + 1 * mGlobalFinish;
-	// 			radiance /= PI * radius2;
-	// 		}
-	// 	}
-	// 	delete[] photons;
-	// 	// printf("radiance ");
-	// 	// radiance.prt();
-	// 	res += caustic * diff;
-	// 	res += radiance * diff;
-	// 	res *= color;
-	// }
-	// // if (showPhoton){
-	// // 	real dist;
-	// // 	Color rcol;
-	// // 	rayTracing(Ray(pi + ray.d * EPS, ray.d), rcol, depth + 1, 1, dist);
-	// // 	res += rcol;
-	// // 	return;
-	// // }
+	Intersection isect;
+	if (mScene->intersect(ray, isect) == MISS){
+		res = BACKGROUND;
+		return;
+	}
+	Primitive* prim = isect.getPrim();
+	if (isect.isLight()){
+		res = (static_cast<Light*>(prim))->getPower();
+		return;
+	}
+	Material* mtl = prim->getMaterial();
+	Vec3f pos = isect.getPos();
+	Vec3f norm = isect.getNorm();
 
-	// // calculate specular
-	// //real refr = mtl->getRefraction();
-	// Color spec = mtl->getSpecular();
-	// if ((spec.L2() > 0.0f) && (depth < TRACEDEPTH))
-	// {
-	// 	real rindex = mtl->getRefrIndex();
-	// 	real n = 1.0f / rindex;
-	// 	Vec3f N = norm;
-	// 	if (isect.isBack()){
-	// 		n = rindex;
-	// 		N = -N;
-	// 	}
-	// 	//printf("%lf\n",n);
-	// 	real cosI = -dot(N, ray.d);
-	// 	real cosT2 = 1.0f - n * n * (1.0f - cosI * cosI);
-	// 	// real refl = _FresnelReflection(n, cosI, cosT2) * spec;
-	// 	// real refr = spec - refl;
-	// 	real refl = mtl->getReflection();
-	// 	real refr = mtl->getRefraction();
-	// 	if (cosT2 < 0.0f)
-	// 		refl = 1, refr = 0;
+	if (depth >= TRACEDEPTH)
+		return;
 
-	// 	if ((refr > 0.0f) && (depth < TRACEDEPTH)){
-	// 		Vec3f T = (n * ray.d) + (n * cosI - sqrt( cosT2 )) * N;
-	// 		Color rcol( 0, 0, 0 );
-	// 		real dist;
-	// 		rayTracing(Ray(pos + T * EPS, T), rcol, depth + 1, rindex, dist); //, a_Samples * 0.5f, a_SScale * 2 );
-	// 		mRaysCast++;
-	// 		// apply Beer's law
-	// 		Color absorbance = mtl->getColor() * 0.1f * -dist;
-	// 		Color transparency = Color( exp( absorbance.r ), exp( absorbance.g ), exp( absorbance.b ) );
-	// 		Color add = refr * rcol * color;
-	// 		// if (!isect.isBack())
-	// 		// 	add = add * transparency;
-	// 		res += add;
-	// 	}
-
-	// 	if ((refl > 0.0f) && (depth < TRACEDEPTH)){
-	// 		// calculate perfect reflection
-	// 		Vec3f N = isect.getNorm();
-	// 		Vec3f R = ray.d - 2.0f * dot(ray.d, N) * N;
-	// 		Color rcol(0, 0, 0);
-	// 		real dist;
-	// 		rayTracing( Ray( pos + R * EPS, R ), rcol, depth + 1, aRIndex, dist); //, a_Samples * 0.5f, a_SScale * 2 );
-	// 		mRaysCast++;
-	// 		res += refl * rcol * color;
-	// 	}
-	// }
-
-	// bool traceDiffuse = false;
-	// if (traceDiffuse){
-	// 	Color diff = mtl->getDiffuse();
-	// 	if ((diff.L2() > 0) && (depth < TRACEDEPTH)){
-	// 		int nSample = 1;
-	// 		Color Ld;
-	// 		for (int i = 0; i < nSample; ++ i){
-	// 			Vec3f R = Sampler::getDiffuseDir(norm);
-	// 			Color rcol;
-	// 			real dist;
-	// 			rayTracing( Ray( pos + R * EPS, R ), rcol, depth + 1, aRIndex, dist); //, a_Samples * 0.5f, a_SScale * 2 );
-	// 			mRaysCast++;
-	// 			Ld += rcol * color * diff * dot(R, norm);
-	// 		}
-	// 		res += Ld / nSample;
-	// 	}
-	// }
-
-	// return;
+	bool isSpecular;
+	Vec3f R;
+	real pdf;
+	Color F = mtl->sample(ray.d, R, norm, pos, pdf, isSpecular);
+	if (isSpecular){
+		Color rcol;
+		rayTracing(Ray(pos + R * EPS, R), rcol, depth + 1);
+		res += F * rcol / pdf;
+	}else{
+		Color radiance, caustic;
+		int nPhotons = SEARCH_PHOTONS;
+		real alpha = CAUSTIC_SEARCH_RADIUS, beta = GLOBAL_SEARCH_RADIUS;
+		pair<real, Photon* > * photons = new pair<real, Photon* >[nPhotons + 5];
+		{
+			int m = mCaustic.getKNearest(pos, nPhotons, photons, (alpha + mProgress) / (1. + mProgress));
+			if (m >= 1){
+				real radius2 = photons[0].first;
+				for (int i = 0; i < m; ++ i){
+					Photon* photon = photons[i].second;
+					if (dot(norm, photon->getRay().d) < 0)
+						caustic += photon->getPower();
+				}
+				caustic /= 0 * mCaustic.getN() + 1 * mCausticFinish;
+				caustic /= PI * radius2;
+			}
+		}
+		{
+			int m = mGlobal.getKNearest(pos, nPhotons, photons, (beta + mProgress) / (1. + mProgress));
+			if (m >= 2){
+				real radius2 = photons[0].first;
+				for (int i = 0; i < m; ++ i){
+					Photon* photon = photons[i].second;
+					if (dot(norm, photon->getRay().d) < 0)
+						radiance += photon->getPower();
+				}
+				radiance /= 0 * mGlobal.getN() + 1 * mGlobalFinish;
+				radiance /= PI * radius2;
+			}
+		}
+		delete[] photons;
+		res += F * (caustic + radiance) / pdf;
+	}
 }
 
 void PhotonRenderer::render(const Args& args){

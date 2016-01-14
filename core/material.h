@@ -39,7 +39,7 @@ public:
 	real getRefract(real cosI){
 		return 1.0f - mFresnel->getReflection(cosI);
 	}
-	Color sample(const Vec3f& wi, Vec3f &wo, Vec3f norm, Vec3f pos, real& pdf);
+	Color sample(const Vec3f& wi, Vec3f &wo, Vec3f norm, Vec3f pos, real& pdf, bool& isSpecular);
 
 	void setTexture(Texture* aTexture){
 		mTexture = aTexture;

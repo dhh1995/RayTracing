@@ -102,7 +102,7 @@ int main(int argc, char** argv)
 		}
 		int power = 32;
 		if (args.usePhoton)
-			power = 100;
+			power = 10000;
 		Light* light4 = new AreaLight(WHITE, Vec3f(278, 548.8, 279.5), power, Vec3f(0, -1, 0), Vec3f(1, 0, 0), 1, 200, 200);
 		scene->addLight(light4);
 
@@ -144,8 +144,8 @@ int main(int argc, char** argv)
 
 		// Primitive* obj4 = new TriangleMesh("test_data/cube.obj",
 		// 	mat4, Vec3f(2, 0.5, -1));
-		Primitive* obj4 = new TriangleMesh("test_data/cube.obj",
-			mat2, Matrix44::translation(testTransForCube));
+		// Primitive* obj4 = new TriangleMesh("test_data/cube.obj",
+			// mat2, Matrix44::translation(testTransForCube));
 		//scene->addObject(obj4);
 		
 		Primitive* obj9 = new Sphere(Vec3f(3, 0, 1), 1);
@@ -167,10 +167,7 @@ int main(int argc, char** argv)
 		//Light* light3 = new Light(WHITE, Vec3f(2.5, 0, 1.5));
 		//scene->addLight(light3);
 		
-		if (useBox >> 1 & 1)
-			scene->addObject(obj8);
-		if (useBox & 1)
-			scene->addObject(obj4);
+		scene->addObject(obj8);
 
 		camera->setPos(Vec3f(-3, 0, 4));
 	}
