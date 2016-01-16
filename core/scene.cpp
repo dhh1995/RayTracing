@@ -86,7 +86,8 @@ bool Scene::loadObj(string folder, string fileName){
 				}else if (type == "Ni"){
 					real index;
 					fscanf(mtllib, "%lf", &index);
-					mtl->setFresnel(new Fresnel(index));
+					if (index != 1.0f)
+						mtl->setFresnel(new Fresnel(index));
 				}
 			}
 			if (mtl != NULL)
@@ -109,23 +110,38 @@ bool Scene::loadObj(string folder, string fileName){
 			char blank;
 			int n = vertexs.size();
 			int a, b, c, d;
-			fscanf(fp, "%d %d %d", &a, &b, &c);
+			int va, vb, vc, vd;
+			int na, nb, nc, nd;
+			fgets(tmp, 1000, fp);
+			char* ptr = tmp;
+			char ch;
+
+			bool debug = false;
+			if ((ch = readBuf(ptr, a)) =='/')
+				if ((ch = readBuf(ptr, va)) =='/') 
+					ch = readBuf(ptr, na);
+			if ((ch = readBuf(ptr, b)) =='/')
+				if ((ch = readBuf(ptr, vb)) =='/')
+					ch = readBuf(ptr, nb);
+			if ((ch = readBuf(ptr, c)) =='/')
+				if ((ch = readBuf(ptr, vc)) =='/')
+					ch = readBuf(ptr, nc);
 			a = chg(n, a), b = chg(n, b), c = chg(n, c);
-			// printf("%d %d %d\n",a,b,c);
  			Triangle* tri = new Triangle(vertexs, a, b, c);
  			assert(currentMaterial != NULL);
  			tri->setMaterial(currentMaterial);
  			mAggregate.add(tri);
 
- 			fscanf(fp, "%c", &blank);
-			if (blank == ' '){
-				fscanf(fp, "%d", &d);
+			if (ch == ' '){
+				if ((ch = readBuf(ptr, d)) =='/')
+					if ((ch = readBuf(ptr, vd)) =='/')
+						readBuf(ptr, nd);
 				d = chg(n, d);
-				tri = new Triangle(vertexs, d, c, b);
+				tri = new Triangle(vertexs, a, c, d);
 	 			assert(currentMaterial != NULL);
 	 			tri->setMaterial(currentMaterial);
 	 			mAggregate.add(tri);
-			}
+	 		}
 		}else if (type == "usemtl"){
 			fscanf(fp, "%s", tmp);
 			string materialName = tmp;

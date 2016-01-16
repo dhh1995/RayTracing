@@ -140,7 +140,7 @@ Color PhotonRenderer::_getFlux(const PhotonMap& pm, Vec3f pos, Vec3f norm, real 
 
 void PhotonRenderer::rayTracing(Ray ray, Color& res, int depth){
 	Intersection isect;
-	if (mScene->intersect(ray, isect, true) == MISS){
+	if (mScene->intersect(ray, isect) == MISS){
 		res = BACKGROUND;
 		return;
 	}

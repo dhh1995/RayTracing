@@ -40,17 +40,19 @@ private:
 class ProjectiveCamera : public Camera{
 public:
 	ProjectiveCamera(Vec3f aPos, Vec3f aLookAt, Vec3f aI, real aFov)
-		: Camera(aPos), mLookAt(aLookAt), mI(aI), mFov(aFov){
-			mJ = cross(mI, mLookAt);
+		: Camera(aPos), mFov(aFov){
+			mLookAt = aLookAt.Normalize();
+			mI = aI.Normalize();
+			mJ = cross(mI, mLookAt).Normalize();
 			mArc  = mFov / 180 * PI;
 			l = tan(- mArc / 2), r = tan(mArc / 2);
 			printf("camera left = %lf right = %lf\n",l,r);
 	}
 	void convert(int x, int y, real &dx, real &dy);
 	void setLookAt(Vec3f lookAt, Vec3f aI){
-		mLookAt = lookAt;
-		mI = aI;
-		mJ = cross(mI, mLookAt);
+		mLookAt = lookAt.Normalize();
+		mI = aI.Normalize();
+		mJ = cross(mI, mLookAt).Normalize();
 	}
 	Ray sampleRay(int x, int y);
 protected:

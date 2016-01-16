@@ -20,7 +20,8 @@ void TestRenderer::rayTracing(Ray ray, Color& res, int depth){
 	//real Li = mScene->getLi(isect);
 	//printf("%lf\n",isect.getDist());
 	//Vec3f pos = ray.o + ray.d * isect.getDist();
-	// res = WHITE / (1 + (isect.getDist() / 100));
+	// res = WHITE / (1 + (isect.getDist()));
+	// res = isect.getPrim()->getMaterial()->getDiffuse();
 	// return;
 	
 	// aDist = isect.getDist();

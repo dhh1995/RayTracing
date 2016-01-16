@@ -80,11 +80,34 @@ int main(int argc, char** argv)
 		return 0;
 	}
 
+	if (useScene == -2){
+		if (!scene->loadObj("model", args.obj)){
+			colorMessage("load scene unsuccessfully", 1);
+			return 0;
+		}
+		camera->setPos(Vec3f(0, -200, 0));
+		camera->setLookAt(Vec3f(0, 1, 0), Vec3f(0, 0, 1));
+	}
+
 	if (useScene == -1){
 		if (!scene->loadObj("model", args.obj)){
 			colorMessage("load scene unsuccessfully", 1);
 			return 0;
 		}
+		int power = 40;
+		if (args.usePhoton)
+			power = 150000;
+		Light* light0 = new AreaLight(WHITE, Vec3f(0, 9, -15), power, Vec3f(0, -1, 0), Vec3f(1, 0, 0), 1, 1, 1);
+		scene->addLight(light0);
+		Light* light1 = new AreaLight(WHITE, Vec3f(10, 9, -15), power, Vec3f(0, -1, 0), Vec3f(1, 0, 0), 1, 1, 1);
+		scene->addLight(light1);
+		Light* light2 = new AreaLight(WHITE, Vec3f(20, 7, -15), power, Vec3f(0, -1, 0), Vec3f(1, 0, 0), 1, 1, 1);
+		scene->addLight(light2);
+		Light* light4 = new AreaLight(WHITE, Vec3f(30, 7, -15), power, Vec3f(0, -1, 0), Vec3f(1, 0, 0), 1, 1, 1);
+		scene->addLight(light4);
+
+		camera->setPos(Vec3f(44, 2.5, -16));
+		camera->setLookAt(Vec3f(-1, -0.05, -0.05), Vec3f(0, 1, 0));
 	}
 
 	if (useScene == 0){
@@ -111,7 +134,7 @@ int main(int argc, char** argv)
 		// 		scene->addObject(obj);
 		// 	}
 		// }
-		int power = 50;
+		int power = 100;
 		if (args.usePhoton)
 			power = 5000;
 
