@@ -9,13 +9,10 @@ namespace Raytracer {
 class Film{
 public:
 	Film(int w, int h):w(w), h(h){
-		mName = NULL;
+		mName = "";
 	}
-	void setName(char *aName){
-		if (mName != NULL)
-			delete[] mName;
-		mName = new char[strlen(aName) + 1]; 
-		strcpy(mName, aName);
+	void setName(string aName){
+		mName = aName;
 	}
 	int getW(){
 		return w;
@@ -29,7 +26,7 @@ public:
 	virtual void show(bool wait = false) = 0;
 protected:
 	int w, h;
-	char *mName;
+	string mName;
 };
 
 }; // namespace Raytracer

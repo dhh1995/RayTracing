@@ -34,6 +34,7 @@ private:
 	PhotonMap mGlobal, mCaustic;
 	real mGlobalR, mCausticR;
 	int mPhotons;
+	real mBias;
 };
 
 }; // namespace Raytracer

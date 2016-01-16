@@ -42,7 +42,7 @@ int main(int argc, char** argv)
 
 	Film* film = new Image(args.imageSize, args.imageSize);
 	printf("ImageSize is %d\n",args.imageSize);
-	film->setName("test");
+	film->setName(args.imageName);
 	Camera* camera = new PerspectiveCamera(Vec3f(0, 0, -0), Vec3f(1, 0, 0), Vec3f(0, 0, 1),
 											args.fov, args.lensRadius, args.focalDist);
 	camera->setFilm(film);
@@ -111,7 +111,7 @@ int main(int argc, char** argv)
 		// 		scene->addObject(obj);
 		// 	}
 		// }
-		int power = 30;
+		int power = 50;
 		if (args.usePhoton)
 			power = 5000;
 
@@ -240,7 +240,7 @@ int main(int argc, char** argv)
 
 		int power = 1000;
 		if (args.usePhoton)
-			power = 50000;
+			power = 60000;
 		Light* light0 = new Light(WHITE , Vec3f(0, 0, 25), power);
 		scene->addLight(light0);
 

@@ -165,7 +165,7 @@ void PhotonRenderer::rayTracing(Ray ray, Color& res, int depth){
 		rayTracing(Ray(pos + R * EPS, R), rcol, depth + 1);
 		res += F * rcol / pdf;
 	}else{
-		Color caustic = _getFlux(mCaustic, pos, norm, mCausticR) *  0.01;
+		Color caustic = _getFlux(mCaustic, pos, norm, mCausticR) *  mBias;
 		Color radiance = _getFlux(mGlobal, pos, norm, mGlobalR);
 		res += F * (caustic + radiance) / pdf;
 	}
@@ -178,6 +178,7 @@ void PhotonRenderer::render(const Args& args){
 	// progressMessage("Generate photon maps done.");
 
 	//assert(mCamera != NULL);
+	mBias = args.bias;
 	Film* film = mCamera->getFilm();
 	int lastShow = -1;
 	int w = film->getW();
