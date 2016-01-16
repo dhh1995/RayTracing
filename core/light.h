@@ -27,7 +27,6 @@ public:
 		return mPos;
 	}
 	virtual Color getPower(){
-
 		return mColor * mPower;
 	}
 	virtual real getPower(Vec3f dir){

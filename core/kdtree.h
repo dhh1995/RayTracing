@@ -86,7 +86,7 @@ public:
 		root = 1;
 		build(1, 0, n);
 	}
-	int getKNearest(const Vec3f& pos, int K, pair<real, T* > * res, real maxDist = INF){
+	int getKNearest(const Vec3f& pos, int K, pair<real, T* > * res, real maxDist = INF) const{
 		//colorMessage("New Request !!", 5);
 		if (n <= 0)
 			return 0;
@@ -140,7 +140,7 @@ public:
 public:
 	int root;
 private:
-	void _addToHeap(T* t, int& m, int K, pair<real, T* > * res, const Vec3f& pos, real mDist){
+	void _addToHeap(T* t, int& m, int K, pair<real, T* > * res, const Vec3f& pos, real mDist)  const{
 		real dist = (t->getPos() - pos).L2();
 		if (dist > mDist)
 			return;
@@ -156,7 +156,7 @@ private:
 				make_heap(res, res + m);
 		}
 	}
-	void _findKNearest(int root, int& m, int K, pair<real, T* > * res, const Vec3f& pos, real mDist){
+	void _findKNearest(int root, int& m, int K, pair<real, T* > * res, const Vec3f& pos, real mDist) const{
 		KdNode* cur = &a[root];
 		int first = pos[cur->dim] > cur->split, second = !first;
 		//pos.prt();

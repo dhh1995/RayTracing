@@ -7,11 +7,12 @@
 namespace Raytracer {
 
 const int PHOTONDEPTH = 10;
-const int GLOBALWANT = 1000;
-const int CAUSTICWANT = 100;
+const int GLOBALWANT = 1000000;
+const int CAUSTICWANT = 0;
 const real CAUSTIC_SEARCH_RADIUS = 1;
-const real GLOBAL_SEARCH_RADIUS = 10;
-const int SEARCH_PHOTONS = 200;
+const real GLOBAL_SEARCH_RADIUS = 20;
+const real DECAY = 0.7;
+const int SEARCH_PHOTONS = 300;
 
 enum class PhotonState : int {
 	Null	  = 0x0001,
@@ -31,11 +32,13 @@ public:
 	void render(const Args& args);
 	//Options options;
 private:
+	Color _kernel(Color power, real dist, real maxDist);
+	Color _getFlux(const PhotonMap& pm, Vec3f pos, Vec3f norm, real radius);
 	void _addPhoton(Vec3f pos, Vec3f dir, Color power, PhotonState state);
 	int mPhotonEmits, mGlobalWant, mCausticWant;
 	int mGlobalFinish, mCausticFinish;
 	PhotonMap mGlobal, mCaustic;
-	int mProgress;
+	real mGlobalR, mCausticR;
 };
 
 }; // namespace Raytracer

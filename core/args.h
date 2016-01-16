@@ -7,6 +7,7 @@
 namespace Raytracer {
 
 struct Args{
+	int imageSize;
 	int useScene;
 	string obj;
 	bool debug;
@@ -30,6 +31,7 @@ struct Args{
 
 	Args(){//default value
 		showHelp = false;
+		imageSize = 500;
 		useScene = 1;
 		obj = "cornell_box";
 		debug = false;
@@ -54,6 +56,8 @@ struct Args{
 		sprintf(helpInfo, "--help or -h					Show this help information");
 		colorMessage(helpInfo, 3);
 		sprintf(helpInfo, "--debug 		default = false 	Set debug model on");
+		colorMessage(helpInfo, 3);
+		sprintf(helpInfo, "-imgsize [int]		default = %d		the size of image (a, a)", imageSize);
 		colorMessage(helpInfo, 3);
 		sprintf(helpInfo, "-scene [int]		default = %d		Choose which scene to use", useScene);
 		colorMessage(helpInfo, 3);
@@ -99,6 +103,8 @@ struct Args{
 					showHelpInfo(), --ind;
 				if (param == "--debug")
 					debug = true, --ind;
+				else if (param == "-imgsize")
+					readBuf(ptr, imageSize);
 				else if (param == "-scene")
 					readBuf(ptr, useScene);
 				else if (param == "-obj")
