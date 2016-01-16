@@ -7,15 +7,9 @@
 namespace Raytracer {
 
 const int PHOTONDEPTH = 10;
-const int GLOBALWANT = 1000000;
-const int CAUSTICWANT = 0;
-const real CAUSTIC_SEARCH_RADIUS = 1;
-const real GLOBAL_SEARCH_RADIUS = 20;
-const real DECAY = 0.7;
-const int SEARCH_PHOTONS = 300;
 
 enum class PhotonState : int {
-	Null	  = 0x0001,
+	// Null	  = 0x0001,
     Direct    = 0x0100,
     Indirect  = 0x0101,
     Caustic   = 0x0200,
@@ -23,7 +17,7 @@ enum class PhotonState : int {
 
 class PhotonRenderer : public TestRenderer {
 public:
-	PhotonRenderer(int globalWant = GLOBALWANT, int causticWant = CAUSTICWANT)
+	PhotonRenderer(int globalWant, int causticWant)
 		: mPhotonEmits(0), mGlobalWant(globalWant), mCausticWant(causticWant){
 	}
 	void photonTracing(Photon* photon, int depth, PhotonState state);
@@ -39,6 +33,7 @@ private:
 	int mGlobalFinish, mCausticFinish;
 	PhotonMap mGlobal, mCaustic;
 	real mGlobalR, mCausticR;
+	int mPhotons;
 };
 
 }; // namespace Raytracer

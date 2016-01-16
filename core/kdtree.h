@@ -49,7 +49,7 @@ public:
 		++ n;
 		mData.push_back(x);
 	}
-	int getN(){
+	int getN() const{
 		return n;
 	}
 	int getRoot(){

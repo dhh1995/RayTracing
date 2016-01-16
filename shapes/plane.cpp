@@ -8,7 +8,7 @@ void Plane::setIsect(Intersection& isect, real dist, Vec3f pos){
 	isect.setPos(pos);
 	Vec3f norm = mNorm;
 	isect.setNorm(norm);
-	isect.setUV(make_pair(dot(pos, mU), dot(pos, mV)));
+	// isect.setUV(make_pair(dot(pos, mU), dot(pos, mV)));
 }
 
 bool Plane::intersect(const Ray& ray, Intersection& isect){

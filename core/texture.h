@@ -13,15 +13,12 @@ public:
 		IMAGE,
 		BUMP,
 	};
-	Texture(Film* aImg, int aUScale = 1, int aVScale = 1){
-		mImg = aImg;
-		mUScale = aUScale;
-		mVScale = aVScale;
+	Texture(Film* aImg, Vec3f aO, Vec3f aU, Vec3f aV, real aScaleU = 1.0, real aScaleV = 1.0)
+		: mImg(aImg), mO(aO), mU(aU), mV(aV), mScaleU(aScaleU), mScaleV(aScaleV){
 	}
-	Color getColor(UV uv);
-	virtual Vec3f getNorm(Vec3f norm, UV uv){ return norm; }
-		//return mImg->getColor(mod(int(u * mUScale), mImg->w), mod(int(v * mVScale), mImg->h) );
-private:
+	virtual Color getColor(Vec3f pos);
+	virtual Vec3f getNorm(Vec3f pos, Vec3f norm){ return norm; }
+protected:
 	int mod(int x, int y){
 		x %= y;
 		if (x < 0)
@@ -30,15 +27,32 @@ private:
 	}
 	Film* mImg;
 	int mType;
-	int mUScale, mVScale;
+	Vec3f mO, mU, mV;
+	real mScaleU, mScaleV;
 };
 
-// class BumpTexture : public Texture{
-// 	Vec3f getNorm(Vec3f norm, UV uv){
+class CheckerBoard : public Texture{
+public:
+	CheckerBoard(Color b, Color w, Vec3f aO, Vec3f aU, Vec3f aV, real aScaleU = 1.0, real aScaleV = 1.0)
+		: Texture(NULL, aO, aU, aV, aScaleU, aScaleV), b(b), w(w){
+	}
+	Color getColor(Vec3f pos);
+private:
+	Color _getColor(int u, int v){
+		return ((u + v) & 1) ? b : w;
+	}
+	Color b, w;
+};
 
-
-// 	}
-// };
+class BumpTexture : public Texture{
+public:
+	BumpTexture(Film* aImg,Vec3f aO, Vec3f aU, Vec3f aV, real aScaleU = 1.0, real aScaleV = 1.0, real aRate = 1.0):
+		Texture(aImg, aO, aU, aV, aScaleU, aScaleV), mRate(aRate){
+	}
+	Vec3f getNorm(Vec3f pos, Vec3f norm);
+private:
+	real mRate;
+};
 
 }; // namespace Raytracer
 

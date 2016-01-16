@@ -38,16 +38,15 @@ void PhotonRenderer::photonTracing(Photon* photon, int depth, PhotonState state)
 	Vec3f R;
 	real pdf;
 	Color F = mtl->sample(ray.d, R, norm, pos, pdf, isSpecular);
-	PhotonState newState = state;
-    if (!isSpecular){
-    	if (state == PhotonState::Null)
-    		newState = PhotonState::Direct;
-        newState = PhotonState::Indirect;
-    } else
-        newState = PhotonState::Caustic;
-
+	// printf("%d\n",state == PhotonState::Caustic);
 	if (mtl->getDiffuse().getMax() > EPS)
-		_addPhoton(pos, ray.d, P, newState);
+		_addPhoton(pos, ray.d, P, state);
+
+	PhotonState newState = state;
+    if (!isSpecular)
+    	newState = PhotonState::Indirect;
+    else
+        newState = PhotonState::Caustic;
 
 	photon->setRay(Ray(pos + EPS * R, R));
 	photon->updatePower(F / pdf);
@@ -85,7 +84,7 @@ void PhotonRenderer::genPhotonMap(const Args& args, string path){
 		Photon* photon = new Photon(Ray(centre, dir), light->getPower());
 		//puts("new Photon emits");
 		mPhotonEmits++;
-		photonTracing(photon, 0, PhotonState::Null);
+		photonTracing(photon, 0, PhotonState::Direct);
 		delete photon;
 		if (mGlobal.getN() + mCaustic.getN() >= last * total / showStages)
 			printf("photon emits %d/%d global : %d caustic : %d\n", last++, showStages, mGlobal.getN(), mCaustic.getN());
@@ -105,11 +104,11 @@ void PhotonRenderer::genPhotonMap(const Args& args, string path){
 }
 
 Color PhotonRenderer::_getFlux(const PhotonMap& pm, Vec3f pos, Vec3f norm, real radius){
-	int nPhotons = SEARCH_PHOTONS;
-	pair<real, Photon* > * photons = new pair<real, Photon* >[nPhotons + 5];
-	int m = pm.getKNearest(pos, nPhotons, photons, radius);
-
 	Color flux;
+	if (pm.getN() == 0)
+		return flux;
+	pair<real, Photon* > * photons = new pair<real, Photon* >[mPhotons + 5];
+	int m = pm.getKNearest(pos, mPhotons, photons, radius);
 	real maxDist2 = -1;
 	vector<Photon* > valid;
 	for (int i = 0; i < m; ++ i){
@@ -122,18 +121,21 @@ Color PhotonRenderer::_getFlux(const PhotonMap& pm, Vec3f pos, Vec3f norm, real 
 			maxDist2 = max(maxDist2, photons[i].first);
 		}
 	}
-	real k = 1.1;
-	if (valid.size() >= 5){
-		real maxDist = sqrt(maxDist2);
+	// real k = 1.1;
+	real maxDist = sqrt(maxDist2);
+	if (valid.size() > 2 && maxDist > EPS){
 		for (Photon* photon : valid){
-			real dist = (pos - photon->getPos()).length();
-			real weight = 1.0f - dist / (k * maxDist);
-			flux += photon->getPower() * (weight / PI);
+			real dist = (pos - photon->getPos()).L2();
+			real weight = 1.0f - dist / maxDist2;
+			flux += photon->getPower() * (weight * weight * 3 / PI) / maxDist2;
 		}
 	}
 	delete[] photons;
-	flux /= (1.0 - 2.0 / (3.0 * k));
-	return flux / (PI * maxDist2);
+	return flux / pm.getN();
+	// flux /= (1.0 - 2.0 / (3.0 * k));
+	// if (valid.size() > 0)
+	// 	flux /= valid.size();
+	// return flux / (PI * maxDist2);
 }
 
 void PhotonRenderer::rayTracing(Ray ray, Color& res, int depth){
@@ -163,7 +165,7 @@ void PhotonRenderer::rayTracing(Ray ray, Color& res, int depth){
 		rayTracing(Ray(pos + R * EPS, R), rcol, depth + 1);
 		res += F * rcol / pdf;
 	}else{
-		Color caustic = _getFlux(mCaustic, pos, norm, mCausticR);
+		Color caustic = _getFlux(mCaustic, pos, norm, mCausticR) *  0.01;
 		Color radiance = _getFlux(mGlobal, pos, norm, mGlobalR);
 		res += F * (caustic + radiance) / pdf;
 	}
@@ -186,11 +188,12 @@ void PhotonRenderer::render(const Args& args){
 	for (int i = 0; i < nPixels; ++ i)
 			resultColor[i] = BLACK, counter[i] = 0;
 	cout << "number of pixels " << nPixels << endl;
+	mPhotons = args.searchPhotons;
 	for (int iter = 0; iter < args.photonIter; ++ iter){
-		mCausticR = CAUSTIC_SEARCH_RADIUS;
-		mGlobalR = GLOBAL_SEARCH_RADIUS;
-		mCausticR *= (iter + DECAY) / (iter + 1);
-		mGlobalR *= (iter + DECAY) / (iter + 1);
+		mCausticR = args.causticSearchRadius;
+		mGlobalR = args.globalSearchRadius;
+		mCausticR *= (iter + args.decay) / (iter + 1);
+		mGlobalR *= (iter + args.decay) / (iter + 1);
 		genPhotonMap(args, "");
 		#pragma omp parallel for
 		for (int pixel = 0; pixel < nPixels; ++ pixel){

@@ -15,19 +15,26 @@ public:
 	Fresnel(real eta = 1.0f) : eta(eta){}
 	virtual real getReflection(real cosI){
 		real n = cosI > 0 ? eta : 1.0 / eta;
+		cosI = abs(cosI);
 		real cosT2 = 1.0f - n * n * (1.0f - cosI * cosI);
 		if (cosT2 > 0.0f){
 			real cosT = sqrt(cosT2);
 			real r_p = (n * cosI - cosT) / (n * cosI + cosT);
 			real r_v = (cosI - n * cosT) / (cosI + n * cosT);
+			// printf("%lf %lf   %lf %lf\n", cosI, cosT, r_p, r_v);
 			return (r_p * r_p + r_v * r_v) / 2.0;
 		}else
 			return 1.0f;
 	}
 	Vec3f refract(Vec3f incident, Vec3f norm, real cosI){
 		real n = cosI > 0 ? eta : 1.0 / eta;
+		if (cosI < 0) norm = -norm, cosI = -cosI;
 		real cosT2 = 1.0f - n * n * (1.0f - cosI * cosI);
-		return (n * incident) - (n * cosI + sqrt( cosT2 )) * norm;
+		Vec3f out = ((n * incident) - (n * cosI - sqrt( cosT2 )) * norm);//.Normalize();
+		// puts("--------------");
+		// incident.prt();
+		// out.prt();
+		return out;
 	}
 private:
 	real eta;

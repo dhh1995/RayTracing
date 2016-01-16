@@ -72,15 +72,6 @@ int main(int argc, char** argv)
 	Material* mat1 		= new Material(Background, CYAN * 0.6, CYAN * 0.4);
 	Material* mat2 		= new Material(Background, PINK,	PINK, new Fresnel(1.5));
 	
-	Material* wall1		= new Material(Background, WHITE * 0.8, BLACK);
-	Image* image0 = new Image("texture/lena.jpg");
-	Image* image1 = new Image("texture/world1.jpg");
-	Texture* texture1 = new Texture(image0, 20, 20);
-	wall1->setTexture(texture1);
-	Material* floor3	= new Material(Background, WHITE * 0.8, BLACK);
-	Image* image3 = new Image("texture/parquet.jpg");
-	Texture* texture3 = new Texture(image3, 50, 50);
-	floor3->setTexture(texture3);
 
 	Material* mat4		= new Material(Background, WHITE * 0.8, BLACK);
 
@@ -101,9 +92,9 @@ int main(int argc, char** argv)
 			colorMessage("load scene unsuccessfully", 1);
 			return 0;
 		}
-		int power = 32;
+		int power = 40;
 		if (args.usePhoton)
-			power = 50;
+			power = 2000000;
 		Light* light4 = new AreaLight(WHITE, Vec3f(278, 548.8, 279.5), power, Vec3f(0, -1, 0), Vec3f(1, 0, 0), 1, 100, 100);
 		scene->addLight(light4);
 
@@ -120,6 +111,22 @@ int main(int argc, char** argv)
 		// 		scene->addObject(obj);
 		// 	}
 		// }
+		int power = 30;
+		if (args.usePhoton)
+			power = 5000;
+
+		Material* wall1		= new Material(Background, WHITE * 0.8, BLACK);
+		Image* image0 = new Image("texture/lena.jpg");
+		Image* image1 = new Image("texture/world1.jpg");
+		Texture* texture1 = new Texture(image0, Vec3f(0, 0, 0), Vec3f(0, 0, -1), Vec3f(0, 1, 0), 20, 20);
+		wall1->setTexture(texture1);
+		Material* floor3	= new Material(Background, WHITE * 0.8, BLACK);
+		Image* image3 = new Image("texture/bump1.jpg");
+		Texture* texture3 = new BumpTexture(image3, Vec3f(0, 0, 0), Vec3f(1, 0, 0), Vec3f(0, 1, 0), 50, 50, 10);
+		floor3->setTexture(texture3);
+		Material* floor4	= new Material(Background, WHITE * 0.8, BLACK);
+		Texture* texture4 = new CheckerBoard(WHITE, BLACK, Vec3f(0, 0, 0), Vec3f(1, 0, 0), Vec3f(0, 1, 0), 0.01, 0.01);
+		floor4->setTexture(texture4);
 
 		Vec3f testTransForCube(3, -0.5, 1.5);
 
@@ -161,7 +168,7 @@ int main(int argc, char** argv)
 		obj5->setMaterial(mat2);
 		//scene->addObject(obj5);
 
-		Light* light1 = new AreaLight(WHITE, Vec3f(3, 0, 6), 30, Vec3f(0, 0, -1), Vec3f(1, 0, 0), 1, 2, 2);
+		Light* light1 = new AreaLight(WHITE, Vec3f(3, 0, 6), power, Vec3f(0, 0, -1), Vec3f(1, 0, 0), 1, 2, 2);
 		scene->addLight(light1);
 		// Light* light2 = new AreaLight(WHITE, Vec3f(0, 0, 4), 100);
 		// scene->addLight(light2);
@@ -180,8 +187,8 @@ int main(int argc, char** argv)
 	
 		// (Matrix44::scale(5) * Matrix44::rotateX(PI / 2) * Matrix44::rotateY(-PI / 2)) .prt();
 		int power = 1500;
-		if (args.usePhoton)
-			power = 10000;
+		// if (args.usePhoton)
+		// 	power = 10000;
 		for (int i = 0; i < 8; ++ i){
 			Primitive* dragon = new TriangleMesh("test_data/fixed.perfect.dragon.100K.0.07.obj",
 				i & 1 ? mat1 : mat2,
@@ -231,9 +238,9 @@ int main(int argc, char** argv)
 
 		camera->setPos(Vec3f(-40, 0, 0));
 
-		int power = 10000;
+		int power = 1000;
 		if (args.usePhoton)
-			power = 100000;
+			power = 50000;
 		Light* light0 = new Light(WHITE , Vec3f(0, 0, 25), power);
 		scene->addLight(light0);
 
@@ -262,7 +269,7 @@ int main(int argc, char** argv)
 
 	//--------------------------------------test_scene 3----------------------------
 	if (useScene == 4){
-		camera->setPos(Vec3f(-5, 0 ,-1));
+		camera->setPos(Vec3f(-5, 0, -1));
 		Material* mat5 = new Material(Background, ARED, BLACK);
 		Material* mat6 = new Material(Background, AGREEN, BLACK);
 		Material* mat7 = new Material(Background, BLACK, WHITE, new Fresnel(1.33));
@@ -308,11 +315,14 @@ int main(int argc, char** argv)
 
 		//Light* light2 = new Light(YELLOW, Vec3f(5,9,-9));
 		//scene->addLight(light2);
+		int power = 50;
+		if (args.usePhoton)
+			power = 4000;
 
-		Light* light3 = new Light(WHITE, Vec3f(6,0,4), 500);
+		Light* light3 = new Light(WHITE, Vec3f(6,0,4), power);
 		// scene->addLight(light3);
 
-		Light* light4 = new AreaLight(WHITE, Vec3f(7, 0, 4.9), 500, Vec3f(0, 0, -1), Vec3f(1, 0, 0), 2, 2, 2);
+		Light* light4 = new AreaLight(WHITE, Vec3f(7, 0, 4.9), power, Vec3f(0, 0, -1), Vec3f(1, 0, 0), 2, 2, 2);
 		scene->addLight(light4);
 	}
 
@@ -364,7 +374,7 @@ int main(int argc, char** argv)
 
 	Renderer* renderer = new TestRenderer();
 	if (args.usePhoton)
-		renderer = new PhotonRenderer();
+		renderer = new PhotonRenderer(args.globalWant, args.causticWant);
 	renderer->setScene(scene);
 	renderer->setCamera(camera);
 

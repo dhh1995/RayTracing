@@ -29,15 +29,15 @@ public:
 	void setLight(bool flag = true){ mLight = flag; }
 	bool isLight(){ return mLight; }
 	
-	void setUV(const UV &uv){ mUV = uv; }
-	UV getUV(){ return mUV; }
+	// void setUV(const UV &uv){ mUV = uv; }
+	// UV getUV(){ return mUV; }
 private:
 	bool mLight;
 	real mDist;
 	Vec3f mPos;
 	Vec3f mNorm;
 	Primitive* mPrim;
-	UV mUV;
+	// UV mUV;
 };
 
 }; // namespace Raytracer

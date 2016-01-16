@@ -39,16 +39,13 @@ public:
 	real getRefract(real cosI){
 		return 1.0f - mFresnel->getReflection(cosI);
 	}
-	Color sample(const Vec3f& wi, Vec3f &wo, Vec3f norm, Vec3f pos, real& pdf, bool& isSpecular);
+	Color sample(const Vec3f& wi, Vec3f &wo, Vec3f norm, Vec3f pos, real& pdf, bool& isSpecular, const UV& uv = UV(0,0));
 
 	void setTexture(Texture* aTexture){
 		mTexture = aTexture;
 	}
 	Texture* getTexture(){
 		return mTexture;
-	}
-	Color getColor(real u, real v){
-		return mTexture->getColor(make_pair(u, v));
 	}
 	Vec3f getNorm(real u, real v){
 		return ZERO;
