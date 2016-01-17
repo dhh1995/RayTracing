@@ -40,12 +40,13 @@ bool Scene::loadObj(string folder, string fileName){
 
 	vector<Vertex* > vertexs;
 	vector<UV> vt;
+	vector<Vec3f> vn;
 	Box* boundingBox = new Box;
 	map<string, Material*> materials;
 	Material* currentMaterial = NULL;
 	Material* defaultMtl = new Material(WHITE / 5, WHITE, BLACK);
 	int lines = 0;
-	char tmp[105];
+	char tmp[1005];
 	char buf[1005];
 	while (fscanf(fp, "%s", tmp)!=EOF){
 		// puts(tmp);
@@ -106,6 +107,10 @@ bool Scene::loadObj(string folder, string fileName){
 			fscanf(fp, "%lf %lf", &u, &v);
 			// printf("%lf %lf %lf\n",x,y,z);
 			vt.push_back(make_pair(u,v));
+		}else if (type == "vn"){
+			real x, y, z;
+			fscanf(fp, "%lf %lf %lf", &x, &y, &z);
+			vn.push_back(Vec3f(x, y, z));
 		}else if (type == "f"){
 			char blank;
 			int n = vertexs.size();
@@ -148,7 +153,8 @@ bool Scene::loadObj(string folder, string fileName){
 			currentMaterial = materials[materialName];
 			if (currentMaterial == NULL)
 				currentMaterial = defaultMtl;
-		}
+		}else if (type == "s" || type == "g")
+			fgets(tmp, 1000, fp);
 	}
 	return true;
 }

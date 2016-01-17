@@ -24,6 +24,8 @@ Color Material::sample(const Vec3f& wi, Vec3f &wo, Vec3f norm, Vec3f pos, real& 
 		isSpecular = true;
 		return mSpec; // Ps * (Pd + Ps);
 	}else{
+		if (dot(wi, norm) > 0)
+			norm = -norm;
 		wo = Sampler::getDiffuseDir(norm);
 		return diffuse; // Pd * (Pd + Ps);
 	}

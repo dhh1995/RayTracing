@@ -14,7 +14,9 @@ void PhotonRenderer::_addPhoton(Vec3f pos, Vec3f dir, Color power, PhotonState s
 		}
 	}else{
 		if (mGlobal.getN() < mGlobalWant){
-			//photon->prt();
+			// puts("photon");
+			// pos.prt();
+			// dir.prt();
 			mGlobal.add(new Photon(Ray(pos, dir), power));
 			if (mGlobal.getN() == mGlobalWant)
 				mGlobalFinish = mPhotonEmits;
@@ -80,7 +82,7 @@ void PhotonRenderer::genPhotonMap(const Args& args, string path){
 		int ind = Sampler::getRandInt(lights.size());
 		Light* light = lights[ind];
 		Vec3f centre = light->samplePos();
-		Vec3f dir = Sampler::getRandomDir();
+		Vec3f dir = light->sampleDir();
 		Photon* photon = new Photon(Ray(centre, dir), light->getPower());
 		//puts("new Photon emits");
 		mPhotonEmits++;
@@ -123,7 +125,7 @@ Color PhotonRenderer::_getFlux(const PhotonMap& pm, Vec3f pos, Vec3f norm, real 
 	}
 	// real k = 1.1;
 	real maxDist = sqrt(maxDist2);
-	if (valid.size() > 2 && maxDist > EPS){
+	if (valid.size() >= 1 && maxDist > EPS){
 		for (Photon* photon : valid){
 			real dist = (pos - photon->getPos()).L2();
 			real weight = 1.0f - dist / maxDist2;

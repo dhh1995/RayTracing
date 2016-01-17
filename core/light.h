@@ -53,7 +53,7 @@ protected:
 
 class AreaLight : public Light{
 public:
-	AreaLight(Vec3f aColor, Color aPos, real aPower, Vec3f aNorm, Vec3f aU,
+	AreaLight(Color aColor, Color aPos, real aPower, Vec3f aNorm, Vec3f aU,
 				int aSamples, real aUScale = 1.0, real aVScale = 1.0)
 			: Light(aColor, aPos, aPower, aSamples), mNorm(aNorm), mU(aU), mUScale(aUScale), mVScale(aVScale){
 		aColor.prt();
@@ -69,11 +69,11 @@ public:
 		return dot(mNorm, pos - mPos) > 0;
 	}
 	virtual Color getPower(){
-		return mColor * (mPower / PI);
+		return mColor * mPower;
 	}
-	virtual real getPower(Vec3f dir){
-		return mPower * dot(mNorm, dir) / PI;
-	}
+	// virtual real getPower(Vec3f dir){
+	// 	return mPower * dot(mNorm, dir) / PI;
+	// }
 	bool intersect(const Ray& ray, Intersection& isect);
 	Vec3f samplePos(){
 		real u, v;
@@ -89,6 +89,32 @@ private:
 	real mD;
 	real mUScale, mVScale; //how large
 };
+
+class ProjectLight : public Light{
+public:
+	ProjectLight(Color aColor, Color aPos, real aPower, Vec3f aNorm, real aR)
+		: Light(aColor, aPos, aPower), mNorm(aNorm), mR(aR){
+		while (mU.L2() < EPS)
+			mU = cross(mNorm, Sampler::randVector());
+		mU.Normalize();
+		mV = cross(mU, mNorm).Normalize();
+	}
+	string getType(){
+		return "ProjectLight";
+	}
+	Vec3f samplePos(){
+		real u, v;
+		Sampler::concentricSampleDisk(u, v);
+		return mPos + (mU * u + mV * v) * mR;
+	}
+	Vec3f sampleDir(){
+		return mNorm;
+	}
+private:
+	Vec3f mNorm, mU, mV;
+	real mR;
+};
+
 
 }; // namespace Raytracer
 

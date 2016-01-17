@@ -81,31 +81,32 @@ int main(int argc, char** argv)
 	}
 
 	if (useScene == -2){
-		if (!scene->loadObj("model", args.obj)){
+		if (!scene->loadObj("src/render_scene", args.obj)){
 			colorMessage("load scene unsuccessfully", 1);
 			return 0;
 		}
-		camera->setPos(Vec3f(0, -200, 0));
-		camera->setLookAt(Vec3f(0, 1, 0), Vec3f(0, 0, 1));
+		camera->setPos(Vec3f(-10, 0.5, 0));
+		camera->setLookAt(Vec3f(1, 0, 0), Vec3f(0, 1, 0));
 	}
 
 	if (useScene == -1){
-		if (!scene->loadObj("model", args.obj)){
+		if (!scene->loadObj("src/render_scene", args.obj)){
 			colorMessage("load scene unsuccessfully", 1);
 			return 0;
 		}
 		int power = 40;
 		if (args.usePhoton)
-			power = 150000;
-		Light* light0 = new AreaLight(WHITE, Vec3f(0, 9, -15), power, Vec3f(0, -1, 0), Vec3f(1, 0, 0), 1, 1, 1);
+			power = 50000;
+		Light* light0 = new AreaLight(WHITE, Vec3f(0, 21, -15), power, Vec3f(0, -1, 0), Vec3f(1, 0, 0), 1, 2, 2);
 		scene->addLight(light0);
-		Light* light1 = new AreaLight(WHITE, Vec3f(10, 9, -15), power, Vec3f(0, -1, 0), Vec3f(1, 0, 0), 1, 1, 1);
+		Light* light1 = new AreaLight(WHITE, Vec3f(10, 21, -15), power, Vec3f(0, -1, 0), Vec3f(1, 0, 0), 1, 2, 2);
 		scene->addLight(light1);
-		Light* light2 = new AreaLight(WHITE, Vec3f(20, 7, -15), power, Vec3f(0, -1, 0), Vec3f(1, 0, 0), 1, 1, 1);
+		Light* light2 = new AreaLight(WHITE, Vec3f(20, 21, -15), power, Vec3f(0, -1, 0), Vec3f(1, 0, 0), 1, 2, 2);
 		scene->addLight(light2);
-		Light* light4 = new AreaLight(WHITE, Vec3f(30, 7, -15), power, Vec3f(0, -1, 0), Vec3f(1, 0, 0), 1, 1, 1);
+		Light* light4 = new AreaLight(WHITE, Vec3f(30, 21, -15), power, Vec3f(0, -1, 0), Vec3f(1, 0, 0), 1, 2, 2);
 		scene->addLight(light4);
 
+		// camera->setPos(Vec3f(44, 2.5, -16));
 		camera->setPos(Vec3f(44, 2.5, -16));
 		camera->setLookAt(Vec3f(-1, -0.05, -0.05), Vec3f(0, 1, 0));
 	}
@@ -134,9 +135,9 @@ int main(int argc, char** argv)
 		// 		scene->addObject(obj);
 		// 	}
 		// }
-		int power = 100;
+		int power = 40;
 		if (args.usePhoton)
-			power = 5000;
+			power = 2000;
 
 		Material* wall1		= new Material(Background, WHITE * 0.8, BLACK);
 		Image* image0 = new Image("texture/lena.jpg");
@@ -265,6 +266,7 @@ int main(int argc, char** argv)
 		if (args.usePhoton)
 			power = 60000;
 		Light* light0 = new Light(WHITE , Vec3f(0, 0, 25), power);
+		// Light* light1 = new ProjectLight(WHITE, Vec3f(0, 0, 25), power, Vec3f(0, 0, -1), 0.1);
 		scene->addLight(light0);
 
 		Primitive* obj5 = new Plane(Vec3f(-1, 0, 0), Vec3f(0, -1, 0), 30);
@@ -338,9 +340,9 @@ int main(int argc, char** argv)
 
 		//Light* light2 = new Light(YELLOW, Vec3f(5,9,-9));
 		//scene->addLight(light2);
-		int power = 50;
+		int power = 25;
 		if (args.usePhoton)
-			power = 4000;
+			power = 1200;
 
 		Light* light3 = new Light(WHITE, Vec3f(6,0,4), power);
 		// scene->addLight(light3);
