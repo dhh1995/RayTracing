@@ -91,12 +91,13 @@ void PhotonRenderer::genPhotonMap(const Args& args, string path){
 		if (mGlobal.getN() + mCaustic.getN() >= last * total / showStages)
 			printf("photon emits %d/%d global : %d caustic : %d\n", last++, showStages, mGlobal.getN(), mCaustic.getN());
 	}
-	if (!args.loadPM){
+	bool saveMap = false;
+	if (saveMap){
 		causticPmFile = fopen(causticPmFileName.c_str(), "w");
 		fprintf(causticPmFile, "%d\n", mCausticFinish);
 		mCaustic.dump(causticPmFile);
 	}
-	if (!args.loadPM){
+	if (saveMap){
 		globalPmFile = fopen(globalPmFileName.c_str(), "w");
 		fprintf(globalPmFile, "%d\n", mGlobalFinish);
 		mGlobal.dump(globalPmFile);
