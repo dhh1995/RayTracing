@@ -96,7 +96,7 @@ int main(int argc, char** argv)
 		}
 		int power = 40;
 		if (args.usePhoton)
-			power = 50000;
+			power = 3000;
 		Light* light0 = new AreaLight(WHITE, Vec3f(0, 21, -15), power, Vec3f(0, -1, 0), Vec3f(1, 0, 0), 1, 2, 2);
 		scene->addLight(light0);
 		Light* light1 = new AreaLight(WHITE, Vec3f(10, 21, -15), power, Vec3f(0, -1, 0), Vec3f(1, 0, 0), 1, 2, 2);
@@ -118,7 +118,7 @@ int main(int argc, char** argv)
 		}
 		int power = 40;
 		if (args.usePhoton)
-			power = 2000000;
+			power = 200000;
 		Light* light4 = new AreaLight(WHITE, Vec3f(278, 548.8, 279.5), power, Vec3f(0, -1, 0), Vec3f(1, 0, 0), 1, 100, 100);
 		scene->addLight(light4);
 
@@ -137,7 +137,7 @@ int main(int argc, char** argv)
 		// }
 		int power = 40;
 		if (args.usePhoton)
-			power = 2000;
+			power = 200;
 
 		Material* wall1		= new Material(Background, WHITE * 0.8, BLACK);
 		Image* image0 = new Image("texture/lena.jpg");
@@ -210,7 +210,7 @@ int main(int argc, char** argv)
 		Material* mat2 = new Material(Background, PINK * 0.6, PINK * 0.4);
 	
 		// (Matrix44::scale(5) * Matrix44::rotateX(PI / 2) * Matrix44::rotateY(-PI / 2)) .prt();
-		int power = 1500;
+		int power = 100;
 		// if (args.usePhoton)
 		// 	power = 10000;
 		for (int i = 0; i < 8; ++ i){
@@ -264,7 +264,7 @@ int main(int argc, char** argv)
 
 		int power = 1000;
 		if (args.usePhoton)
-			power = 60000;
+			power = 6000;
 		Light* light0 = new Light(WHITE , Vec3f(0, 0, 25), power);
 		// Light* light1 = new ProjectLight(WHITE, Vec3f(0, 0, 25), power, Vec3f(0, 0, -1), 0.1);
 		scene->addLight(light0);
@@ -342,7 +342,7 @@ int main(int argc, char** argv)
 		//scene->addLight(light2);
 		int power = 25;
 		if (args.usePhoton)
-			power = 1200;
+			power = 120;
 
 		Light* light3 = new Light(WHITE, Vec3f(6,0,4), power);
 		// scene->addLight(light3);

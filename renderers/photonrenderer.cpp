@@ -133,7 +133,7 @@ Color PhotonRenderer::_getFlux(const PhotonMap& pm, Vec3f pos, Vec3f norm, real 
 		}
 	}
 	delete[] photons;
-	return flux / pm.getN();
+	return flux;
 	// flux /= (1.0 - 2.0 / (3.0 * k));
 	// if (valid.size() > 0)
 	// 	flux /= valid.size();
@@ -167,8 +167,8 @@ void PhotonRenderer::rayTracing(Ray ray, Color& res, int depth){
 		rayTracing(Ray(pos + R * EPS, R), rcol, depth + 1);
 		res += F * rcol / pdf;
 	}else{
-		Color caustic = _getFlux(mCaustic, pos, norm, mCausticR) *  mBias;
-		Color radiance = _getFlux(mGlobal, pos, norm, mGlobalR);
+		Color caustic = _getFlux(mCaustic, pos, norm, mCausticR) / mCausticFinish *  mBias;
+		Color radiance = _getFlux(mGlobal, pos, norm, mGlobalR) / mGlobalFinish;
 		res += F * (caustic + radiance) / pdf;
 	}
 }
